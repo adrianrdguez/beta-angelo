@@ -119,6 +119,11 @@ class Simulator {
         }
     }
 
+
+    //------------- Rectas -------------------
+
+
+
     // ------------- Implantes -------------------
 
     addImplantObject = (url) => {
@@ -155,3 +160,7 @@ class Simulator {
 
 let simulator = new Simulator('img/radiografia.png');
 simulator.init()
+
+
+
+// 
