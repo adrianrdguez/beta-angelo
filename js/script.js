@@ -1,10 +1,16 @@
 class Simulator {
-    constructor(radiography) {
+    constructor(radiographyUrl) {
+        this.radiographyUrl = radiographyUrl;
+        this.radiographyImg = null;
+        this.limitClipPathField = null;
         this.canvas = new fabric.Canvas('template', { selection: false });
         this.setCanvasSize();
-        fabric.Image.fromURL(radiography, (img) => {
+        fabric.Image.fromURL(this.radiographyUrl, (img) => {
             this.canvas.add(img);
             img.center();
+            img.clone((imgCloned) => {
+                this.radiographyImg = imgCloned;
+            })
             img.set({
                 centeredRotation: false,
                 centeredScaling: false,
@@ -20,6 +26,13 @@ class Simulator {
                 lockSkewingX: true,
                 lockSkewingY: true,
                 selectable: false,
+            });
+            this.limitClipPathField = new fabric.Rect({
+                width: img.width + 1,
+                height: img.height + 1,
+                top: img.top - 1,
+                left: img.left - 1,
+                absolutePositioned: true
             });
         });
     }
@@ -46,12 +59,51 @@ class Simulator {
                 this.disableDraggingMode();
             }
         });
-        this.canvas.on('path:created', () => {
-            if (this.canvas.isDrawingMode && this.canvas.fillDrawing) {
-                this.canvas.getObjects().forEach(o => o.fill = this.canvas.freeDrawingBrush.color);
-                this.canvas.renderAll();
+        this.canvas.on('path:created', (opt) => {
+            let linePath = opt.path;
+            linePath.set({
+                centeredRotation: false,
+                centeredScaling: false,
+                evented: false,
+                hasBorders: false,
+                hasControls: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingFlip: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                lockSkewingX: true,
+                lockSkewingY: true,
+                selectable: false,
+            });
+
+            // no funciona :(
+            if (this.canvas.isDrawingMode && this.canvas.cutBackground) {
+                linePath.objectCaching = false;
+                linePath.strokeWidth = 0;
+                linePath.clone((pls) => {
+                    fabric.Image.fromURL(this.radiographyUrl, (img) => {
+                        let patternSourceCanvas = new fabric.StaticCanvas();
+                        patternSourceCanvas.add(img);
+                        patternSourceCanvas.renderAll();
+                        patternSourceCanvas.setDimensions({
+                            width: this.radiographyImg.width,
+                            height: this.radiographyImg.height,
+                        });
+                        let pattern = new fabric.Pattern({
+                            source: patternSourceCanvas.getElement(),
+                            repeat: 'no-repeat',
+                        });
+                        pls.fill = pattern;
+                        this.canvas.add(pls);
+                    });
+                })
+                this.canvas.requestRenderAll();
+                this.setDraggingMode();
             }
         });
+        this.setFreeCutMode();
     }
 
     setCanvasSize = () => {
@@ -94,16 +146,25 @@ class Simulator {
     // ------------- Herramientas -------------------
 
     setDraggingMode = () => {
-        this.canvas.isDragging = true;
+        this.canvas.isDragging = false;
         this.canvas.isDrawingMode = false;
+        this.canvas.cutBackground = false;
     }
 
-    setDrawingMode = (width = 3, color = '#fff', fillDrawing = false) => {
-        this.canvas.isDragging = false;
+    setDrawingMode = (width = 1, color = '#fff', dashedLine = false) => {
+        this.setDraggingMode();
         this.canvas.isDrawingMode = true;
-        this.canvas.fillDrawing = fillDrawing;
+        this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
+        this.canvas.freeDrawingBrush.straightLineKey = 'altKey';
         this.canvas.freeDrawingBrush.color = color;
-        this.canvas.freeDrawingBrush.width = parseInt(width, 10) || 1;
+        this.canvas.freeDrawingBrush.width = width;
+        if (dashedLine) {
+            this.canvas.cutBackground = true;
+            this.canvas.freeDrawingBrush.strokeDashArray = [1.5];
+        } else {
+            this.canvas.cutBackground = false;
+            this.canvas.freeDrawingBrush.strokeDashArray = [];
+        }
     }
 
     undoLastDraw = () => {
@@ -119,39 +180,50 @@ class Simulator {
         }
     }
 
+    setFreeCutMode = () => {
+        this.setDrawingMode(0.5, 'red', true);
+    }
+
     // ------------- Implantes -------------------
+
+    setDefaultObjectOptions = (object) => {
+        object.set({
+            lockScalingFlip: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockSkewingX: true,
+            lockSkewingY: true,
+            selectable: true,
+            borderColor: 'darkblue',
+            cornerSize: 50,
+            padding: 10,
+            cornerStyle: 'circle',
+            hasBorders: true,
+        });
+        object.controls.mtr.offsetY = -parseFloat(60);
+        object.setControlsVisibility({
+            tl: false,
+            bl: false,
+            tr: false,
+            br: false,
+            ml: false,
+            mb: false,
+            mr: false,
+            mt: false,
+        })
+        object.clipPath = this.limitClipPathField;
+    }
 
     addImplantObject = (url) => {
         fabric.Image.fromURL(url, (img) => {
             this.canvas.add(img);
             img.center();
-            img.set({
-                lockScalingFlip: false,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockSkewingX: false,
-                lockSkewingY: false,
-                selectable: true,
-                borderColor: 'blue',
-                cornerSize: 50,
-                padding: 10,
-                cornerStyle: 'circle',
-                hasBorders: true,
-            });
-            img.controls.mtr.offsetY = -parseFloat(60);
-            img.setControlVisible('tl', false);
-            img.setControlVisible('bl', false);
-            img.setControlVisible('tr', false);
-            img.setControlVisible('br', false);
-            img.setControlVisible('ml', false);
-            img.setControlVisible('mb', false);
-            img.setControlVisible('mr', false);
-            img.setControlVisible('mt', false);
+            this.setDefaultObjectOptions(img);
         });
-        this.canvas.renderAll();
+        this.canvas.requestRenderAll();
     }
 
 }
 
 let simulator = new Simulator('img/radiografia.png');
-simulator.init()
+simulator.init();
