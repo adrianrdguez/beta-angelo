@@ -1,6 +1,6 @@
 class Simulator {
     constructor(radiography) {
-        this.canvas = new fabric.Canvas('template', { selection: false });
+        this.canvas = new fabric.Canvas('canvas', { selection: false });
         this.setCanvasSize();
         fabric.Image.fromURL(radiography, (img) => {
             this.canvas.add(img);
