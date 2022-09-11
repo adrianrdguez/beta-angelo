@@ -1,11 +1,7 @@
 class Simulator {
     constructor(radiography) {
-        this.paths = [];
-        this.canvas = new fabric.Canvas('template', {
-            selection: false,
-            width: $(window).width(),
-            height: $(window).height(),
-        });
+        this.canvas = new fabric.Canvas('template', { selection: false });
+        this.setCanvasSize();
         fabric.Image.fromURL(radiography, (img) => {
             this.canvas.add(img);
             img.center();
@@ -15,71 +11,105 @@ class Simulator {
                 evented: false,
                 hasBorders: false,
                 hasControls: false,
-                lockMovementX: false,
-                lockMovementY: false,
+                lockMovementX: true,
+                lockMovementY: true,
                 lockRotation: true,
-                lockScalingFlip: false,
+                lockScalingFlip: true,
                 lockScalingX: true,
                 lockScalingY: true,
-                lockSkewingX: false,
-                lockSkewingY: false,
+                lockSkewingX: true,
+                lockSkewingY: true,
                 selectable: false,
             });
         });
-
     }
 
+    // ------------- Eventos -------------------
+
     init = () => {
-        $(window).bind("resize", () => {
-            this.canvas.setDimensions({ width: $(window).width(), height: $(window).height() });
-        });
+        window.onresize = this.setCanvasSize
         this.canvas.on('mouse:wheel', (opt) => {
-            let delta = opt.e.deltaY;
-            let zoom = this.canvas.getZoom();
-            zoom *= 0.999 ** delta;
-            if (zoom > 20) zoom = 20;
-            if (zoom < 0.01) zoom = 0.01;
-            this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
+            this.zoomToPoint(opt);
         });
         this.canvas.on('mouse:down', (opt) => {
             if (!opt.target && !this.canvas.isDrawingMode) {
-                let event = opt.e;
-                this.canvas.isDragging = true;
-                this.canvas.lastPosX = event.clientX;
-                this.canvas.lastPosY = event.clientY;
+                this.activateDraggingMode(opt);
             }
         });
         this.canvas.on('mouse:move', (opt) => {
             if (this.canvas.isDragging) {
-                let e = opt.e;
-                let vpt = this.canvas.viewportTransform;
-                vpt[4] += e.clientX - this.canvas.lastPosX;
-                vpt[5] += e.clientY - this.canvas.lastPosY;
-                this.canvas.requestRenderAll();
-                this.canvas.lastPosX = e.clientX;
-                this.canvas.lastPosY = e.clientY;
+                this.dragScreen(opt);
             }
         });
-        this.canvas.on('mouse:up', (opt) => {
-            this.canvas.setViewportTransform(this.canvas.viewportTransform);
-            this.canvas.isDragging = false;
+        this.canvas.on('mouse:up', () => {
+            if (this.canvas.isDragging) {
+                this.disableDraggingMode();
+            }
         });
-        this.canvas.on('path:created', (object) => {
+        this.canvas.on('path:created', () => {
             if (this.canvas.isDrawingMode && this.canvas.fillDrawing) {
-                this.canvas.getObjects().forEach(o => {
-                    o.fill = this.canvas.freeDrawingBrush.color
-                });
+                this.canvas.getObjects().forEach(o => o.fill = this.canvas.freeDrawingBrush.color);
                 this.canvas.renderAll();
             }
         });
     }
 
+    setCanvasSize = () => {
+        this.canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    }
+
+    zoomToPoint = (opt) => {
+        let delta = opt.e.deltaY;
+        let zoom = this.canvas.getZoom();
+        zoom *= 0.999 ** delta;
+        if (zoom > 20) zoom = 20;
+        if (zoom < 0.01) zoom = 0.01;
+        this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();
+    }
+
+    activateDraggingMode = (opt) => {
+        let event = opt.e;
+        this.canvas.isDragging = true;
+        this.canvas.lastPosX = event.clientX;
+        this.canvas.lastPosY = event.clientY;
+    }
+
+    disableDraggingMode = () => {
+        this.canvas.setViewportTransform(this.canvas.viewportTransform);
+        this.canvas.isDragging = false;
+    }
+
+    dragScreen = (opt) => {
+        let e = opt.e;
+        let vpt = this.canvas.viewportTransform;
+        vpt[4] += e.clientX - this.canvas.lastPosX;
+        vpt[5] += e.clientY - this.canvas.lastPosY;
+        this.canvas.requestRenderAll();
+        this.canvas.lastPosX = e.clientX;
+        this.canvas.lastPosY = e.clientY;
+    }
+
+    // ------------- Herramientas -------------------
+
+    setDraggingMode = () => {
+        this.canvas.isDragging = true;
+        this.canvas.isDrawingMode = false;
+    }
+
+    setDrawingMode = (width = 3, color = '#fff', fillDrawing = false) => {
+        this.canvas.isDragging = false;
+        this.canvas.isDrawingMode = true;
+        this.canvas.fillDrawing = fillDrawing;
+        this.canvas.freeDrawingBrush.color = color;
+        this.canvas.freeDrawingBrush.width = parseInt(width, 10) || 1;
+    }
+
     undoLastDraw = () => {
-        for (let path of this.canvas.getObjects('path').reverse()) {
+        let path = this.canvas.getObjects('path').pop();
+        if (path) {
             this.canvas.remove(path);
-            return;
         }
     }
 
@@ -89,12 +119,7 @@ class Simulator {
         }
     }
 
-    downloadImage = (filename) => {
-        const link = document.createElement("a");
-        link.href = this.canvas.toDataURL();
-        link.download = filename;
-        link.click();
-    }
+    // ------------- Implantes -------------------
 
     addImplantObject = (url) => {
         fabric.Image.fromURL(url, (img) => {
@@ -126,18 +151,6 @@ class Simulator {
         this.canvas.renderAll();
     }
 
-    setNormalMode = () => {
-        this.canvas.isDragging = true;
-        this.canvas.isDrawingMode = false;
-    }
-
-    setDrawingMode = (width = 3, color = '#fff', fillDrawing = false) => {
-        this.canvas.isDragging = false;
-        this.canvas.isDrawingMode = true;
-        this.canvas.freeDrawingBrush.color = color;
-        this.canvas.freeDrawingBrush.width = parseInt(width, 10) || 1;
-        this.canvas.fillDrawing = fillDrawing;
-    }
 }
 
 let simulator = new Simulator('img/radiografia.png');
