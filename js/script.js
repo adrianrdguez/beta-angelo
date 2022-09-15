@@ -61,42 +61,55 @@ class Simulator {
         });
         this.canvas.on('path:created', (opt) => {
             let linePath = opt.path;
-            linePath.set({
-                centeredRotation: false,
-                centeredScaling: false,
-                evented: false,
-                hasBorders: false,
-                hasControls: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                lockRotation: true,
-                lockScalingFlip: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockSkewingX: true,
-                lockSkewingY: true,
-                selectable: false,
-            });
-
-            // no funciona :(
             if (this.canvas.isDrawingMode && this.canvas.cutBackground) {
-                linePath.objectCaching = false;
                 linePath.strokeWidth = 0;
-                linePath.clone((pls) => {
+                linePath.fill = 'black';
+                linePath.width = linePath.width + 5;
+                linePath.height = linePath.height + 5;
+                fabric.Image.fromURL(linePath.toDataURL(), (lineImg) => {
+                    lineImg.left = linePath.left;
+                    lineImg.top = linePath.top;
+                    lineImg.width = linePath.width;
+                    lineImg.height = linePath.height;
+                    lineImg.set({
+                        centeredRotation: false,
+                        centeredScaling: false,
+                        evented: false,
+                        hasBorders: false,
+                        hasControls: false,
+                        lockMovementX: true,
+                        lockMovementY: true,
+                        lockRotation: true,
+                        lockScalingFlip: true,
+                        lockScalingX: true,
+                        lockScalingY: true,
+                        lockSkewingX: true,
+                        lockSkewingY: true,
+                        selectable: false,
+                    })
+                    this.canvas.add(lineImg);
                     fabric.Image.fromURL(this.radiographyUrl, (img) => {
-                        let patternSourceCanvas = new fabric.StaticCanvas();
-                        patternSourceCanvas.add(img);
-                        patternSourceCanvas.renderAll();
-                        patternSourceCanvas.setDimensions({
-                            width: this.radiographyImg.width,
-                            height: this.radiographyImg.height,
-                        });
-                        let pattern = new fabric.Pattern({
-                            source: patternSourceCanvas.getElement(),
-                            repeat: 'no-repeat',
-                        });
-                        pls.fill = pattern;
-                        this.canvas.add(pls);
+                        let imgCanvas = new fabric.Canvas();
+                        imgCanvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
+                        imgCanvas.add(img);
+                        img.center();
+                        lineImg.absolutePositioned = true;
+                        img.clipPath = lineImg;
+                        fabric.Image.fromURL(imgCanvas.toDataURL({
+                            left: lineImg.left,
+                            top: lineImg.top,
+                            width: lineImg.width,
+                            height: lineImg.height,
+                        }), (img) => {
+                            img.left = lineImg.left;
+                            img.top = lineImg.top;
+                            img.width = lineImg.width;
+                            img.height = lineImg.height;
+                            this.canvas.add(img);
+                            this.canvas.bringToFront(img)
+                            this.setDefaultObjectOptions(img)
+                            this.undoLastDraw()
+                        })
                     });
                 })
                 this.canvas.requestRenderAll();
