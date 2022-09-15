@@ -208,7 +208,7 @@ class Simulator {
             lockSkewingX: true,
             lockSkewingY: true,
             selectable: true,
-            borderColor: 'darkblue',
+            borderColor: 'red',
             cornerSize: 50,
             padding: 10,
             cornerStyle: 'circle',
