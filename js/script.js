@@ -4,29 +4,14 @@ class Simulator {
         this.radiographyImg = null;
         this.limitClipPathField = null;
         this.canvas = new fabric.Canvas('template', { selection: false });
-        this.setCanvasSize();
+        this.setCanvasSize(this.canvas);
         fabric.Image.fromURL(this.radiographyUrl, (img) => {
             this.canvas.add(img);
             img.center();
             img.clone((imgCloned) => {
                 this.radiographyImg = imgCloned;
             })
-            img.set({
-                centeredRotation: false,
-                centeredScaling: false,
-                evented: false,
-                hasBorders: false,
-                hasControls: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                lockRotation: true,
-                lockScalingFlip: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockSkewingX: true,
-                lockSkewingY: true,
-                selectable: false,
-            });
+            this.setBackgroundOptions(img);
             this.limitClipPathField = new fabric.Rect({
                 width: img.width + 1,
                 height: img.height + 1,
@@ -41,9 +26,7 @@ class Simulator {
 
     init = () => {
         window.onresize = this.setCanvasSize
-        this.canvas.on('mouse:wheel', (opt) => {
-            this.zoomToPoint(opt);
-        });
+        this.canvas.on('mouse:wheel', this.zoomToPoint);
         this.canvas.on('mouse:down', (opt) => {
             if (!opt.target && !this.canvas.isDrawingMode) {
                 this.activateDraggingMode(opt);
@@ -61,66 +44,14 @@ class Simulator {
         });
         this.canvas.on('path:created', (opt) => {
             let linePath = opt.path;
-            if (this.canvas.isDrawingMode && this.canvas.isCuttingMode) {
-                linePath.strokeWidth = 0;
-                linePath.fill = 'black';
-                linePath.width = linePath.width + 5;
-                linePath.height = linePath.height + 5;
-                fabric.Image.fromURL(linePath.toDataURL(), (lineImg) => {
-                    lineImg.left = linePath.left;
-                    lineImg.top = linePath.top;
-                    lineImg.width = linePath.width;
-                    lineImg.height = linePath.height;
-                    lineImg.set({
-                        centeredRotation: false,
-                        centeredScaling: false,
-                        evented: false,
-                        hasBorders: false,
-                        hasControls: false,
-                        lockMovementX: true,
-                        lockMovementY: true,
-                        lockRotation: true,
-                        lockScalingFlip: true,
-                        lockScalingX: true,
-                        lockScalingY: true,
-                        lockSkewingX: true,
-                        lockSkewingY: true,
-                        selectable: false,
-                    })
-                    this.canvas.add(lineImg);
-                    fabric.Image.fromURL(this.radiographyUrl, (img) => {
-                        let imgCanvas = new fabric.Canvas();
-                        imgCanvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
-                        imgCanvas.add(img);
-                        img.center();
-                        lineImg.absolutePositioned = true;
-                        img.clipPath = lineImg;
-                        fabric.Image.fromURL(imgCanvas.toDataURL({
-                            left: lineImg.left,
-                            top: lineImg.top,
-                            width: lineImg.width,
-                            height: lineImg.height,
-                        }), (img) => {
-                            img.left = lineImg.left;
-                            img.top = lineImg.top;
-                            img.width = lineImg.width;
-                            img.height = lineImg.height;
-                            this.canvas.add(img);
-                            this.canvas.bringToFront(img)
-                            this.setDefaultObjectOptions(img)
-                            this.undoLastDraw()
-                        })
-                    });
-                })
-                this.canvas.requestRenderAll();
-                this.setDraggingMode();
+            if (this.canvas.isCuttingMode) {
+                this.cutPath(linePath);
             }
         });
-        this.setFreeCutMode();
     }
 
-    setCanvasSize = () => {
-        this.canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    setCanvasSize = (canvas) => {
+        canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
     }
 
     zoomToPoint = (opt) => {
@@ -212,6 +143,7 @@ class Simulator {
             cornerSize: 50,
             padding: 10,
             cornerStyle: 'circle',
+            cornerColor: '#f08080',
             hasBorders: true,
         });
         object.controls.mtr.offsetY = -parseFloat(60);
@@ -228,6 +160,25 @@ class Simulator {
         object.clipPath = this.limitClipPathField;
     }
 
+    setBackgroundOptions = (object) => {
+        object.set({
+            centeredRotation: false,
+            centeredScaling: false,
+            evented: false,
+            hasBorders: false,
+            hasControls: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockRotation: true,
+            lockScalingFlip: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockSkewingX: true,
+            lockSkewingY: true,
+            selectable: false,
+        });
+    }
+
     addImplantObject = (url) => {
         fabric.Image.fromURL(url, (img) => {
             this.canvas.add(img);
@@ -237,6 +188,38 @@ class Simulator {
         this.canvas.requestRenderAll();
     }
 
+
+    cutPath(linePath) {
+        linePath.strokeWidth = 0;
+        linePath.fill = 'black';
+        fabric.Image.fromURL(linePath.toDataURL({ width: linePath.width + 5, height: linePath.height + 5 }), (lineImg) => {
+            lineImg.left = linePath.left;
+            lineImg.top = linePath.top;
+            lineImg.width = linePath.width;
+            lineImg.height = linePath.height;
+            this.canvas.add(lineImg);
+            this.setBackgroundOptions(lineImg);
+            fabric.Image.fromURL(this.radiographyUrl, (img) => {
+                let imgCanvas = new fabric.Canvas();
+                this.setCanvasSize(imgCanvas);
+                imgCanvas.add(img);
+                img.center();
+                lineImg.absolutePositioned = true;
+                img.clipPath = lineImg;
+                fabric.Image.fromURL(imgCanvas.toDataURL({ left: lineImg.left, top: lineImg.top, width: lineImg.width, height: lineImg.height }), (img) => {
+                    img.left = lineImg.left;
+                    img.top = lineImg.top;
+                    img.width = lineImg.width;
+                    img.height = lineImg.height;
+                    this.canvas.add(img);
+                    this.setDefaultObjectOptions(img);
+                    this.undoLastDraw();
+                });
+            });
+        });
+        this.canvas.requestRenderAll();
+        this.setDraggingMode();
+    }
 }
 
 let simulator = new Simulator('img/radiografia.png');
