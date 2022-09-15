@@ -61,7 +61,7 @@ class Simulator {
         });
         this.canvas.on('path:created', (opt) => {
             let linePath = opt.path;
-            if (this.canvas.isDrawingMode && this.canvas.cutBackground) {
+            if (this.canvas.isDrawingMode && this.canvas.isCuttingMode) {
                 linePath.strokeWidth = 0;
                 linePath.fill = 'black';
                 linePath.width = linePath.width + 5;
@@ -141,11 +141,6 @@ class Simulator {
         this.canvas.lastPosY = event.clientY;
     }
 
-    disableDraggingMode = () => {
-        this.canvas.setViewportTransform(this.canvas.viewportTransform);
-        this.canvas.isDragging = false;
-    }
-
     dragScreen = (opt) => {
         let e = opt.e;
         let vpt = this.canvas.viewportTransform;
@@ -156,29 +151,39 @@ class Simulator {
         this.canvas.lastPosY = e.clientY;
     }
 
-    // ------------- Herramientas -------------------
+    disableDraggingMode = () => {
+        this.canvas.setViewportTransform(this.canvas.viewportTransform);
+        this.canvas.isDragging = false;
+    }
+
+    // ------------- Modos -------------------
 
     setDraggingMode = () => {
         this.canvas.isDragging = false;
         this.canvas.isDrawingMode = false;
-        this.canvas.cutBackground = false;
+        this.canvas.isCuttingMode = false;
     }
 
-    setDrawingMode = (width = 1, color = '#fff', dashedLine = false) => {
+    setDrawingMode = (width = 1, color = '#fff', isCuttingMode = false) => {
         this.setDraggingMode();
         this.canvas.isDrawingMode = true;
         this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
-        this.canvas.freeDrawingBrush.straightLineKey = 'altKey';
         this.canvas.freeDrawingBrush.color = color;
         this.canvas.freeDrawingBrush.width = width;
-        if (dashedLine) {
-            this.canvas.cutBackground = true;
-            this.canvas.freeDrawingBrush.strokeDashArray = [1.5];
+        this.canvas.freeDrawingBrush.decimate = 0;
+        if (isCuttingMode) {
+            this.canvas.isCuttingMode = true;
         } else {
-            this.canvas.cutBackground = false;
-            this.canvas.freeDrawingBrush.strokeDashArray = [];
+            this.canvas.isCuttingMode = false;
         }
     }
+
+    setFreeCutMode = () => {
+        this.setDrawingMode(0.3, 'red', true);
+    }
+
+    // ------------- Opciones de herramienta adicionales -------------------
+
 
     undoLastDraw = () => {
         let path = this.canvas.getObjects('path').pop();
@@ -191,10 +196,6 @@ class Simulator {
         for (let path of this.canvas.getObjects('path')) {
             this.canvas.remove(path);
         }
-    }
-
-    setFreeCutMode = () => {
-        this.setDrawingMode(0.5, 'red', true);
     }
 
     // ------------- Implantes -------------------
