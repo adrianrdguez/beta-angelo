@@ -32,13 +32,18 @@ class Simulator {
         let addingLineButton = document.getElementById('adding-line-btn');
         addingLineButton.addEventListener('click', this.setRuleMode);
 
+        let startDrawingLineButton = document.getElementById('drawing-btn');
+        startDrawingLineButton.addEventListener('click', this.setDrawingMode);
+
+        let startDraggingLineButton = document.getElementById('dragging-btn');
+        startDraggingLineButton.addEventListener('click', this.setDraggingMode);
+
 
         this.canvas.on('mouse:wheel', (opt) => {
             this.zoomToPoint(opt);
         });
 
         this.canvas.on('mouse:down', (opt) => {
-            console.log("rule", this.canvas.isRuleMode)
             if (this.canvas.isRuleMode) {
                 this.startAddingLine(opt);
             }
@@ -68,6 +73,9 @@ class Simulator {
                 this.canvas.renderAll();
             }
         });
+        this.canvas.on('mouse:dblclick', (opt) => {
+            this.addingControllPoints(opt);
+        });
     }
 
     setCanvasSize = () => {
@@ -84,6 +92,7 @@ class Simulator {
         opt.e.preventDefault();
         opt.e.stopPropagation();
     }
+
 
     activateDraggingMode = (opt) => {
         let event = opt.e;
@@ -119,6 +128,10 @@ class Simulator {
         this.canvas.isRuleMode = true;
     }
 
+    setNewRuleMode = () => {
+        this.canvas.isNewRuleMode = true;
+    }
+
     startAddingLine = (mouse) => {
         let pointer = this.canvas.getPointer(mouse.e);
 
@@ -126,7 +139,7 @@ class Simulator {
             id: 'added-line',
             stroke: 'red',
             strokeWidth: 3,
-            selectable: false
+            selectable: true
         })
 
         this.canvas.line = line;
@@ -174,6 +187,99 @@ class Simulator {
         }
     }
 
+    updateNewLineCoordinates = (object) => {
+        let obj = object.target;
+
+        if (obj.id === 'added-line') {
+            let centerX = obj.getCenterPoint().x;
+            let centerY = obj.getCenterPoint().y;
+
+            let x1offset = obj.calcLinePoints().x1;
+            let y1offset = obj.calcLinePoints().y1;
+            let x2offset = obj.calcLinePoints().x2;
+            let y2offset = obj.calcLinePoints().y2;
+
+            return {
+                x1: centerX + x1offset,
+                y1: centerY + y1offset,
+                x2: centerX + x2offset,
+                y2: centerY + y2offset
+            }
+        }
+    }
+
+    addingControllPoints = (object) => {
+        let obj = object.target;
+
+        let newLineCoords = this.updateNewLineCoordinates(object);
+
+        if (!obj) {
+            return;
+        } else {
+            if (obj.id === 'added-line') {
+                let pointer1 = new fabric.Circle({
+                    id: 'pointer1',
+                    radius: obj.strokeWidth * 6,
+                    fill: 'red',
+                    opacity: 0.5,
+                    top: newLineCoords.y1,
+                    left: newLineCoords.x1,
+                    originX: 'center',
+                    originY: 'center',
+                    hasBorders: false,
+                    hasControls: false
+                })
+
+                let pointer2 = new fabric.Circle({
+                    id: 'pointer2',
+                    radius: obj.strokeWidth * 6,
+                    fill: 'red',
+                    opacity: 0.5,
+                    top: newLineCoords.y2,
+                    left: newLineCoords.x2,
+                    originX: 'center',
+                    originY: 'center',
+                    hasBorders: false,
+                    hasControls: false
+                })
+
+                this.canvas.add(pointer1, pointer2);
+                this.canvas.discardActiveObject();
+                this.canvas.requestRenderAll();
+
+                this.canvas.on('object:moving', this.endPointOfLineFollowPointer);
+            }
+        }
+    }
+
+    endPointOfLineFollowPointer = (object) => {
+        let obj = object.target;
+
+        if (obj.id === 'pointer1') {
+            this.canvas.getObjects().forEach(object => {
+                if (object.id === 'added-line') {
+                    object.set({
+                        x1: obj.left,
+                        y1: obj.top
+                    })
+                    object.setCoords();
+                }
+            })
+        }
+
+        if (obj.id === 'pointer2') {
+            this.canvas.getObjects().forEach(object => {
+                if (object.id === 'added-line') {
+                    object.set({
+                        x2: obj.left,
+                        y2: obj.top
+                    })
+                    object.setCoords();
+                }
+            })
+        }
+    }
+
     // ------------- Implantes -------------------
 
     addImplantObject = (url) => {
@@ -213,127 +319,9 @@ simulator.init()
 
 
 
-
-/* let line;
-let mouseDown = false;
-
-
-let deactivateAddingButton = document.getElementById('deactivate-line-btn');
-
-deactivateAddingButton.addEventListener('click', deactivateAdding)
-
-
-function deactivateAdding() {
-    canvas.off('mouse:down', startAddingLine);
-    canvas.off('mouse:move', startDrawingLine);
-    canvas.off('mouse:up', stopDrawingLine);
-
-    canvas.getObjects().forEach(object => {
-        if (object.id === 'added-line') {
-            object.set({
-                selectable: true
-            })
-        }
-    })
-}
-
-canvas.on({
+/* canvas.on({
     'object:moved': updateNewLineCoordinates,
     'selection:created': updateNewLineCoordinates,
     'selection:updated': updateNewLineCoordinates,
     'mouse:dblclick': addingControllPoints
-})
-
-
-function updateNewLineCoordinates(object) {
-    let obj = object.target;
-
-    if (obj.id === 'added-line') {
-        let centerX = obj.getCenterPoint().x;
-        let centerY = obj.getCenterPoint().y;
-
-        let x1offset = obj.calcLinePoints().x1;
-        let y1offset = obj.calcLinePoints().y1;
-        let x2offset = obj.calcLinePoints().x2;
-        let y2offset = obj.calcLinePoints().y2;
-
-        return {
-            x1: centerX + x1offset,
-            y1: centerY + y1offset,
-            x2: centerX + x2offset,
-            y2: centerY + y2offset
-        }
-    }
-}
-
-function addingControllPoints(object) {
-    let obj = object.target;
-
-    let newLineCoords = updateNewLineCoordinates(object);
-
-    if (!obj) {
-        return;
-    } else {
-        if (obj.id === 'added-line') {
-            let pointer1 = new fabric.Circle({
-                id: 'pointer1',
-                radius: obj.strokeWidth * 6,
-                fill: 'blue',
-                opacity: 0.5,
-                top: newLineCoords.y1,
-                left: newLineCoords.x1,
-                originX: 'center',
-                originY: 'center',
-                hasBorders: false,
-                hasControls: false
-            })
-
-            let pointer2 = new fabric.Circle({
-                id: 'pointer2',
-                radius: obj.strokeWidth * 6,
-                fill: 'blue',
-                opacity: 0.5,
-                top: newLineCoords.y2,
-                left: newLineCoords.x2,
-                originX: 'center',
-                originY: 'center',
-                hasBorders: false,
-                hasControls: false
-            })
-
-            canvas.add(pointer1, pointer2);
-            canvas.discardActiveObject();
-            canvas.requestRenderAll();
-
-            canvas.on('object:moving', endPointOfLineFollowPointer);
-        }
-    }
-}
-
-function endPointOfLineFollowPointer(object) {
-    let obj = object.target;
-
-    if (obj.id === 'pointer1') {
-        canvas.getObjects().forEach(object => {
-            if (object.id === 'added-line') {
-                object.set({
-                    x1: obj.left,
-                    y1: obj.top
-                })
-                object.setCoords();
-            }
-        })
-    }
-
-    if (obj.id === 'pointer2') {
-        canvas.getObjects().forEach(object => {
-            if (object.id === 'added-line') {
-                object.set({
-                    x2: obj.left,
-                    y2: obj.top
-                })
-                object.setCoords();
-            }
-        })
-    }
-} */
+}) */

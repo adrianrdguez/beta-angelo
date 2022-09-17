@@ -15,14 +15,31 @@ body {
     overflow: hidden;
 }
 
-#adding-line-btn {
+.btn-group {
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
-#deactivate-line-btn {
-    position: absolute;
-    right: 20px;
-    top: 0;
+button {
+    background-color: greenyellow;
+    border: 1px solid green;
+    color: black;
+    padding: 10px 24px;
+    cursor: pointer;
+}
+
+.btn-group button:not(:last-child) {
+    border-right: none;
+}
+
+.btn-group::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.btn-group button:hover {
+    background-color: #3e8341;
 }
