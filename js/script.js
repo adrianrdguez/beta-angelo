@@ -31,21 +31,21 @@ class Simulator {
 
         this.canvas.on('mouse:wheel', this.zoomToPoint);
         this.canvas.on('mouse:down', (opt) => {
-            if (this.canvas.isRuleMode) {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
                 this.startAddingLine(opt);
             } else if (!opt.target && !this.canvas.isDrawingMode) {
                 this.activateDraggingMode(opt);
             }
         });
         this.canvas.on('mouse:move', (opt) => {
-            if (this.canvas.isRuleMode) {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
                 this.startDrawingLine(opt);
             } else if (this.canvas.isDragging) {
                 this.dragScreen(opt);
             }
         });
         this.canvas.on('mouse:up', () => {
-            if (this.canvas.isRuleMode) {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
                 this.stopDrawingLine();
             } else if (this.canvas.isDragging) {
                 this.disableDraggingMode();
@@ -109,13 +109,13 @@ class Simulator {
         this.canvas.isRuleMode = true;
     }
 
-    startAddingLine = (mouse) => {
-        let pointer = this.canvas.getPointer(mouse.e);
+    startAddingLine = (opt) => {
+        let pointer = this.canvas.getPointer(opt.e);
 
         let line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
             id: 'added-line',
             stroke: 'red',
-            strokeWidth: 3,
+            strokeWidth: this.canvas.freeDrawingBrush.width ?? 3,
             selectable: false
         })
 
@@ -124,9 +124,9 @@ class Simulator {
         this.canvas.requestRenderAll();
     }
 
-    startDrawingLine = (mouse) => {
+    startDrawingLine = (opt) => {
         if (this.canvas.line) {
-            let pointer = this.canvas.getPointer(mouse.e);
+            let pointer = this.canvas.getPointer(opt.e);
 
             this.canvas.line.set({
                 x2: pointer.x,
