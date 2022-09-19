@@ -163,6 +163,15 @@ class Simulator {
 
     // ------------- Opciones de herramienta adicionales -------------------
 
+    removeElement = (element = null) => {
+        element = element ?? this.canvas.getObjects().pop();
+        if (element && this.canvas.getObjects().length > 1) {
+            if (element.associatedChild) {
+                this.removeElement(element.associatedChild)
+            }
+            this.canvas.remove(element);
+        }
+    }
 
     undoLastDraw = () => {
         let path = this.canvas.getObjects('path').pop();
@@ -240,13 +249,14 @@ class Simulator {
     cutPath(linePath) {
         linePath.strokeWidth = 0;
         linePath.fill = 'black';
-        fabric.Image.fromURL(linePath.toDataURL({ width: linePath.width + 5, height: linePath.height + 5 }), (lineImg) => {
+        fabric.Image.fromURL(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }), (lineImg) => {
             lineImg.left = linePath.left;
             lineImg.top = linePath.top;
             lineImg.width = linePath.width;
             lineImg.height = linePath.height;
             this.canvas.add(lineImg);
             this.setBackgroundOptions(lineImg);
+            this.canvas.moveTo(lineImg, 1);
             fabric.Image.fromURL(this.radiographyUrl, (img) => {
                 let imgCanvas = new fabric.Canvas();
                 this.setCanvasSize(imgCanvas);
@@ -259,8 +269,10 @@ class Simulator {
                     img.top = lineImg.top;
                     img.width = lineImg.width;
                     img.height = lineImg.height;
+                    img.associatedChild = lineImg;
                     this.canvas.add(img);
                     this.setDefaultObjectOptions(img);
+                    this.removeElement(this.canvas.line);
                     this.undoLastDraw();
                 });
             });
