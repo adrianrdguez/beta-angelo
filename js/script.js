@@ -3,7 +3,7 @@ class Simulator {
         this.radiographyUrl = radiographyUrl;
         this.radiographyImg = null;
         this.limitClipPathField = null;
-        this.canvas = new fabric.Canvas('template', { selection: false });
+        this.canvas = new fabric.Canvas('simulador', { selection: false });
         this.setCanvasSize(this.canvas);
         fabric.Image.fromURL(this.radiographyUrl, (img) => {
             this.canvas.add(img);
@@ -25,20 +25,29 @@ class Simulator {
     // ------------- Eventos -------------------
 
     init = () => {
-        window.onresize = this.setCanvasSize
+        window.onresize = () => {this.setCanvasSize(this.canvas)}
+        let addingLineButton = document.getElementById('adding-line-btn');
+        addingLineButton.addEventListener('click', this.setRuleMode);
+
         this.canvas.on('mouse:wheel', this.zoomToPoint);
         this.canvas.on('mouse:down', (opt) => {
-            if (!opt.target && !this.canvas.isDrawingMode) {
+            if (this.canvas.isRuleMode) {
+                this.startAddingLine(opt);
+            } else if (!opt.target && !this.canvas.isDrawingMode) {
                 this.activateDraggingMode(opt);
             }
         });
         this.canvas.on('mouse:move', (opt) => {
-            if (this.canvas.isDragging) {
+            if (this.canvas.isRuleMode) {
+                this.startDrawingLine(opt);
+            } else if (this.canvas.isDragging) {
                 this.dragScreen(opt);
             }
         });
         this.canvas.on('mouse:up', () => {
-            if (this.canvas.isDragging) {
+            if (this.canvas.isRuleMode) {
+                this.stopDrawingLine();
+            } else if (this.canvas.isDragging) {
                 this.disableDraggingMode();
             }
         });
@@ -92,7 +101,46 @@ class Simulator {
     setDraggingMode = () => {
         this.canvas.isDragging = false;
         this.canvas.isDrawingMode = false;
+        this.canvas.isRuleMode = false;
         this.canvas.isCuttingMode = false;
+    }
+
+    setRuleMode = () => {
+        this.canvas.isRuleMode = true;
+    }
+
+    startAddingLine = (mouse) => {
+        let pointer = this.canvas.getPointer(mouse.e);
+
+        let line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+            id: 'added-line',
+            stroke: 'red',
+            strokeWidth: 3,
+            selectable: false
+        })
+
+        this.canvas.line = line;
+        this.canvas.add(line);
+        this.canvas.requestRenderAll();
+    }
+
+    startDrawingLine = (mouse) => {
+        if (this.canvas.line) {
+            let pointer = this.canvas.getPointer(mouse.e);
+
+            this.canvas.line.set({
+                x2: pointer.x,
+                y2: pointer.y
+            });
+
+            this.canvas.requestRenderAll()
+        }
+    }
+
+    stopDrawingLine = () => {
+        this.canvas.line.setCoords();
+        delete this.canvas.line;
+        this.setDraggingMode();
     }
 
     setDrawingMode = (width = 1, color = '#fff', isCuttingMode = false) => {
@@ -224,3 +272,110 @@ class Simulator {
 
 let simulator = new Simulator('img/radiografia.png');
 simulator.init();
+
+/* 
+
+// Falta refactorizar?
+
+canvas.on({
+    'object:moved': updateNewLineCoordinates,
+    'selection:created': updateNewLineCoordinates,
+    'selection:updated': updateNewLineCoordinates,
+    'mouse:dblclick': addingControllPoints
+})
+
+
+function updateNewLineCoordinates(object) {
+    let obj = object.target;
+
+    if (obj.id === 'added-line') {
+        let centerX = obj.getCenterPoint().x;
+        let centerY = obj.getCenterPoint().y;
+
+        let x1offset = obj.calcLinePoints().x1;
+        let y1offset = obj.calcLinePoints().y1;
+        let x2offset = obj.calcLinePoints().x2;
+        let y2offset = obj.calcLinePoints().y2;
+
+        return {
+            x1: centerX + x1offset,
+            y1: centerY + y1offset,
+            x2: centerX + x2offset,
+            y2: centerY + y2offset
+        }
+    }
+}
+
+function addingControllPoints(object) {
+    let obj = object.target;
+
+    let newLineCoords = updateNewLineCoordinates(object);
+
+    if (!obj) {
+        return;
+    } else {
+        if (obj.id === 'added-line') {
+            let pointer1 = new fabric.Circle({
+                id: 'pointer1',
+                radius: obj.strokeWidth * 6,
+                fill: 'blue',
+                opacity: 0.5,
+                top: newLineCoords.y1,
+                left: newLineCoords.x1,
+                originX: 'center',
+                originY: 'center',
+                hasBorders: false,
+                hasControls: false
+            })
+
+            let pointer2 = new fabric.Circle({
+                id: 'pointer2',
+                radius: obj.strokeWidth * 6,
+                fill: 'blue',
+                opacity: 0.5,
+                top: newLineCoords.y2,
+                left: newLineCoords.x2,
+                originX: 'center',
+                originY: 'center',
+                hasBorders: false,
+                hasControls: false
+            })
+
+            canvas.add(pointer1, pointer2);
+            canvas.discardActiveObject();
+            canvas.requestRenderAll();
+
+            canvas.on('object:moving', endPointOfLineFollowPointer);
+        }
+    }
+}
+
+function endPointOfLineFollowPointer(object) {
+    let obj = object.target;
+
+    if (obj.id === 'pointer1') {
+        canvas.getObjects().forEach(object => {
+            if (object.id === 'added-line') {
+                object.set({
+                    x1: obj.left,
+                    y1: obj.top
+                })
+                object.setCoords();
+            }
+        })
+    }
+
+    if (obj.id === 'pointer2') {
+        canvas.getObjects().forEach(object => {
+            if (object.id === 'added-line') {
+                object.set({
+                    x2: obj.left,
+                    y2: obj.top
+                })
+                object.setCoords();
+            }
+        })
+    }
+} 
+
+*/
