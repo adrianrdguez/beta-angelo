@@ -2,102 +2,109 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://kit.fontawesome.com/2accd57d6d.js" crossorigin="anonymous"></script>
-    <script src="js/fabric.js" defer></script>
-    <script src="js/script.js" defer></script>
-    <script src="js/temp.js" defer></script>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://kit.fontawesome.com/2accd57d6d.js" crossorigin="anonymous"></script>
+  <script src="js/fabric.js" defer></script>
+  <script src="js/script.js" defer></script>
+  <script src="js/temp.js" defer></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <div class="navigation">
-        <ul>
-            <li id="dragging-btn" class="list active">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-up-down-left-right"></i>
-                    </span>
-                    <span class="title">Move</span>
-                </a>
-            </li>
-            <li id="adding-line-btn" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-ruler"></i>
-                    </span>
-                    <span class="title">Measure</span>
-                </a>
-            </li>
-            <li id="drawing-btn" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-paintbrush"></i>
-                    </span>
-                    <span class="title">Drawing</span>
-                </a>
-            </li>
-            <li id="free-cut-btn" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-scissors"></i>
-                    </span>
-                    <span class="title">Free cut</span>
-                </a>
-            </li>
+  <!-- <div class="btn-group">
+    <button id="adding-line-btn">Add Line</button>
+    <button id="drawing-btn">Start Drawing</button>
+    <button id="dragging-btn">Start Dragging</button>
+  </div> -->
+  <div class="navigation">
+    <ul>
+      <li id="adding-line-btn" class="list active">
+        <b></b>
+        <b></b>
+        <a href="#">
+          <span class="icon">
+            <ion-icon name="analytics-outline"></ion-icon>
+          </span>
+          <span class="title">Measure</span>
+        </a>
+      </li>
+      <li id="drawing-btn" class="list">
+        <b></b>
+        <b></b>
+        <a href="#">
+          <span class="icon">
+            <ion-icon name="brush-outline"></ion-icon>
+          </span>
+          <span class="title">Drawing</span>
+        </a>
+      </li>
+      <li id="dragging-btn" class="list">
+        <b></b>
+        <b></b>
+        <a href="#">
+          <span class="icon">
+            <ion-icon name="move-outline"></ion-icon>
+          </span>
+          <span class="title">Move</span>
+        </a>
+      </li>
 
-            <!-- Campos temporales, esto se tiene que hacer en otro sitio -->
-            <li class="list">
-                <p>
-                    <label>
-                        Brightness:
-                        <input id="brightness" type="range" value="0" min="-1" max="1" step="0.003921">
-                    </label>
-                </p>
-            </li>
-            <li class="list">
-                <p>
-                    <label>
-                        Contrast:
-                        <input id="contrast" type="range" value="0" min="-1" max="1" step="0.003921">
-                    </label>
-                </p>
-            </li>
-            <li class="list">
-                <p>
-                    <label>
-                        BlackAndWhite:
-                        <input id="blackandwhite" type="checkbox">
-                    </label>
-                </p>
-            </li>
-            <li class="list">
-                <p>
-                    <label>
-                        <button id="apply-filters">Apply</button>
-                        <button id="reset-filters">reset</button>
-                    </label>
-                </p>
-            </li>
-        </ul>
+      <!-- Campos temporales, esto se tiene que hacer en otro sitio -->
+      <li class="list">
+        <p>
+          <label>
+            Brightness:
+            <input id="brightness" type="range" value="0" min="-1" max="1" step="0.003921">
+          </label>
+        </p>
+      </li>
+      <li class="list">
+        <p>
+          <label>
+            Contrast:
+            <input id="contrast" type="range" value="0" min="-1" max="1" step="0.003921">
+          </label>
+        </p>
+      </li>
+      <li class="list">
+        <p>
+          <label>
+            BlackAndWhite:
+            <input id="blackandwhite" type="checkbox">
+          </label>
+        </p>
+      </li>
+      <li class="list">
+        <p>
+          <label>
+            <button id="apply-filters">Apply</button>
+            <button id="reset-filters">reset</button>
+          </label>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <script>
+    let list = document.querySelectorAll('.list');
+    for (let i = 0; i < list.length; i++) {
+      list[i].onclick = function () {
+        let j = 0;
+        while (j < list.length) {
+          list[j++].className = 'list';
+        }
+        list[i].className = 'list active'
+      }
+    }
+  </script>
+  <canvas id="canvas"></canvas>
+  <div id="menu-1" class="menu">
+    <div class="menu-li" id="remove-btn">
+      <i class="fa-solid fa-trash"></i> Borrar elemento
     </div>
-    <canvas id="simulador"></canvas>
-    <div id="menu-1" class="menu">
-        <div class="menu-li" id="remove-btn">
-            <i class="fa-solid fa-trash"></i> Borrar elemento
-        </div>
-    </div>
+  </div>
 </body>
 
 </html>
