@@ -9,15 +9,57 @@
   <script src="https://code.jquery.com/jquery-3.6.1.min.js" defer></script>
   <script src="js/fabric.min.js" defer></script>
   <script src="js/script.js" defer></script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-  <div class="btn-group">
+  <!-- <div class="btn-group">
     <button id="adding-line-btn">Add Line</button>
     <button id="drawing-btn">Start Drawing</button>
     <button id="dragging-btn">Start Dragging</button>
+  </div> -->
+  <div class="navigation">
+    <ul>
+      <li class="list active">
+        <a href="#">
+          <span class="icon">
+            <ion-icon name="brush-outline"></ion-icon>
+          </span>
+          <span class="title">Measure</span>
+        </a>
+      </li>
+      <li class="list">
+        <a href="#">
+          <span class="icon">
+            <ion-icon name="brush-outline"></ion-icon>
+          </span>
+          <span class="title">Drawing</span>
+        </a>
+      </li>
+      <li class="list">
+        <a href="#">
+          <span class="icon">
+            <ion-icon name="move-outline"></ion-icon>
+          </span>
+          <span class="title">Move</span>
+        </a>
+      </li>
+    </ul>
   </div>
+  <script>
+    let list = document.querySelectorAll('.list');
+    for (let i = 0; i < list.length; i++) {
+      list[i].onclick = function () {
+        let j = 0;
+        while (j < list.length) {
+          list[j++].className = 'list';
+        }
+        list[i].className = 'list active'
+      }
+    }
+  </script>
   <canvas id="canvas"></canvas>
 </body>
 

@@ -43,3 +43,73 @@ button {
 .btn-group button:hover {
     background-color: #3e8341;
 }
+
+.navigation {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    bottom: 20px;
+    width: 300px;
+    border-radius: 10px;
+    box-sizing: initial;
+    border-right: 5px solid green;
+    background: green;
+    transition: width 0.5s;
+    z-index: 1000;
+}
+
+.navigation ul {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    padding-right: 5px;
+    padding-top: 40px;
+}
+
+.navigation ul li {
+    position: relative;
+    list-style: none;
+    width: 100%;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.navigation ul li.active {
+    background: #fff;
+}
+
+.navigation ul li a {
+    position: relative;
+    display: block;
+    display: flex;
+    width: 100%;
+    text-decoration: none;
+    color: white;
+}
+
+.navigation ul li.active a {
+    color: #1b1e20;
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+}
+
+.navigation ul li a .icon ion-icon {
+    font-size: 1.5em;
+}
+
+.navigation ul li a .title {
+    position: relative;
+    display: block;
+    padding-right: 10px;
+    height: 60px;
+    line-height: 60px;
+    white-space: normal;
+}
