@@ -1,25 +1,23 @@
 class Simulator {
-    constructor(radiography) {
-        this.canvas = new fabric.Canvas('canvas', { selection: false });
-        this.setCanvasSize();
-        fabric.Image.fromURL(radiography, (img) => {
+    constructor(radiographyUrl) {
+        this.radiographyUrl = radiographyUrl;
+        this.radiographyImg = null;
+        this.limitClipPathField = null;
+        this.canvas = new fabric.Canvas('simulador', { selection: false });
+        this.setCanvasSize(this.canvas);
+        fabric.Image.fromURL(this.radiographyUrl, (img) => {
             this.canvas.add(img);
             img.center();
-            img.set({
-                centeredRotation: false,
-                centeredScaling: false,
-                evented: false,
-                hasBorders: false,
-                hasControls: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                lockRotation: true,
-                lockScalingFlip: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockSkewingX: true,
-                lockSkewingY: true,
-                selectable: false,
+            img.clone((imgCloned) => {
+                this.radiographyImg = imgCloned;
+            })
+            this.setBackgroundOptions(img);
+            this.limitClipPathField = new fabric.Rect({
+                width: img.width + 1,
+                height: img.height + 1,
+                top: img.top - 1,
+                left: img.left - 1,
+                absolutePositioned: true
             });
         });
     }
@@ -27,8 +25,7 @@ class Simulator {
     // ------------- Eventos -------------------
 
     init = () => {
-        window.onresize = this.setCanvasSize
-
+        window.onresize = () => {this.setCanvasSize(this.canvas)}
         let addingLineButton = document.getElementById('adding-line-btn');
         addingLineButton.addEventListener('click', this.setRuleMode);
 
@@ -38,48 +35,41 @@ class Simulator {
         let startDraggingLineButton = document.getElementById('dragging-btn');
         startDraggingLineButton.addEventListener('click', this.setDraggingMode);
 
-
-        this.canvas.on('mouse:wheel', (opt) => {
-            this.zoomToPoint(opt);
-        });
-
+        this.canvas.on('mouse:wheel', this.zoomToPoint);
         this.canvas.on('mouse:down', (opt) => {
-            if (this.canvas.isRuleMode) {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
                 this.startAddingLine(opt);
-            }
-            else if (!opt.target && !this.canvas.isDrawingMode) {
+            } else if (!opt.target && !this.canvas.isDrawingMode) {
                 this.activateDraggingMode(opt);
             }
         });
         this.canvas.on('mouse:move', (opt) => {
-            if (this.canvas.isRuleMode) {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
                 this.startDrawingLine(opt);
-            }
-            else if (this.canvas.isDragging) {
+            } else if (this.canvas.isDragging) {
                 this.dragScreen(opt);
             }
         });
         this.canvas.on('mouse:up', () => {
-            if (this.canvas.isRuleMode) {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
                 this.stopDrawingLine();
-            }
-            else if (this.canvas.isDragging) {
+            } else if (this.canvas.isDragging) {
                 this.disableDraggingMode();
             }
         });
-        this.canvas.on('path:created', () => {
-            if (this.canvas.isDrawingMode && this.canvas.fillDrawing) {
-                this.canvas.getObjects().forEach(o => o.fill = this.canvas.freeDrawingBrush.color);
-                this.canvas.renderAll();
+        this.canvas.on('path:created', (opt) => {
+            let linePath = opt.path;
+            if (this.canvas.isCuttingMode) {
+                this.cutPath(linePath);
             }
         });
         this.canvas.on('mouse:dblclick', (opt) => {
-            this.addingControllPoints(opt);
+            this.addingControlPoints(opt);
         });
     }
 
-    setCanvasSize = () => {
-        this.canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    setCanvasSize = (canvas) => {
+        canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
     }
 
     zoomToPoint = (opt) => {
@@ -92,7 +82,6 @@ class Simulator {
         opt.e.preventDefault();
         opt.e.stopPropagation();
     }
-
 
     activateDraggingMode = (opt) => {
         let event = opt.e;
@@ -116,12 +105,14 @@ class Simulator {
         this.canvas.lastPosY = e.clientY;
     }
 
-    // ------------- Herramientas -------------------
+
+    // ------------- Modos -------------------
 
     setDraggingMode = () => {
         this.canvas.isDragging = false;
         this.canvas.isDrawingMode = false;
         this.canvas.isRuleMode = false;
+        this.canvas.isCuttingMode = false;
     }
 
     setRuleMode = () => {
@@ -132,14 +123,14 @@ class Simulator {
         this.canvas.isNewRuleMode = true;
     }
 
-    startAddingLine = (mouse) => {
-        let pointer = this.canvas.getPointer(mouse.e);
+    startAddingLine = (opt) => {
+        let pointer = this.canvas.getPointer(opt.e);
 
         let line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
             id: 'added-line',
             stroke: 'red',
-            strokeWidth: 3,
-            selectable: true
+            strokeWidth: this.canvas.freeDrawingBrush.width ?? 3,
+            selectable: false
         })
 
         this.canvas.line = line;
@@ -147,9 +138,9 @@ class Simulator {
         this.canvas.requestRenderAll();
     }
 
-    startDrawingLine = (mouse) => {
+    startDrawingLine = (opt) => {
         if (this.canvas.line) {
-            let pointer = this.canvas.getPointer(mouse.e);
+            let pointer = this.canvas.getPointer(opt.e);
 
             this.canvas.line.set({
                 x2: pointer.x,
@@ -166,12 +157,34 @@ class Simulator {
         this.setDraggingMode();
     }
 
-    setDrawingMode = (width = 3, color = '#fff', fillDrawing = false) => {
-        this.canvas.isDragging = false;
+    setDrawingMode = (width = 1, color = '#fff', isCuttingMode = false) => {
+        this.setDraggingMode();
         this.canvas.isDrawingMode = true;
-        this.canvas.fillDrawing = fillDrawing;
+        this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
         this.canvas.freeDrawingBrush.color = color;
-        this.canvas.freeDrawingBrush.width = parseInt(width, 10) || 1;
+        this.canvas.freeDrawingBrush.width = width;
+        this.canvas.freeDrawingBrush.decimate = 0;
+        if (isCuttingMode) {
+            this.canvas.isCuttingMode = true;
+        } else {
+            this.canvas.isCuttingMode = false;
+        }
+    }
+
+    setFreeCutMode = () => {
+        this.setDrawingMode(0.3, 'red', true);
+    }
+
+    // ------------- Opciones de herramienta adicionales -------------------
+
+    removeElement = (element = null) => {
+        element = element ?? this.canvas.getObjects().pop();
+        if (element && this.canvas.getObjects().length > 1) {
+            if (element.associatedChild) {
+                this.removeElement(element.associatedChild)
+            }
+            this.canvas.remove(element);
+        }
     }
 
     undoLastDraw = () => {
@@ -190,6 +203,7 @@ class Simulator {
     updateNewLineCoordinates = (object) => {
         let obj = object.target;
 
+        // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
         if (obj.id === 'added-line') {
             let centerX = obj.getCenterPoint().x;
             let centerY = obj.getCenterPoint().y;
@@ -208,7 +222,7 @@ class Simulator {
         }
     }
 
-    addingControllPoints = (object) => {
+    addingControlPoints = (object) => {
         let obj = object.target;
 
         let newLineCoords = this.updateNewLineCoordinates(object);
@@ -216,6 +230,7 @@ class Simulator {
         if (!obj) {
             return;
         } else {
+            // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
             if (obj.id === 'added-line') {
                 let pointer1 = new fabric.Circle({
                     id: 'pointer1',
@@ -247,6 +262,7 @@ class Simulator {
                 this.canvas.discardActiveObject();
                 this.canvas.requestRenderAll();
 
+                // TODO: Esto esta mal, cada vez que se ejecute un doble click se va a crear un evento?
                 this.canvas.on('object:moving', this.endPointOfLineFollowPointer);
             }
         }
@@ -255,6 +271,7 @@ class Simulator {
     endPointOfLineFollowPointer = (object) => {
         let obj = object.target;
 
+        // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
         if (obj.id === 'pointer1') {
             this.canvas.getObjects().forEach(object => {
                 if (object.id === 'added-line') {
@@ -267,6 +284,7 @@ class Simulator {
             })
         }
 
+        // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
         if (obj.id === 'pointer2') {
             this.canvas.getObjects().forEach(object => {
                 if (object.id === 'added-line') {
@@ -280,46 +298,110 @@ class Simulator {
         }
     }
 
+    cutPath(linePath) {
+        linePath.strokeWidth = 0;
+        linePath.fill = 'black';
+        fabric.Image.fromURL(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }), (lineImg) => {
+            lineImg.left = linePath.left;
+            lineImg.top = linePath.top;
+            lineImg.width = linePath.width;
+            lineImg.height = linePath.height;
+            this.canvas.add(lineImg);
+            this.setBackgroundOptions(lineImg);
+            this.canvas.moveTo(lineImg, 1);
+            fabric.Image.fromURL(this.radiographyUrl, (img) => {
+                let imgCanvas = new fabric.Canvas();
+                this.setCanvasSize(imgCanvas);
+                imgCanvas.add(img);
+                img.center();
+                lineImg.absolutePositioned = true;
+                img.clipPath = lineImg;
+                fabric.Image.fromURL(imgCanvas.toDataURL({ left: lineImg.left, top: lineImg.top, width: lineImg.width, height: lineImg.height }), (img) => {
+                    img.left = lineImg.left;
+                    img.top = lineImg.top;
+                    img.width = lineImg.width;
+                    img.height = lineImg.height;
+                    img.associatedChild = lineImg;
+                    this.canvas.add(img);
+                    this.setDefaultObjectOptions(img);
+                    this.removeElement(this.canvas.line);
+                    this.undoLastDraw();
+                });
+            });
+        });
+        this.canvas.requestRenderAll();
+        this.setDraggingMode();
+    }
+
     // ------------- Implantes -------------------
+
+    setDefaultObjectOptions = (object) => {
+        object.set({
+            lockScalingFlip: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockSkewingX: true,
+            lockSkewingY: true,
+            selectable: true,
+            borderColor: 'red',
+            cornerSize: 50,
+            padding: 10,
+            cornerStyle: 'circle',
+            cornerColor: '#f08080',
+            hasBorders: true,
+        });
+        object.controls.mtr.offsetY = -parseFloat(60);
+        object.setControlsVisibility({
+            tl: false,
+            bl: false,
+            tr: false,
+            br: false,
+            ml: false,
+            mb: false,
+            mr: false,
+            mt: false,
+        })
+        object.clipPath = this.limitClipPathField;
+    }
+
+    setBackgroundOptions = (object) => {
+        object.set({
+            centeredRotation: false,
+            centeredScaling: false,
+            evented: false,
+            hasBorders: false,
+            hasControls: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockRotation: true,
+            lockScalingFlip: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockSkewingX: true,
+            lockSkewingY: true,
+            selectable: false,
+        });
+    }
 
     addImplantObject = (url) => {
         fabric.Image.fromURL(url, (img) => {
             this.canvas.add(img);
             img.center();
-            img.set({
-                lockScalingFlip: false,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockSkewingX: false,
-                lockSkewingY: false,
-                selectable: true,
-                borderColor: 'blue',
-                cornerSize: 50,
-                padding: 10,
-                cornerStyle: 'circle',
-                hasBorders: true,
-            });
-            img.controls.mtr.offsetY = -parseFloat(60);
-            img.setControlVisible('tl', false);
-            img.setControlVisible('bl', false);
-            img.setControlVisible('tr', false);
-            img.setControlVisible('br', false);
-            img.setControlVisible('ml', false);
-            img.setControlVisible('mb', false);
-            img.setControlVisible('mr', false);
-            img.setControlVisible('mt', false);
+            this.setDefaultObjectOptions(img);
         });
-        this.canvas.renderAll();
+        this.canvas.requestRenderAll();
     }
 
 }
 
 let simulator = new Simulator('img/radiografia.png');
-simulator.init()
+simulator.init();
 
+/*
 
+// Falta refactorizar?
 
-/* canvas.on({
+canvas.on({
     'object:moved': updateNewLineCoordinates,
     'selection:created': updateNewLineCoordinates,
     'selection:updated': updateNewLineCoordinates,
