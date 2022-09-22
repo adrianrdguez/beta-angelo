@@ -26,9 +26,10 @@ class Simulator {
 
     init = () => {
         window.onresize = () => {this.setCanvasSize(this.canvas)}
-        document.getElementById('adding-line-btn').addEventListener('click', () => {this.setRuleMode()});
-        document.getElementById('drawing-btn').addEventListener('click', () => {this.setDrawingMode()});
-        document.getElementById('dragging-btn').addEventListener('click', () => {this.setDraggingMode()});
+        document.getElementById('adding-line-btn').addEventListener('click', (event) => {this.setListActive(event);this.setRuleMode()});
+        document.getElementById('drawing-btn').addEventListener('click', (event) => {this.setListActive(event);this.setDrawingMode()});
+        document.getElementById('dragging-btn').addEventListener('click', (event) => {this.setListActive(event);this.setDraggingMode()});
+        document.getElementById('free-cut-btn').addEventListener('click', (event) => {this.setListActive(event);this.setFreeCutMode()});
         this.canvas.on('mouse:wheel', this.zoomToPoint);
         this.canvas.on('mouse:down', (event) => {
             if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
@@ -55,11 +56,18 @@ class Simulator {
             let linePath = event.path;
             if (this.canvas.isCuttingMode) {
                 this.cutPath(linePath);
+            } else {
+                this.setBackgroundOptions(linePath);
             }
         });
         this.canvas.on('mouse:dblclick', (event) => {
             this.addingControlPoints(event);
         });
+    }
+
+    setListActive = (event) => {
+        document.querySelectorAll('.list').forEach(li => li.classList.remove("active"));
+        event.currentTarget.classList.add("active")
     }
 
     setCanvasSize = (canvas) => {
@@ -148,7 +156,7 @@ class Simulator {
         this.setDraggingMode();
     }
 
-    setDrawingMode = (width = 1, color = '#fff', isCuttingMode = false) => {
+    setDrawingMode = (width = 1, color = 'red', isCuttingMode = false) => {
         this.setDraggingMode();
         this.canvas.isDrawingMode = true;
         this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
@@ -191,7 +199,7 @@ class Simulator {
         let obj = object.target;
 
         // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
-        if (obj.id === 'added-line') {
+        if (obj?.id === 'added-line') {
             let centerX = obj.getCenterPoint().x;
             let centerY = obj.getCenterPoint().y;
 
@@ -218,7 +226,7 @@ class Simulator {
             return;
         } else {
             // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
-            if (obj.id === 'added-line') {
+            if (obj?.id === 'added-line') {
                 let pointer1 = new fabric.Circle({
                     id: 'pointer1',
                     radius: obj.strokeWidth * 6,
@@ -259,9 +267,9 @@ class Simulator {
         let obj = object.target;
 
         // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
-        if (obj.id === 'pointer1') {
+        if (obj?.id === 'pointer1') {
             this.canvas.getObjects().forEach(object => {
-                if (object.id === 'added-line') {
+                if (object?.id === 'added-line') {
                     object.set({
                         x1: obj.left,
                         y1: obj.top
@@ -272,9 +280,9 @@ class Simulator {
         }
 
         // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
-        if (obj.id === 'pointer2') {
+        if (obj?.id === 'pointer2') {
             this.canvas.getObjects().forEach(object => {
-                if (object.id === 'added-line') {
+                if (object?.id === 'added-line') {
                     object.set({
                         x2: obj.left,
                         y2: obj.top

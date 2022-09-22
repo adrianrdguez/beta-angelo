@@ -6,65 +6,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js" defer></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js" defer></script>
+    <script src="https://kit.fontawesome.com/2accd57d6d.js" crossorigin="anonymous"></script>
     <script src="js/fabric.js" defer></script>
     <script src="js/script.js" defer></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <!-- <div class="btn-group">
-    <button id="adding-line-btn">Add Line</button>
-    <button id="drawing-btn">Start Drawing</button>
-    <button id="dragging-btn">Start Dragging</button>
-    </div> -->
     <div class="navigation">
         <ul>
-            <li id="adding-line-btn" class="list active">
-                <b></b>
-                <b></b>
+            <li id="dragging-btn" class="list active">
                 <a href="#">
                     <span class="icon">
-                        <ion-icon name="brush-outline"></ion-icon>
+                        <i class="fa-solid fa-up-down-left-right"></i>
+                    </span>
+                    <span class="title">Move</span>
+                </a>
+            </li>
+            <li id="adding-line-btn" class="list">
+                <a href="#">
+                    <span class="icon">
+                        <i class="fa-solid fa-ruler"></i>
                     </span>
                     <span class="title">Measure</span>
                 </a>
             </li>
             <li id="drawing-btn" class="list">
-                <b></b>
-                <b></b>
                 <a href="#">
                     <span class="icon">
-                        <ion-icon name="brush-outline"></ion-icon>
+                        <i class="fa-solid fa-paintbrush"></i>
                     </span>
                     <span class="title">Drawing</span>
                 </a>
             </li>
-            <li id="dragging-btn" class="list">
-                <b></b>
-                <b></b>
+            <li id="free-cut-btn" class="list">
                 <a href="#">
                     <span class="icon">
-                        <ion-icon name="move-outline"></ion-icon>
+                        <i class="fa-solid fa-scissors"></i>
                     </span>
-                    <span class="title">Move</span>
+                    <span class="title">Free cut</span>
                 </a>
             </li>
         </ul>
     </div>
-    <script>
-        let list = document.querySelectorAll('.list');
-        for (let i = 0; i < list.length; i++) {
-            list[i].onclick = function () {
-                let j = 0;
-                while (j < list.length) {
-                    list[j++].className = 'list';
-                }
-                list[i].className = 'list active'
-            }
-        }
-    </script>
     <canvas id="simulador"></canvas>
 </body>
 
