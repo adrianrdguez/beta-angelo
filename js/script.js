@@ -26,28 +26,22 @@ class Simulator {
 
     init = () => {
         window.onresize = () => {this.setCanvasSize(this.canvas)}
-        let addingLineButton = document.getElementById('adding-line-btn');
-        addingLineButton.addEventListener('click', this.setRuleMode);
-
-        let startDrawingLineButton = document.getElementById('drawing-btn');
-        startDrawingLineButton.addEventListener('click', this.setDrawingMode);
-
-        let startDraggingLineButton = document.getElementById('dragging-btn');
-        startDraggingLineButton.addEventListener('click', this.setDraggingMode);
-
+        document.getElementById('adding-line-btn').addEventListener('click', () => {this.setRuleMode()});
+        document.getElementById('drawing-btn').addEventListener('click', () => {this.setDrawingMode()});
+        document.getElementById('dragging-btn').addEventListener('click', () => {this.setDraggingMode()});
         this.canvas.on('mouse:wheel', this.zoomToPoint);
-        this.canvas.on('mouse:down', (opt) => {
+        this.canvas.on('mouse:down', (event) => {
             if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
-                this.startAddingLine(opt);
-            } else if (!opt.target && !this.canvas.isDrawingMode) {
-                this.activateDraggingMode(opt);
+                this.startAddingLine(event);
+            } else if (!event.target && !this.canvas.isDrawingMode) {
+                this.activateDraggingMode(event);
             }
         });
-        this.canvas.on('mouse:move', (opt) => {
+        this.canvas.on('mouse:move', (event) => {
             if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
-                this.startDrawingLine(opt);
+                this.startDrawingLine(event);
             } else if (this.canvas.isDragging) {
-                this.dragScreen(opt);
+                this.dragScreen(event);
             }
         });
         this.canvas.on('mouse:up', () => {
@@ -57,14 +51,14 @@ class Simulator {
                 this.disableDraggingMode();
             }
         });
-        this.canvas.on('path:created', (opt) => {
-            let linePath = opt.path;
+        this.canvas.on('path:created', (event) => {
+            let linePath = event.path;
             if (this.canvas.isCuttingMode) {
                 this.cutPath(linePath);
             }
         });
-        this.canvas.on('mouse:dblclick', (opt) => {
-            this.addingControlPoints(opt);
+        this.canvas.on('mouse:dblclick', (event) => {
+            this.addingControlPoints(event);
         });
     }
 
@@ -72,19 +66,19 @@ class Simulator {
         canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
     }
 
-    zoomToPoint = (opt) => {
-        let delta = opt.e.deltaY;
+    zoomToPoint = (event) => {
+        let delta = event.e.deltaY;
         let zoom = this.canvas.getZoom();
         zoom *= 0.999 ** delta;
         if (zoom > 20) zoom = 20;
         if (zoom < 0.01) zoom = 0.01;
-        this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-        opt.e.preventDefault();
-        opt.e.stopPropagation();
+        this.canvas.zoomToPoint({ x: event.e.offsetX, y: event.e.offsetY }, zoom);
+        event.e.preventDefault();
+        event.e.stopPropagation();
     }
 
-    activateDraggingMode = (opt) => {
-        let event = opt.e;
+    activateDraggingMode = (event) => {
+        event = event.e;
         this.canvas.isDragging = true;
         this.canvas.lastPosX = event.clientX;
         this.canvas.lastPosY = event.clientY;
@@ -95,8 +89,8 @@ class Simulator {
         this.canvas.isDragging = false;
     }
 
-    dragScreen = (opt) => {
-        let e = opt.e;
+    dragScreen = (event) => {
+        let e = event.e;
         let vpt = this.canvas.viewportTransform;
         vpt[4] += e.clientX - this.canvas.lastPosX;
         vpt[5] += e.clientY - this.canvas.lastPosY;
@@ -116,15 +110,12 @@ class Simulator {
     }
 
     setRuleMode = () => {
+        this.setDraggingMode();
         this.canvas.isRuleMode = true;
     }
 
-    setNewRuleMode = () => {
-        this.canvas.isNewRuleMode = true;
-    }
-
-    startAddingLine = (opt) => {
-        let pointer = this.canvas.getPointer(opt.e);
+    startAddingLine = (event) => {
+        let pointer = this.canvas.getPointer(event.e);
 
         let line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
             id: 'added-line',
@@ -138,9 +129,9 @@ class Simulator {
         this.canvas.requestRenderAll();
     }
 
-    startDrawingLine = (opt) => {
+    startDrawingLine = (event) => {
         if (this.canvas.line) {
-            let pointer = this.canvas.getPointer(opt.e);
+            let pointer = this.canvas.getPointer(event.e);
 
             this.canvas.line.set({
                 x2: pointer.x,
@@ -164,11 +155,7 @@ class Simulator {
         this.canvas.freeDrawingBrush.color = color;
         this.canvas.freeDrawingBrush.width = width;
         this.canvas.freeDrawingBrush.decimate = 0;
-        if (isCuttingMode) {
-            this.canvas.isCuttingMode = true;
-        } else {
-            this.canvas.isCuttingMode = false;
-        }
+        this.canvas.isCuttingMode = isCuttingMode;
     }
 
     setFreeCutMode = () => {
@@ -396,14 +383,3 @@ class Simulator {
 
 let simulator = new Simulator('img/radiografia.png');
 simulator.init();
-
-/*
-
-// Falta refactorizar?
-
-canvas.on({
-    'object:moved': updateNewLineCoordinates,
-    'selection:created': updateNewLineCoordinates,
-    'selection:updated': updateNewLineCoordinates,
-    'mouse:dblclick': addingControllPoints
-}) */
