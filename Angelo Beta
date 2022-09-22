@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-09-22T19:42:19.221Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36" etag="hVOREjGPV9jGyaFviFgk" version="20.3.6" type="github">
+<mxfile host="app.diagrams.net" modified="2022-09-22T19:45:18.543Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36" etag="N114NquRO0xCv738Fypr" version="20.3.6" type="github">
   <diagram id="Z7-8OZBnm4g3UprOuuCT" name="Página-1">
     <mxGraphModel dx="2062" dy="1154" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -47,7 +47,7 @@
           <mxGeometry y="210" width="140" height="30" as="geometry" />
         </mxCell>
         <mxCell id="G8D0WgorMGxC8iIe_ytQ-14" value="Implants" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
-          <mxGeometry x="550" y="420" width="140" height="120" as="geometry" />
+          <mxGeometry x="550" y="420" width="140" height="180" as="geometry" />
         </mxCell>
         <mxCell id="G8D0WgorMGxC8iIe_ytQ-15" value="Id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="G8D0WgorMGxC8iIe_ytQ-14" vertex="1">
           <mxGeometry y="30" width="140" height="30" as="geometry" />
@@ -57,6 +57,12 @@
         </mxCell>
         <mxCell id="G8D0WgorMGxC8iIe_ytQ-17" value="TypeId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="G8D0WgorMGxC8iIe_ytQ-14" vertex="1">
           <mxGeometry y="90" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="mftq84NY8P8Uj_6mAstQ-3" value="Model" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="G8D0WgorMGxC8iIe_ytQ-14">
+          <mxGeometry y="120" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="mftq84NY8P8Uj_6mAstQ-4" value="Measure" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="G8D0WgorMGxC8iIe_ytQ-14">
+          <mxGeometry y="150" width="140" height="30" as="geometry" />
         </mxCell>
         <mxCell id="G8D0WgorMGxC8iIe_ytQ-25" value="ImplantTypes" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
           <mxGeometry x="40" y="435" width="140" height="90" as="geometry" />
