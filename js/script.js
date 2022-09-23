@@ -3,7 +3,7 @@ class Simulator {
         this.radiographyUrl = radiographyUrl;
         this.radiographyImg = null;
         this.limitClipPathField = null;
-        this.canvas = new fabric.Canvas('simulador', { selection: false });
+        this.canvas = new fabric.Canvas('simulador', { selection: false, fireRightClick: true, fireMiddleClick: true, stopContextMenu: true });
         this.setCanvasSize(this.canvas);
         fabric.Image.fromURL(this.radiographyUrl, (img) => {
             this.canvas.add(img);
@@ -25,135 +25,38 @@ class Simulator {
     // ------------- Eventos -------------------
 
     init = () => {
-        window.onresize = () => {this.setCanvasSize(this.canvas)}
-        document.getElementById('adding-line-btn').addEventListener('click', (event) => {this.setListActive(event);this.setRuleMode()});
-        document.getElementById('drawing-btn').addEventListener('click', (event) => {this.setListActive(event);this.setDrawingMode()});
-        document.getElementById('dragging-btn').addEventListener('click', (event) => {this.setListActive(event);this.setDraggingMode()});
-        document.getElementById('free-cut-btn').addEventListener('click', (event) => {this.setListActive(event);this.setFreeCutMode()});
-        this.canvas.on('mouse:wheel', this.zoomToPoint);
-        this.canvas.on('mouse:down', (event) => {
-            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
-                this.startAddingLine(event);
-            } else if (!event.target && !this.canvas.isDrawingMode) {
-                this.activateDraggingMode(event);
-            }
-        });
-        this.canvas.on('mouse:move', (event) => {
-            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
-                this.startDrawingLine(event);
-            } else if (this.canvas.isDragging) {
-                this.dragScreen(event);
-            }
-        });
-        this.canvas.on('mouse:up', () => {
-            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
-                this.stopDrawingLine();
-            } else if (this.canvas.isDragging) {
-                this.disableDraggingMode();
-            }
-        });
-        this.canvas.on('path:created', (event) => {
-            let linePath = event.path;
-            if (this.canvas.isCuttingMode) {
-                this.cutPath(linePath);
-            } else {
-                this.setBackgroundOptions(linePath);
-            }
-        });
-        this.canvas.on('mouse:dblclick', (event) => {
-            this.addingControlPoints(event);
-        });
+        this.htmlEvents();
+        this.canvasEvents();
     }
 
-    setListActive = (event) => {
-        document.querySelectorAll('.list').forEach(li => li.classList.remove("active"));
-        event.currentTarget.classList.add("active")
+    // ------------- Eventos HTML -------------------
+    htmlEvents = () => {
+        window.onresize = () => { this.setCanvasSize(this.canvas) }
+        document.getElementById('menu-1').oncontextmenu = e => e.preventDefault();
+        document.getElementById('adding-line-btn').addEventListener('click', (event) => { this.setListActive(event); this.setRuleMode() });
+        document.getElementById('drawing-btn').addEventListener('click', (event) => { this.setListActive(event); this.setDrawingMode() });
+        document.getElementById('dragging-btn').addEventListener('click', (event) => { this.setListActive(event); this.setDraggingMode() });
+        document.getElementById('free-cut-btn').addEventListener('click', (event) => { this.setListActive(event); this.setFreeCutMode() });
+        document.getElementById('remove-btn').addEventListener('click', (event) => this.removeElement(this.canvas.selectedElement));
     }
 
     setCanvasSize = (canvas) => {
         canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
     }
 
-    zoomToPoint = (event) => {
-        let delta = event.e.deltaY;
-        let zoom = this.canvas.getZoom();
-        zoom *= 0.999 ** delta;
-        if (zoom > 20) zoom = 20;
-        if (zoom < 0.01) zoom = 0.01;
-        this.canvas.zoomToPoint({ x: event.e.offsetX, y: event.e.offsetY }, zoom);
-        event.e.preventDefault();
-        event.e.stopPropagation();
-    }
-
-    activateDraggingMode = (event) => {
-        event = event.e;
-        this.canvas.isDragging = true;
-        this.canvas.lastPosX = event.clientX;
-        this.canvas.lastPosY = event.clientY;
-    }
-
-    disableDraggingMode = () => {
-        this.canvas.setViewportTransform(this.canvas.viewportTransform);
-        this.canvas.isDragging = false;
-    }
-
-    dragScreen = (event) => {
-        let e = event.e;
-        let vpt = this.canvas.viewportTransform;
-        vpt[4] += e.clientX - this.canvas.lastPosX;
-        vpt[5] += e.clientY - this.canvas.lastPosY;
-        this.canvas.requestRenderAll();
-        this.canvas.lastPosX = e.clientX;
-        this.canvas.lastPosY = e.clientY;
-    }
-
-
-    // ------------- Modos -------------------
-
-    setDraggingMode = () => {
-        this.canvas.isDragging = false;
-        this.canvas.isDrawingMode = false;
-        this.canvas.isRuleMode = false;
-        this.canvas.isCuttingMode = false;
+    setListActive = (event = null) => {
+        document.querySelectorAll('.list').forEach(li => li.classList.remove("active"));
+        if (event) {
+            event.currentTarget.classList.add("active");
+        } else {
+            document.getElementById('dragging-btn').classList.add("active");
+        }
     }
 
     setRuleMode = () => {
         this.setDraggingMode();
+        this.canvas.freeDrawingBrush.width = 1;
         this.canvas.isRuleMode = true;
-    }
-
-    startAddingLine = (event) => {
-        let pointer = this.canvas.getPointer(event.e);
-
-        let line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
-            id: 'added-line',
-            stroke: 'red',
-            strokeWidth: this.canvas.freeDrawingBrush.width ?? 3,
-            selectable: false
-        })
-
-        this.canvas.line = line;
-        this.canvas.add(line);
-        this.canvas.requestRenderAll();
-    }
-
-    startDrawingLine = (event) => {
-        if (this.canvas.line) {
-            let pointer = this.canvas.getPointer(event.e);
-
-            this.canvas.line.set({
-                x2: pointer.x,
-                y2: pointer.y
-            });
-
-            this.canvas.requestRenderAll()
-        }
-    }
-
-    stopDrawingLine = () => {
-        this.canvas.line.setCoords();
-        delete this.canvas.line;
-        this.setDraggingMode();
     }
 
     setDrawingMode = (width = 1, color = 'red', isCuttingMode = false) => {
@@ -166,20 +69,26 @@ class Simulator {
         this.canvas.isCuttingMode = isCuttingMode;
     }
 
+    setDraggingMode = () => {
+        this.canvas.isDragging = false;
+        this.canvas.isDrawingMode = false;
+        this.canvas.isRuleMode = false;
+        this.canvas.isCuttingMode = false;
+    }
+
     setFreeCutMode = () => {
         this.setDrawingMode(0.3, 'red', true);
     }
-
-    // ------------- Opciones de herramienta adicionales -------------------
 
     removeElement = (element = null) => {
         element = element ?? this.canvas.getObjects().pop();
         if (element && this.canvas.getObjects().length > 1) {
             if (element.associatedChild) {
-                this.removeElement(element.associatedChild)
+                this.removeElement(element.associatedChild);
             }
             this.canvas.remove(element);
         }
+        document.getElementById('menu-1').style = `visibility: hidden;left: 0;top: 0;z-index: -100;`;
     }
 
     undoLastDraw = () => {
@@ -195,19 +104,124 @@ class Simulator {
         }
     }
 
+    // ------------- Eventos Canvas -------------------
+
+    canvasEvents = () => {
+        this.canvas.on('mouse:wheel', this.zoomToPoint);
+        this.canvas.on('mouse:down', (event) => this.mouseDown(event));
+        this.canvas.on('mouse:move', (event) => this.mouseMove(event));
+        this.canvas.on('mouse:up', (event) => this.mouseUp(event));
+        this.canvas.on('mouse:dblclick', (event) => this.mouseDblClick(event));
+        this.canvas.on('path:created', (event) => this.pathCreated(event));
+        this.canvas.on('object:moving', this.endPointOfLineFollowPointer);
+    }
+
+    zoomToPoint = (event) => {
+        let delta = event.e.deltaY;
+        let zoom = this.canvas.getZoom();
+        zoom *= 0.999 ** delta;
+        if (zoom > 20) zoom = 20;
+        if (zoom < 0.01) zoom = 0.01;
+        this.canvas.zoomToPoint({ x: event.e.offsetX, y: event.e.offsetY }, zoom);
+        event.e.preventDefault();
+        event.e.stopPropagation();
+    }
+
+    mouseDown(event) {
+        this.canvas.selectedElement = event.target;
+        if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
+            this.startAddingLine(event);
+        } else if (!this.canvas.selectedElement && !this.canvas.isDrawingMode) {
+            this.activateDraggingMode(event);
+        }
+        let menu = document.getElementById('menu-1');
+        if (event.button === 3 && this.canvas.selectedElement) {
+            const menuWidth = menu.offsetWidth;
+            const menuHeight = menu.offsetHeight;
+            let pointX = event.pointer.x;
+            let pointY = event.pointer.y;
+            if (this.canvas.width - pointX <= menuWidth) {
+                pointX -= menuWidth;
+            }
+            if (this.canvas.height - pointY <= menuHeight) {
+                pointY -= menuHeight;
+            }
+            menu.style = `visibility: visible;left: ${pointX}px;top: ${pointY}px;z-index: 100;`;
+        } else {
+            menu.style = `visibility: hidden;left: 0;top: 0;z-index: -100;`;
+        }
+    }
+
+    mouseMove(event) {
+        if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
+            this.startDrawingLine(event);
+        } else if (this.canvas.isDragging) {
+            this.dragScreen(event);
+        }
+    }
+
+    mouseUp() {
+        if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
+            this.stopDrawingLine();
+        } else if (this.canvas.isDragging) {
+            this.disableDraggingMode();
+        }
+    }
+
+    mouseDblClick(event) {
+        this.addingControlPoints(event);
+    }
+
+    pathCreated(event) {
+        let linePath = event.path;
+        if (this.canvas.isCuttingMode) {
+            this.cutPath(linePath);
+        } else {
+            this.setBackgroundOptions(linePath);
+        }
+    }
+
+    startAddingLine = (event) => {
+        let pointer = this.canvas.getPointer(event.e);
+        let line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+            id: 'added-line',
+            stroke: 'red',
+            strokeWidth: this.canvas.freeDrawingBrush.width ?? 3,
+            selectable: false
+        })
+        this.canvas.line = line;
+        this.canvas.add(line);
+        this.canvas.requestRenderAll();
+    }
+
+    startDrawingLine = (event) => {
+        if (this.canvas.line) {
+            let pointer = this.canvas.getPointer(event.e);
+            this.canvas.line.set({
+                x2: pointer.x,
+                y2: pointer.y
+            });
+            this.canvas.requestRenderAll()
+        }
+    }
+
+    stopDrawingLine = () => {
+        this.canvas.line.setCoords();
+        delete this.canvas.line;
+        this.setDraggingMode();
+        this.setListActive();
+    }
+
     updateNewLineCoordinates = (object) => {
         let obj = object.target;
-
         // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
         if (obj?.id === 'added-line') {
             let centerX = obj.getCenterPoint().x;
             let centerY = obj.getCenterPoint().y;
-
             let x1offset = obj.calcLinePoints().x1;
             let y1offset = obj.calcLinePoints().y1;
             let x2offset = obj.calcLinePoints().x2;
             let y2offset = obj.calcLinePoints().y2;
-
             return {
                 x1: centerX + x1offset,
                 y1: centerY + y1offset,
@@ -219,9 +233,7 @@ class Simulator {
 
     addingControlPoints = (object) => {
         let obj = object.target;
-
         let newLineCoords = this.updateNewLineCoordinates(object);
-
         if (!obj) {
             return;
         } else {
@@ -239,7 +251,6 @@ class Simulator {
                     hasBorders: false,
                     hasControls: false
                 })
-
                 let pointer2 = new fabric.Circle({
                     id: 'pointer2',
                     radius: obj.strokeWidth * 6,
@@ -252,13 +263,9 @@ class Simulator {
                     hasBorders: false,
                     hasControls: false
                 })
-
                 this.canvas.add(pointer1, pointer2);
                 this.canvas.discardActiveObject();
                 this.canvas.requestRenderAll();
-
-                // TODO: Esto esta mal, cada vez que se ejecute un doble click se va a crear un evento?
-                this.canvas.on('object:moving', this.endPointOfLineFollowPointer);
             }
         }
     }
@@ -326,9 +333,32 @@ class Simulator {
         });
         this.canvas.requestRenderAll();
         this.setDraggingMode();
+        this.setListActive();
     }
 
-    // ------------- Implantes -------------------
+    activateDraggingMode = (event) => {
+        event = event.e;
+        this.canvas.isDragging = true;
+        this.canvas.lastPosX = event.clientX;
+        this.canvas.lastPosY = event.clientY;
+    }
+
+    disableDraggingMode = () => {
+        this.canvas.setViewportTransform(this.canvas.viewportTransform);
+        this.canvas.isDragging = false;
+    }
+
+    dragScreen = (event) => {
+        let e = event.e;
+        let vpt = this.canvas.viewportTransform;
+        vpt[4] += e.clientX - this.canvas.lastPosX;
+        vpt[5] += e.clientY - this.canvas.lastPosY;
+        this.canvas.requestRenderAll();
+        this.canvas.lastPosX = e.clientX;
+        this.canvas.lastPosY = e.clientY;
+    }
+
+    // ------------- Tratamiento con objetos -------------------
 
     setDefaultObjectOptions = (object) => {
         object.set({
@@ -339,10 +369,11 @@ class Simulator {
             lockSkewingY: true,
             selectable: true,
             borderColor: 'red',
-            cornerSize: 50,
+            cornerSize: 20,
             padding: 10,
             cornerStyle: 'circle',
             cornerColor: '#f08080',
+            transparentCorners: false,
             hasBorders: true,
         });
         object.controls.mtr.offsetY = -parseFloat(60);
