@@ -27,6 +27,44 @@ class Simulator {
     init = () => {
         this.htmlEvents();
         this.canvasEvents();
+        window.onresize = () => { this.setCanvasSize(this.canvas) }
+        document.getElementById('adding-line-btn').addEventListener('click', (event) => { this.setListActive(event); this.setRuleMode() });
+        document.getElementById('drawing-btn').addEventListener('click', (event) => { this.setListActive(event); this.setDrawingMode() });
+        document.getElementById('dragging-btn').addEventListener('click', (event) => { this.setListActive(event); this.setDraggingMode() });
+        document.getElementById('free-cut-btn').addEventListener('click', (event) => { this.setListActive(event); this.setFreeCutMode() });
+        this.canvas.on('mouse:wheel', this.zoomToPoint);
+        this.canvas.on('mouse:down', (event) => {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
+                this.startAddingLine(event);
+            } else if (!event.target && !this.canvas.isDrawingMode) {
+                this.activateDraggingMode(event);
+            }
+        });
+        this.canvas.on('mouse:move', (event) => {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
+                this.startDrawingLine(event);
+            } else if (this.canvas.isDragging) {
+                this.dragScreen(event);
+            }
+        });
+        this.canvas.on('mouse:up', () => {
+            if (this.canvas.isRuleMode || this.canvas.isCuttingMode) {
+                this.stopDrawingLine();
+            } else if (this.canvas.isDragging) {
+                this.disableDraggingMode();
+            }
+        });
+        this.canvas.on('path:created', (event) => {
+            let linePath = event.path;
+            if (this.canvas.isCuttingMode) {
+                this.cutPath(linePath);
+            } else {
+                this.setBackgroundOptions(linePath);
+            }
+        });
+        this.canvas.on('mouse:dblclick', (event) => {
+            this.addingControlPoints(event);
+        });
     }
 
     // ------------- Eventos HTML -------------------
@@ -241,7 +279,7 @@ class Simulator {
             if (obj?.id === 'added-line') {
                 let pointer1 = new fabric.Circle({
                     id: 'pointer1',
-                    radius: obj.strokeWidth * 6,
+                    radius: obj.strokeWidth * 20,
                     fill: 'red',
                     opacity: 0.5,
                     top: newLineCoords.y1,
@@ -253,7 +291,7 @@ class Simulator {
                 })
                 let pointer2 = new fabric.Circle({
                     id: 'pointer2',
-                    radius: obj.strokeWidth * 6,
+                    radius: obj.strokeWidth * 20,
                     fill: 'red',
                     opacity: 0.5,
                     top: newLineCoords.y2,
