@@ -1,5 +1,5 @@
 class Drag extends Tool {
-
+    isDragging = false;
     constructor(canvas) {
         super(canvas);
         this.resetEvents();
@@ -9,23 +9,29 @@ class Drag extends Tool {
     }
 
     activateDraggingMode = (event) => {
-        event = event.e;
-        this.canvas.lastPosX = event.clientX;
-        this.canvas.lastPosY = event.clientY;
+        if (!event.target) {
+            this.isDragging = true;
+            event = event.e;
+            this.canvas.lastPosX = event.clientX;
+            this.canvas.lastPosY = event.clientY;
+        }
     }
 
     dragScreen = (event) => {
-        let e = event.e;
-        let vpt = this.canvas.viewportTransform;
-        vpt[4] += e.clientX - this.canvas.lastPosX;
-        vpt[5] += e.clientY - this.canvas.lastPosY;
-        this.canvas.requestRenderAll();
-        this.canvas.lastPosX = e.clientX;
-        this.canvas.lastPosY = e.clientY;
+        if (this.isDragging) {
+            let e = event.e;
+            let vpt = this.canvas.viewportTransform;
+            vpt[4] += e.clientX - this.canvas.lastPosX;
+            vpt[5] += e.clientY - this.canvas.lastPosY;
+            this.canvas.requestRenderAll();
+            this.canvas.lastPosX = e.clientX;
+            this.canvas.lastPosY = e.clientY;
+        }
     }
 
     disableDraggingMode = () => {
         this.canvas.setViewportTransform(this.canvas.viewportTransform);
+        this.isDragging = false;
     }
 
 }

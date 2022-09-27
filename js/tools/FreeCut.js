@@ -1,7 +1,13 @@
 class FreeCut extends Tool {
-
+    line = null;
     constructor(canvas) {
         super(canvas)
+        this.canvas.isDrawingMode = true;
+        this.resetEvents();
+        this.setBrushOptions(0.3);
+        this.canvas.on('mouse:down', event => this.startAddingLine(event));
+        this.canvas.on('mouse:move', event => this.startDrawingLine(event));
+        this.canvas.on('path:created', event => this.pathCreated(event));
     }
 
     cutPath(linePath) {
@@ -13,11 +19,11 @@ class FreeCut extends Tool {
             lineImg.width = linePath.width;
             lineImg.height = linePath.height;
             this.canvas.add(lineImg);
-            this.setBackgroundOptions(lineImg);
+            this.canvas.simulator.setBackgroundOptions(lineImg);
             this.canvas.moveTo(lineImg, 1);
-            fabric.Image.fromURL(this.radiographyUrl, (img) => {
+            fabric.Image.fromURL(this.canvas.simulator.radiographyUrl, (img) => {
                 let imgCanvas = new fabric.Canvas();
-                this.setCanvasSize(imgCanvas);
+                this.canvas.simulator.setCanvasSize(imgCanvas);
                 imgCanvas.add(img);
                 img.center();
                 lineImg.absolutePositioned = true;
@@ -30,26 +36,40 @@ class FreeCut extends Tool {
                     img.associatedChild = lineImg;
                     this.canvas.add(img);
                     this.setDefaultObjectOptions(img);
-                    this.removeElement(this.canvas.line);
+                    this.removeElement(this.line);
+                    this.removeElement(linePath);
+                    this.line = null;
                     this.undoLastDraw();
                 });
             });
         });
         this.canvas.requestRenderAll();
-        this.setDraggingMode();
+        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    setDrawingMode = (width = 0.3, color = 'red', isCuttingMode = false) => {
-        this.setDraggingMode();
-        this.canvas.isDrawingMode = true;
-        this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
-        this.canvas.freeDrawingBrush.color = color;
-        this.canvas.freeDrawingBrush.width = width;
-        this.canvas.freeDrawingBrush.decimate = 0;
-        this.canvas.isCuttingMode = isCuttingMode;
+    pathCreated(event) {
+        this.cutPath(event.path);
     }
 
-    setFreeCutMode = () => {
-        this.setDrawingMode(0.3, 'red', true);
+    startAddingLine(event) {
+        let pointer = this.canvas.getPointer(event.e);
+        this.line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+            stroke: this.canvas.freeDrawingBrush.color,
+            strokeWidth: this.canvas.freeDrawingBrush.width
+        })
+        this.canvas.add(this.line);
+        this.canvas.requestRenderAll();
     }
+
+    startDrawingLine(event) {
+        if (this.line) {
+            let pointer = this.canvas.getPointer(event.e);
+            this.line.set({
+                x2: pointer.x,
+                y2: pointer.y
+            });
+            this.canvas.requestRenderAll()
+        }
+    }
+
 }

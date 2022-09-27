@@ -20,12 +20,10 @@ class Rule extends Tool {
     startDrawingLine = (event) => {
         if (this.canvas.line) {
             let pointer = this.canvas.getPointer(event.e);
-
             this.canvas.line.set({
                 x2: pointer.x,
                 y2: pointer.y
             });
-
             this.canvas.requestRenderAll()
         }
     }

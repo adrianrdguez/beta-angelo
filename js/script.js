@@ -1,14 +1,16 @@
 class Simulator {
     canvas;
+    radiographyUrl;
+    limitClipPathField;
     constructor(radiographyUrl) {
         this.canvas = new fabric.Canvas('simulador', { selection: false, fireRightClick: true, fireMiddleClick: true, stopContextMenu: true });
-        this.canvas.radiographyUrl = radiographyUrl;
+        this.radiographyUrl = radiographyUrl;
         this.setCanvasSize(this.canvas);
         fabric.Image.fromURL(this.radiographyUrl, (img) => {
             this.canvas.add(img);
             img.center();
             this.setBackgroundOptions(img);
-            this.canvas.limitClipPathField = new fabric.Rect({
+            this.limitClipPathField = new fabric.Rect({
                 width: img.width + 1,
                 height: img.height + 1,
                 top: img.top - 1,
@@ -16,10 +18,11 @@ class Simulator {
                 absolutePositioned: true
             });
         });
+        this.canvas.simulator = this;
         this.setCurrentTool(new Drag(this.canvas))
     }
 
-    init = () => {
+    init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
         document.getElementById('menu-1').oncontextmenu = e => e.preventDefault();
         document.getElementById('adding-line-btn').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
@@ -29,11 +32,15 @@ class Simulator {
         document.getElementById('remove-btn').addEventListener('click', () => this.removeElement(this.canvas.selectedElement));
     }
 
-    setCanvasSize = (canvas) => canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    setCanvasSize(canvas) {
+        canvas.setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    }
 
-    setCurrentTool = (tool) => this.canvas.currentTool = tool;
+    setCurrentTool(tool) {
+        this.canvas.currentTool = tool;
+    }
 
-    setBackgroundOptions = (object) => {
+    setBackgroundOptions(object) {
         object.set({
             centeredRotation: false,
             centeredScaling: false,

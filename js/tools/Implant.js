@@ -1,6 +1,6 @@
 class Implant extends Tool {
     constructor(canvas) {
-        super(canvas) 
+        super(canvas)
     }
 
     addImplantObject = (url) => {

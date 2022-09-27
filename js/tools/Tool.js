@@ -2,8 +2,8 @@ class Tool {
     canvas;
     constructor(canvas) {
         this.canvas = canvas
-        this.setBrushOptions();
         this.canvas.isDrawingMode = false;
+        this.setBrushOptions();
     }
 
     setBrushOptions = (width = 1, color = 'red') => {
