@@ -27,7 +27,7 @@ function loadStartCanvas(imgUploaded, contrast = 0, brightness = 0, blackWhite =
             brightness: parseFloat(brightness)
         }));
         if (blackWhite) {
-            img.filters.push(new fabric.Image.filters.BlackWhite());
+            img.filters.push(new fabric.Image.filters.Grayscale());
         }
         if (img.filters.length) {
             img.applyFilters();
