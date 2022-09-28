@@ -73,6 +73,8 @@ class Rule extends Tool {
             this.canvas.bringForward(pointer2);
             this.line.pointer1 = pointer1;
             this.line.pointer2 = pointer2;
+            this.line.pointer1.associatedChild = this.line.pointer2;
+            this.line.associatedChild = pointer1;
             this.canvas.discardActiveObject();
             this.canvas.requestRenderAll();
             this.canvas.on('selection:cleared', event => this.removePointers(event));
@@ -115,10 +117,9 @@ class Rule extends Tool {
         this.line.setCoords();
     }
 
-    removePointers() { // esto no funka
-        this.canvas.remove(this.line.pointer1)
+    removePointers() {
+        this.removeElement(this.line.associatedChild)
         delete this.line.pointer1;
-        this.canvas.remove(this.line.pointer2)
         delete this.line.pointer2;
         this.canvas.requestRenderAll();
         this.canvas.off('selection:cleared');
