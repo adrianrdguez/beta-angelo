@@ -1,7 +1,7 @@
 class Drag extends Tool {
     isDragging = false;
     constructor(canvas) {
-        super(canvas);
+        super(canvas, 'drag');
         this.resetEvents();
         this.canvas.on('mouse:down', (event) => this.activateDraggingMode(event));
         this.canvas.on('mouse:move', (event) => this.dragScreen(event));

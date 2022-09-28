@@ -1,7 +1,7 @@
 class FreeCut extends Tool {
     line = null;
     constructor(canvas) {
-        super(canvas)
+        super(canvas, 'free-cut');
         this.canvas.isDrawingMode = true;
         this.resetEvents();
         this.setBrushOptions(0.3);

@@ -1,7 +1,6 @@
 class FreeDraw extends Tool {
-
     constructor(canvas) {
-        super(canvas);
+        super(canvas, 'free-draw');
         this.canvas.isDrawingMode = true;
         this.resetEvents();
         this.canvas.on('path:created', event => this.pathCreated(event));

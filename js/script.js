@@ -28,10 +28,10 @@ class Simulator {
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
         document.getElementById('menu-1').oncontextmenu = e => e.preventDefault();
-        document.getElementById('adding-line-btn').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
-        document.getElementById('drawing-btn').addEventListener('click', () => this.setCurrentTool(new FreeDraw(this.canvas)));
-        document.getElementById('dragging-btn').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
-        document.getElementById('free-cut-btn').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
+        document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
+        document.getElementById('free-draw').addEventListener('click', () => this.setCurrentTool(new FreeDraw(this.canvas)));
+        document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
+        document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
         document.getElementById('remove-btn').addEventListener('click', () => this.canvas.currentTool.removeElement(this.canvas.selectedElement));
     }
 

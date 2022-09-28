@@ -1,7 +1,7 @@
 class Rule extends Tool {
-
+    name = 'rule';
     constructor(canvas) {
-        super(canvas)
+        super(canvas, 'rule');
     }
 
     startAddingLine(event) {

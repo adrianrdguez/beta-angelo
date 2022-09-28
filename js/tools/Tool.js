@@ -1,7 +1,12 @@
 class Tool {
     canvas;
-    constructor(canvas) {
-        this.canvas = canvas
+    toolName;
+    constructor(canvas, toolName = null) {
+        if (toolName) {
+            this.toolName = toolName;
+            this.setActiveTool(toolName);
+        }
+        this.canvas = canvas;
         this.canvas.isDrawingMode = false;
         this.setBrushOptions();
     }
@@ -14,7 +19,7 @@ class Tool {
     }
 
     resetEvents() {
-        this.canvas.off()
+        this.canvas.off();
         this.canvas.on('mouse:wheel', this.zoomToPoint);
     };
 
@@ -46,7 +51,7 @@ class Tool {
             mt: false,
         })
         object.clipPath = this.limitClipPathField;
-        object.on('mousedown', this.obectMouseDownEvent)
+        object.on('mousedown', this.obectMouseDownEvent);
     }
 
     obectMouseDownEvent(event) {
@@ -72,13 +77,9 @@ class Tool {
         }
     }    
 
-    setListActive(event = null) {
+    setActiveTool(toolName) {
         document.querySelectorAll('.list').forEach(li => li.classList.remove("active"));
-        if (event) {
-            event.currentTarget.classList.add("active");
-        } else {
-            document.getElementById('dragging-btn').classList.add("active");
-        }
+        document.getElementById(toolName)?.classList.add("active");
     }
 
     removeElement(element = null) {
