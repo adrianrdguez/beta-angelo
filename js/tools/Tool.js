@@ -19,8 +19,10 @@ class Tool {
     }
 
     resetEvents() {
+        this.canvas.discardActiveObject()
+        this.canvas.requestRenderAll();
         this.canvas.off();
-        this.canvas.on('mouse:wheel', this.zoomToPoint);
+        this.canvas.on('mouse:wheel', event => this.zoomToPoint(event));
     };
 
     setDefaultObjectOptions(object) {
