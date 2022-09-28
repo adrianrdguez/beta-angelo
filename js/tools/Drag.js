@@ -8,7 +8,7 @@ class Drag extends Tool {
         this.canvas.on('mouse:up', () => this.disableDraggingMode());
     }
 
-    activateDraggingMode = (event) => {
+    activateDraggingMode(event) {
         if (!event.target) {
             this.isDragging = true;
             event = event.e;
@@ -17,7 +17,7 @@ class Drag extends Tool {
         }
     }
 
-    dragScreen = (event) => {
+    dragScreen(event) {
         if (this.isDragging) {
             let e = event.e;
             let vpt = this.canvas.viewportTransform;
@@ -29,7 +29,7 @@ class Drag extends Tool {
         }
     }
 
-    disableDraggingMode = () => {
+    disableDraggingMode() {
         this.canvas.setViewportTransform(this.canvas.viewportTransform);
         this.isDragging = false;
     }

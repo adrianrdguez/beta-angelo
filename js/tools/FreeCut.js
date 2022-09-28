@@ -10,39 +10,34 @@ class FreeCut extends Tool {
         this.canvas.on('path:created', event => this.pathCreated(event));
     }
 
-    cutPath(linePath) {
+    async cutPath(linePath) {
         linePath.strokeWidth = 0;
         linePath.fill = 'black';
-        fabric.Image.fromURL(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }), (lineImg) => {
-            lineImg.left = linePath.left;
-            lineImg.top = linePath.top;
-            lineImg.width = linePath.width;
-            lineImg.height = linePath.height;
-            this.canvas.add(lineImg);
-            this.canvas.simulator.setBackgroundOptions(lineImg);
-            this.canvas.moveTo(lineImg, 1);
-            fabric.Image.fromURL(this.canvas.simulator.radiographyUrl, (img) => {
-                let imgCanvas = new fabric.Canvas();
-                this.canvas.simulator.setCanvasSize(imgCanvas);
-                imgCanvas.add(img);
-                img.center();
-                lineImg.absolutePositioned = true;
-                img.clipPath = lineImg;
-                fabric.Image.fromURL(imgCanvas.toDataURL({ left: lineImg.left, top: lineImg.top, width: lineImg.width, height: lineImg.height }), (img) => {
-                    img.left = lineImg.left;
-                    img.top = lineImg.top;
-                    img.width = lineImg.width;
-                    img.height = lineImg.height;
-                    img.associatedChild = lineImg;
-                    this.canvas.add(img);
-                    this.setDefaultObjectOptions(img);
-                    this.removeElement(this.line);
-                    this.removeElement(linePath);
-                    this.line = null;
-                    this.undoLastDraw();
-                });
-            });
-        });
+        let lineImg = await this.canvas.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
+        lineImg.left = linePath.left;
+        lineImg.top = linePath.top;
+        lineImg.width = linePath.width;
+        lineImg.height = linePath.height;
+        this.canvas.add(lineImg);
+        this.canvas.simulator.setBackgroundOptions(lineImg);
+        this.canvas.moveTo(lineImg, 1);
+        let tmpRadiographyImg = await this.canvas.simulator.loadImageFromUrl(this.canvas.simulator.radiographyUrl)
+        let tmpCanvas = new fabric.Canvas();
+        this.canvas.simulator.setCanvasSize(tmpCanvas);
+        tmpCanvas.add(tmpRadiographyImg);
+        tmpRadiographyImg.center();
+        lineImg.absolutePositioned = true;
+        tmpRadiographyImg.clipPath = lineImg;
+        let imgCutted = await this.canvas.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: lineImg.left, top: lineImg.top, width: lineImg.width, height: lineImg.height }));
+        imgCutted.left = lineImg.left;
+        imgCutted.top = lineImg.top;
+        imgCutted.width = lineImg.width;
+        imgCutted.height = lineImg.height;
+        imgCutted.associatedChild = lineImg;
+        this.canvas.add(imgCutted);
+        this.setDefaultObjectOptions(imgCutted);
+        this.removeElement(linePath);
+        this.removeElement(this.line);
         this.canvas.requestRenderAll();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }

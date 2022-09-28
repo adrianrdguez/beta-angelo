@@ -4,7 +4,7 @@ class Rule extends Tool {
         super(canvas)
     }
 
-    startAddingLine = (event) => {
+    startAddingLine(event) {
         let pointer = this.canvas.getPointer(event.e);
         let line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
             id: 'added-line',
@@ -17,7 +17,7 @@ class Rule extends Tool {
         this.canvas.requestRenderAll();
     }
 
-    startDrawingLine = (event) => {
+    startDrawingLine(event) {
         if (this.canvas.line) {
             let pointer = this.canvas.getPointer(event.e);
             this.canvas.line.set({
@@ -28,13 +28,13 @@ class Rule extends Tool {
         }
     }
 
-    stopDrawingLine = () => {
+    stopDrawingLine() {
         this.canvas.line.setCoords();
         delete this.canvas.line;
         this.setDraggingMode();
     }
 
-    updateNewLineCoordinates = (object) => {
+    updateNewLineCoordinates(object) {
         let obj = object.target;
 
         // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse
@@ -56,7 +56,7 @@ class Rule extends Tool {
         }
     }
 
-    addingControlPoints = (object) => {
+    addingControlPoints(object) {
         let obj = object.target;
 
         let newLineCoords = this.updateNewLineCoordinates(object);
@@ -102,7 +102,7 @@ class Rule extends Tool {
         }
     }
 
-    endPointOfLineFollowPointer = (object) => {
+    endPointOfLineFollowPointer(object) {
         let obj = object.target;
 
         // Todo: Cambiar la forma de identificar el objeto, en html los id no pueden repetirse

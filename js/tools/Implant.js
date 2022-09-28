@@ -3,12 +3,11 @@ class Implant extends Tool {
         super(canvas)
     }
 
-    addImplantObject = (url) => {
-        fabric.Image.fromURL(url, (img) => {
-            this.canvas.add(img);
-            img.center();
-            this.setDefaultObjectOptions(img);
-        });
+    async addImplantObject(url) {
+        let img = await this.canvas.simulator.loadImageFromUrl(url);
+        this.canvas.add(img);
+        img.center();
+        this.setDefaultObjectOptions(img);
         this.canvas.requestRenderAll();
     }
 
