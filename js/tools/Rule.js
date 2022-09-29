@@ -62,7 +62,7 @@ class Rule extends Tool {
     }
 
     addingControlPoints() {
-        if (!this.line.pointer2 && !this.line.pointer2) {
+        if (!this.line.pointer1 && !this.line.pointer2) {
             let newLineCoords = this.getNewLineCoordinates();
             let pointer1 = this.createPointer(newLineCoords.y1, newLineCoords.x1);
             let pointer2 = this.createPointer(newLineCoords.y2, newLineCoords.x2);

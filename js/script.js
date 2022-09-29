@@ -29,6 +29,7 @@ class Simulator {
         window.onresize = () => this.setCanvasSize(this.canvas);
         document.getElementById('menu-1').oncontextmenu = e => e.preventDefault();
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
+        document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
         document.getElementById('free-draw').addEventListener('click', () => this.setCurrentTool(new FreeDraw(this.canvas)));
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
