@@ -12,7 +12,7 @@ class Tool {
         this.setBrushOptions();
     }
 
-    setBrushOptions(width = 1, color = 'red') {
+    setBrushOptions(width = 1.5, color = 'red') {
         this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
         this.canvas.freeDrawingBrush.color = color;
         this.canvas.freeDrawingBrush.width = width;

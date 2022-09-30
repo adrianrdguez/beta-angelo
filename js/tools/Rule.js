@@ -63,15 +63,8 @@ class Rule extends Tool {
     addingControlPoints() {
         if (!this.element.pointer1 && !this.element.pointer2) {
             let newLineCoords = this.getNewLineCoordinates();
-            let pointer1 = this.createPointer(newLineCoords.y1, newLineCoords.x1);
-            let pointer2 = this.createPointer(newLineCoords.y2, newLineCoords.x2);
-            pointer1.on('moving', () => this.lineFollowPointers());
-            pointer2.on('moving', () => this.lineFollowPointers());
-            this.canvas.add(pointer1, pointer2);
-            this.canvas.bringForward(pointer1);
-            this.canvas.bringForward(pointer2);
-            this.element.pointer1 = pointer1;
-            this.element.pointer2 = pointer2;
+            this.element.pointer1 = this.createPointer(newLineCoords.y1, newLineCoords.x1);
+            this.element.pointer2 = this.createPointer(newLineCoords.y2, newLineCoords.x2);
             this.canvas.discardActiveObject();
             this.canvas.requestRenderAll();
             this.canvas.on('selection:cleared', event => this.removePointers(event));
@@ -79,8 +72,8 @@ class Rule extends Tool {
     }
 
     createPointer(top, left) {
-        return new fabric.Circle({
-            radius: this.element.line.strokeWidth * 20,
+        let circle = new fabric.Circle({
+            radius: this.canvas.freeDrawingBrush.width * 20,
             fill: this.canvas.freeDrawingBrush.color,
             opacity: 0.5,
             top: top,
@@ -89,7 +82,11 @@ class Rule extends Tool {
             originY: 'center',
             hasBorders: false,
             hasControls: false
-        })
+        });
+        circle.on('moving', () => this.lineFollowPointers());
+        this.canvas.add(circle);
+        this.canvas.bringForward(circle);
+        return circle;
     }
 
     pointersFollowLine() {
