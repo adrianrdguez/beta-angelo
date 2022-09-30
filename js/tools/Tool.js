@@ -1,6 +1,7 @@
 class Tool {
     canvas;
     toolName;
+    element;
     constructor(canvas, toolName = null) {
         if (toolName) {
             this.toolName = toolName;
@@ -23,7 +24,7 @@ class Tool {
         this.canvas.requestRenderAll();
         this.canvas.off();
         this.canvas.on('mouse:wheel', event => this.zoomToPoint(event));
-    };
+    }
 
     setDefaultObjectOptions(object) {
         object.set({
@@ -53,16 +54,17 @@ class Tool {
             mt: false,
         })
         object.clipPath = this.limitClipPathField;
-        object.on('mousedown', this.obectMouseDownEvent);
+        object.on('mousedown', this.objectMouseDownEvent);
+        object.element = this.element;
     }
 
-    obectMouseDownEvent(event) {
+    objectMouseDownEvent(event) {
         this.canvas.bringToFront(event.target);
         let menu = document.getElementById('menu-1');
         if (event.button === 2) {
-            this.removeElement(event.target);
+            this.canvas.remove(event.target);
         } else if (event.button === 3) {
-            this.canvas.selectedElement = event.target;
+            this.canvas.simulator.selectedElement = event.target;
             const menuWidth = menu.offsetWidth;
             const menuHeight = menu.offsetHeight;
             let pointX = event.pointer.x;
@@ -82,17 +84,6 @@ class Tool {
     setActiveTool(toolName) {
         document.querySelectorAll('.list').forEach(li => li.classList.remove("active"));
         document.getElementById(toolName)?.classList.add("active");
-    }
-
-    removeElement(element = null) {
-        element = element ?? this.canvas.getObjects().pop();
-        if (element && this.canvas.getObjects().length > 1) {
-            if (element.associatedChild) {
-                this.removeElement(element.associatedChild);
-            }
-            this.canvas.remove(element);
-        }
-        document.getElementById('menu-1').style = `visibility: hidden;left: 0;top: 0;z-index: -100;`;
     }
 
     zoomToPoint(event) {

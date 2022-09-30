@@ -2,11 +2,12 @@ class Simulator {
     canvas;
     radiographyUrl;
     limitClipPathField;
+    selectedElement;
     constructor(radiographyUrl) {
-        this.initContructor(radiographyUrl)
+        this.initConstructor(radiographyUrl)
     }
 
-    async initContructor(radiographyUrl) {
+    async initConstructor(radiographyUrl) {
         this.canvas = new fabric.Canvas('simulador', {
             selection: false,
             fireRightClick: true,
@@ -41,7 +42,7 @@ class Simulator {
         document.getElementById('free-draw').addEventListener('click', () => this.setCurrentTool(new FreeDraw(this.canvas)));
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
-        document.getElementById('remove-btn').addEventListener('click', () => this.canvas.currentTool.removeElement(this.canvas.selectedElement));
+        document.getElementById('remove-btn').addEventListener('click', () => this.removeObjectToolFromCanvas());
     }
 
     setCanvasSize(canvas) {
@@ -81,6 +82,15 @@ class Simulator {
             lockSkewingY: true,
             selectable: false,
         });
+    }
+
+    removeObjectToolFromCanvas() {
+        if (this.selectedElement) {
+            for (const [key, value] of Object.entries(this.selectedElement.element)) {
+                this.canvas.remove(value);
+            }
+        }
+        document.getElementById('menu-1').style = `visibility: hidden;left: 0;top: 0;z-index: -100;`;
     }
 
 }

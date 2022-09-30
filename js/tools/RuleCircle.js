@@ -1,4 +1,5 @@
 class RuleCircle extends Rule {
+    element = {};
     constructor(canvas) {
         super(canvas);
         this.toolName = 'rule-circle';
@@ -12,7 +13,7 @@ class RuleCircle extends Rule {
 
     startDrawingLine(event) {
         super.startDrawingLine(event);
-        if (this.line) {
+        if (this.element.line) {
             this.adjustCircleRadiusAndPosition();
         }
     }
@@ -33,8 +34,7 @@ class RuleCircle extends Rule {
             selectable: false
         });
         this.canvas.add(circle);
-        this.line.circle = circle;
-        this.line.associatedChild = circle;
+        this.element.circle = circle;
         this.canvas.requestRenderAll();
     }
 
@@ -50,20 +50,12 @@ class RuleCircle extends Rule {
 
     adjustCircleRadiusAndPosition() {
         let newLineCoords = this.getNewLineCoordinates();
-        this.line.circle?.set({
+        this.element.circle?.set({
             radius: Math.sqrt(Math.pow(newLineCoords.x2 * 1 - newLineCoords.x1 * 1, 2) + Math.pow(newLineCoords.y2 * 1 - newLineCoords.y1 * 1, 2)),
             top: newLineCoords.y1,
             left: newLineCoords.x1,
         })
         this.canvas.requestRenderAll();
-    }
-
-    addingControlPoints() {
-        super.addingControlPoints();
-        if (this.line.pointer1) {
-            this.line.circle.associatedChild = this.line.pointer1;
-            this.line.associatedChild = this.line.circle
-        }
     }
 
 }

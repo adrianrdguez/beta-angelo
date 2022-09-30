@@ -1,5 +1,5 @@
 class Rule extends Tool {
-    line;
+    element = {};
     constructor(canvas) {
         super(canvas, 'rule');
         this.resetEvents();
@@ -10,25 +10,25 @@ class Rule extends Tool {
 
     startAddingLine(event) {
         let pointer = this.canvas.getPointer(event.e);
-        this.line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+        this.element.line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
         });
-        this.setDefaultObjectOptions(this.line);
-        this.line.set({
+        this.setDefaultObjectOptions(this.element.line);
+        this.element.line.set({
             hasBorders: false,
         })
-        this.line.setControlsVisibility({
+        this.element.line.setControlsVisibility({
             mtr: false,
         })
-        this.canvas.add(this.line);
+        this.canvas.add(this.element.line);
         this.canvas.requestRenderAll();
     }
 
     startDrawingLine(event) {
-        if (this.line) {
+        if (this.element.line) {
             let pointer = this.canvas.getPointer(event.e);
-            this.line.set({
+            this.element.line.set({
                 x2: pointer.x,
                 y2: pointer.y
             });
@@ -37,20 +37,20 @@ class Rule extends Tool {
     }
 
     stopDrawingLine() {
-        this.line.setCoords();
-        this.line.on('mousedblclick', () => this.addingControlPoints());
-        this.line.on('moving', () => this.pointersFollowLine());
+        this.element.line.setCoords();
+        this.element.line.on('mousedblclick', () => this.addingControlPoints());
+        this.element.line.on('moving', () => this.pointersFollowLine());
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     getNewLineCoordinates() {
-        let centerX = this.line.getCenterPoint().x;
-        let centerY = this.line.getCenterPoint().y;
+        let centerX = this.element.line.getCenterPoint().x;
+        let centerY = this.element.line.getCenterPoint().y;
 
-        let x1offset = this.line.calcLinePoints().x1;
-        let y1offset = this.line.calcLinePoints().y1;
-        let x2offset = this.line.calcLinePoints().x2;
-        let y2offset = this.line.calcLinePoints().y2;
+        let x1offset = this.element.line.calcLinePoints().x1;
+        let y1offset = this.element.line.calcLinePoints().y1;
+        let x2offset = this.element.line.calcLinePoints().x2;
+        let y2offset = this.element.line.calcLinePoints().y2;
 
         return {
             x1: centerX + x1offset,
@@ -61,7 +61,7 @@ class Rule extends Tool {
     }
 
     addingControlPoints() {
-        if (!this.line.pointer1 && !this.line.pointer2) {
+        if (!this.element.pointer1 && !this.element.pointer2) {
             let newLineCoords = this.getNewLineCoordinates();
             let pointer1 = this.createPointer(newLineCoords.y1, newLineCoords.x1);
             let pointer2 = this.createPointer(newLineCoords.y2, newLineCoords.x2);
@@ -70,10 +70,8 @@ class Rule extends Tool {
             this.canvas.add(pointer1, pointer2);
             this.canvas.bringForward(pointer1);
             this.canvas.bringForward(pointer2);
-            this.line.pointer1 = pointer1;
-            this.line.pointer2 = pointer2;
-            this.line.pointer1.associatedChild = this.line.pointer2;
-            this.line.associatedChild = pointer1;
+            this.element.pointer1 = pointer1;
+            this.element.pointer2 = pointer2;
             this.canvas.discardActiveObject();
             this.canvas.requestRenderAll();
             this.canvas.on('selection:cleared', event => this.removePointers(event));
@@ -82,7 +80,7 @@ class Rule extends Tool {
 
     createPointer(top, left) {
         return new fabric.Circle({
-            radius: this.line.strokeWidth * 20,
+            radius: this.element.line.strokeWidth * 20,
             fill: this.canvas.freeDrawingBrush.color,
             opacity: 0.5,
             top: top,
@@ -96,31 +94,31 @@ class Rule extends Tool {
 
     pointersFollowLine() {
         let newLineCoords = this.getNewLineCoordinates();
-        this.line.pointer1?.set({
+        this.element.pointer1?.set({
             top: newLineCoords.y1,
             left: newLineCoords.x1
         })
-        this.line.pointer2?.set({
+        this.element.pointer2?.set({
             top: newLineCoords.y2,
             left: newLineCoords.x2
         })
     }
 
     lineFollowPointers() {
-        this.line.set({
-            x1: this.line.pointer1.left,
-            y1: this.line.pointer1.top,
-            x2: this.line.pointer2.left,
-            y2: this.line.pointer2.top
+        this.element.line.set({
+            x1: this.element.pointer1.left,
+            y1: this.element.pointer1.top,
+            x2: this.element.pointer2.left,
+            y2: this.element.pointer2.top
         })
-        this.line.setCoords();
+        this.element.line.setCoords();
     }
 
     removePointers() {
-        this.removeElement(this.line.pointer1)
-        this.removeElement(this.line.pointer2)
-        delete this.line.pointer1;
-        delete this.line.pointer2;
+        this.canvas.remove(this.element.pointer1)
+        this.canvas.remove(this.element.pointer2)
+        delete this.element.pointer1;
+        delete this.element.pointer2;
         this.canvas.requestRenderAll();
         this.canvas.off('selection:cleared');
     }
