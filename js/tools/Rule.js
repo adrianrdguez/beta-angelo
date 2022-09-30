@@ -97,11 +97,11 @@ class Rule extends Tool {
     pointersFollowLine() {
         let newLineCoords = this.getNewLineCoordinates();
         this.line.pointer1?.set({
-            top: newLineCoords.y1, 
+            top: newLineCoords.y1,
             left: newLineCoords.x1
         })
         this.line.pointer2?.set({
-            top: newLineCoords.y2, 
+            top: newLineCoords.y2,
             left: newLineCoords.x2
         })
     }
@@ -117,7 +117,8 @@ class Rule extends Tool {
     }
 
     removePointers() {
-        this.removeElement(this.line.associatedChild)
+        this.removeElement(this.line.pointer1)
+        this.removeElement(this.line.pointer2)
         delete this.line.pointer1;
         delete this.line.pointer2;
         this.canvas.requestRenderAll();

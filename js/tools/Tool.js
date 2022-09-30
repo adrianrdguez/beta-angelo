@@ -77,7 +77,7 @@ class Tool {
         } else {
             menu.style = `visibility: hidden;left: 0;top: 0;z-index: -100;`;
         }
-    }    
+    }
 
     setActiveTool(toolName) {
         document.querySelectorAll('.list').forEach(li => li.classList.remove("active"));
