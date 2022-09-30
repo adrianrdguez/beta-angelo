@@ -7,7 +7,14 @@ class Simulator {
     }
 
     async initContructor(radiographyUrl) {
-        this.canvas = new fabric.Canvas('simulador', { selection: false, fireRightClick: true, fireMiddleClick: true, stopContextMenu: true });
+        this.canvas = new fabric.Canvas('simulador', {
+            selection: false,
+            fireRightClick: true,
+            fireMiddleClick: true,
+            stopContextMenu: true,
+            perPixelTargetFind: true,
+            imageSmoothingEnabled: false
+        });
         this.radiographyUrl = radiographyUrl;
         this.setCanvasSize(this.canvas);
         let img = await this.loadImageFromUrl(this.radiographyUrl);
