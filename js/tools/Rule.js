@@ -1,5 +1,4 @@
 class Rule extends Tool {
-    name = 'rule';
     line;
     constructor(canvas) {
         super(canvas, 'rule');

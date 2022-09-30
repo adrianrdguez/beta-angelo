@@ -7,7 +7,14 @@ class Simulator {
     }
 
     async initContructor(radiographyUrl) {
-        this.canvas = new fabric.Canvas('simulador', { selection: false, fireRightClick: true, fireMiddleClick: true, stopContextMenu: true });
+        this.canvas = new fabric.Canvas('simulador', {
+            selection: false,
+            fireRightClick: true,
+            fireMiddleClick: true,
+            stopContextMenu: true,
+            perPixelTargetFind: true,
+            imageSmoothingEnabled: false
+        });
         this.radiographyUrl = radiographyUrl;
         this.setCanvasSize(this.canvas);
         let img = await this.loadImageFromUrl(this.radiographyUrl);
@@ -22,7 +29,7 @@ class Simulator {
             absolutePositioned: true
         });
         this.canvas.simulator = this;
-        this.setCurrentTool(new Drag(this.canvas))
+        this.setCurrentTool(new RuleTriangle(this.canvas))
     }
 
     init() {
@@ -30,6 +37,7 @@ class Simulator {
         document.getElementById('menu-1').oncontextmenu = e => e.preventDefault();
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
+        document.getElementById('rule-triangle').addEventListener('click', () => this.setCurrentTool(new RuleTriangle(this.canvas)));
         document.getElementById('free-draw').addEventListener('click', () => this.setCurrentTool(new FreeDraw(this.canvas)));
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
