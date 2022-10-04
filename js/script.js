@@ -30,7 +30,7 @@ class Simulator {
             absolutePositioned: true
         });
         this.canvas.simulator = this;
-        this.setCurrentTool(new RuleTriangle(this.canvas))
+        this.setCurrentTool(new Drag(this.canvas))
     }
 
     init() {
