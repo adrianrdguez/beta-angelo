@@ -24,6 +24,7 @@ class RuleTriangle extends Rule {
         this.setDefaultObjectOptions(line);
         line.set({
             hasBorders: false,
+            selectable: false,
         })
         line.setControlsVisibility({
             mtr: false,
@@ -44,11 +45,8 @@ class RuleTriangle extends Rule {
         let vertexBottomMiddleY1 = (this.canvas.width / triangleSize);
         let vertexBottomMiddleY2 = vertexBottomMiddleY1;
         this.element.line1 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexTopRightX, vertexTopRightY);
-        this.element.line1.stroke ='red'
         this.element.line2 = this.createLine(vertexBottomMiddleX1, vertexBottomMiddleY1, vertexTopRightX, vertexTopRightY);
-        this.element.line2.stroke ='blue'
         this.element.line3 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2);
-        this.element.line3.stroke ='green'
         this.canvas.requestRenderAll();
     }
 
@@ -61,20 +59,20 @@ class RuleTriangle extends Rule {
         let x2offset = this.element.line1.calcLinePoints().x2;
         let y2offset = this.element.line1.calcLinePoints().y2;
         pointerCoords.pointer1Coords = {
-            top: centerX + x1offset,
-            left: centerY + y1offset,
+            top: centerY + y1offset,
+            left: centerX + x1offset,
         }
         pointerCoords.pointer2Coords = {
-            top: centerX + x2offset,
-            left: centerY + y2offset,
+            top: centerY + y2offset,
+            left: centerX + x2offset,
         }
         centerX = this.element.line3.getCenterPoint().x;
         centerY = this.element.line3.getCenterPoint().y;
         x2offset = this.element.line3.calcLinePoints().x2;
         y2offset = this.element.line3.calcLinePoints().y2;
         pointerCoords.pointer3Coords = {
-            top: centerX + x2offset,
-            left: centerY + y2offset,
+            top: centerY + y2offset,
+            left: centerX + x2offset,
         }
         return pointerCoords;
     }
@@ -86,9 +84,9 @@ class RuleTriangle extends Rule {
             !this.element.pointer3
         ) {
             let pointerCoords = this.getNewLineCoordinates();
-            this.element.pointer1 = this.createPointer(pointerCoords.pointer1Coords.left, pointerCoords.pointer1Coords.top);
-            this.element.pointer2 = this.createPointer(pointerCoords.pointer2Coords.left, pointerCoords.pointer2Coords.top);
-            this.element.pointer3 = this.createPointer(pointerCoords.pointer3Coords.left, pointerCoords.pointer3Coords.top);
+            this.element.pointer1 = this.createPointer(pointerCoords.pointer1Coords.top, pointerCoords.pointer1Coords.left);
+            this.element.pointer2 = this.createPointer(pointerCoords.pointer2Coords.top, pointerCoords.pointer2Coords.left);
+            this.element.pointer3 = this.createPointer(pointerCoords.pointer3Coords.top, pointerCoords.pointer3Coords.left);
             this.canvas.discardActiveObject();
             this.canvas.requestRenderAll();
             this.canvas.on('selection:cleared', event => this.removePointers(event));
@@ -98,16 +96,16 @@ class RuleTriangle extends Rule {
     pointersFollowLine() {
         let pointerCoords = this.getNewLineCoordinates();
         this.element.pointer1?.set({
-            top: pointerCoords.pointer1Coords,
-            left: pointerCoords.pointer1Coords
+            top: pointerCoords.pointer1Coords.top,
+            left: pointerCoords.pointer1Coords.left
         })
         this.element.pointer2?.set({
-            top: pointerCoords.pointer2Coords,
-            left: pointerCoords.pointer2Coords
+            top: pointerCoords.pointer2Coords.top,
+            left: pointerCoords.pointer2Coords.left
         })
         this.element.pointer3?.set({
-            top: pointerCoords.pointer3Coords,
-            left: pointerCoords.pointer3Coords
+            top: pointerCoords.pointer3Coords.top,
+            left: pointerCoords.pointer3Coords.left
         })
     }
 
