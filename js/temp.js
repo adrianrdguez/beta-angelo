@@ -9,41 +9,61 @@ function readFile(file) {
     });
 }
 
-function loadStartCanvas(imgUploaded, contrast = 0, brightness = 0, blackWhite = false) {
-    let fabricCanvas = document.getElementsByClassName('canvas-container');
-    if (fabricCanvas.length) {
-        fabricCanvas = fabricCanvas[0];
-        let canvas = document.createElement('canvas');
-        canvas.id = 'simulador';
-        fabricCanvas.parentNode.insertBefore(canvas, fabricCanvas.nextSibling)
-        fabricCanvas.remove();
+function applyFiltersToBackgroundImg(contrast = null, brightness = null, grayscale = null) {
+    let backgroundImg = simulator.canvas.getObjects()[0];
+    backgroundImg.filters[0].contrast = contrast ?? backgroundImg.filters[0].contrast;
+    backgroundImg.filters[1].brightness = brightness ?? backgroundImg.filters[1].brightness;
+    if (grayscale === true) {
+        backgroundImg.filters.push(new fabric.Image.filters.Grayscale());
+    } else if (grayscale === false && backgroundImg.filters.length > 2) {
+        backgroundImg.filters.pop();
     }
+    backgroundImg.applyFilters();
+    simulator.canvas.requestRenderAll();
+}
 
-    fabric.Image.fromURL(imgUploaded, (img) => {
-        img.filters.push(new fabric.Image.filters.Contrast({
-            contrast: parseFloat(contrast)
-        }));
-        img.filters.push(new fabric.Image.filters.Brightness({
-            brightness: parseFloat(brightness)
-        }));
-        if (blackWhite) {
-            img.filters.push(new fabric.Image.filters.Grayscale());
+async function loadStartCanvas(imgUploaded) {
+    simulator = new Simulator(imgUploaded);
+    simulator.init();
+    let interval = setInterval(() => {
+        let backgroundImg = simulator.canvas.getObjects()[0];
+        if (backgroundImg) {
+            backgroundImg.filters.push(new fabric.Image.filters.Contrast({
+                contrast: 0
+            }));
+            backgroundImg.filters.push(new fabric.Image.filters.Brightness({
+                brightness: 0
+            }));
+            backgroundImg.applyFilters();
+            document.getElementById('contrast').onchange = document.getElementById('contrast').oninput = function () {
+                applyFiltersToBackgroundImg(this.value);
+            }
+            document.getElementById('brightness').onchange = document.getElementById('brightness').oninput = function () {
+                applyFiltersToBackgroundImg(null, this.value);
+            }
+            document.getElementById('blackandwhite').onchange = function () {
+                applyFiltersToBackgroundImg(null, null, this.checked);
+            }
+            document.getElementById('reset-filters').onclick = () => {
+                let elements = document.getElementsByTagName('input');
+                for (const element of elements) {
+                    element.value = 0;
+                    element.checked = false;
+                }
+                applyFiltersToBackgroundImg(0, 0, false);
+            }
+            document.getElementsByClassName('navigation')[0].style.visibility = 'visible';
+            clearInterval(interval)
         }
-        if (img.filters.length) {
-            img.applyFilters();
-        }
-        simulator = new Simulator(img.toDataURL());
-        simulator.init();
-        document.getElementsByClassName('navigation')[0].style.visibility = 'visible';
-    })
+    }, 0.5);
+
 }
 
 let simulator;
 let imgUploaded = null;
 let script = document.createElement("script");  // create a script DOM node
 script.onload = function () {
-    simulator = new Simulator('img/radiografia.png');
-    simulator.init();
+    loadStartCanvas('img/radiografia.png')
 };
 script.onerror = function () {
     document.getElementsByClassName('navigation')[0].style.visibility = 'hidden';
@@ -58,17 +78,6 @@ script.onerror = function () {
         if (FileReader && files && files.length) {
             imgUploaded = await readFile(files[0]);
             loadStartCanvas(imgUploaded);
-        }
-        document.getElementById('apply-filters').onclick = () => {
-            loadStartCanvas(imgUploaded, document.getElementById('contrast').value, document.getElementById('brightness').value, document.getElementById('blackandwhite').checked)
-        }
-        document.getElementById('reset-filters').onclick = () => {
-            let elements = document.getElementsByTagName('input');
-            for (const element of elements) {
-                element.value = 0;
-                element.checked = false;
-            }
-            loadStartCanvas(imgUploaded)
         }
     }
 }

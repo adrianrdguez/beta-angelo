@@ -8,6 +8,7 @@ class Simulator {
     }
 
     async initConstructor(radiographyUrl) {
+        fabric.Object.prototype.objectCaching = false;
         this.canvas = new fabric.Canvas('simulador', {
             selection: false,
             fireRightClick: true,
@@ -19,6 +20,10 @@ class Simulator {
         this.radiographyUrl = radiographyUrl;
         this.setCanvasSize(this.canvas);
         let img = await this.loadImageFromUrl(this.radiographyUrl);
+        let imageTextureSize = img.width > img.height ? img.width : img.height;
+        if (imageTextureSize > fabric.textureSize) {
+                fabric.textureSize = imageTextureSize;
+        }
         this.canvas.add(img);
         img.center();
         this.setBackgroundOptions(img);
