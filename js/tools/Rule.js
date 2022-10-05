@@ -46,7 +46,7 @@ class Rule extends Tool {
         }
     }
 
-    Calculate = (x1, y1, x2, y2) => {
+    calculate(x1, y1, x2, y2) {
         return Math.sqrt(Math.pow(x2 * 1 - x1 * 1, 2) + Math.pow(y2 * 1 - y1 * 1, 2));
     }
 
@@ -56,9 +56,8 @@ class Rule extends Tool {
         let startY = this.element.line.starty[this.element.line.temp];
         let endX = this.element.line.endx[this.element.line.temp];
         let endY = this.element.line.endy[this.element.line.temp];
-        this.setTextinTheMiddleOfLine(startX, startY, endX, endY);
+        this.setTextInTheMiddleOfLine(startX, startY, endX, endY);
         //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
-        this.canvas.add(this.element.text);
         this.element.line.on('mousedblclick', () => this.addingControlPoints());
         this.element.line.on('moving', () => this.pointersFollowLine());
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
@@ -120,6 +119,7 @@ class Rule extends Tool {
             top: newLineCoords.y2,
             left: newLineCoords.x2
         })
+        this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2)
         console.log("startx", this.element.line.startx)
     }
 
@@ -130,6 +130,7 @@ class Rule extends Tool {
             x2: this.element.pointer2.left,
             y2: this.element.pointer2.top
         })
+        this.setTextInTheMiddleOfLine(this.element.line.x1, this.element.line.y1, this.element.line.x2, this.element.line.y2)
         this.element.line.startx = this.element.pointer1.left;
         this.element.line.starty = this.element.pointer1.top;
         this.element.line.endx = this.element.pointer2.left;
@@ -146,13 +147,21 @@ class Rule extends Tool {
         this.canvas.off('selection:cleared');
     }
 
-    setTextinTheMiddleOfLine(x1, y1, x2, y2) {
-        var px = this.Calculate(x1, y1, x2, y2).toFixed(2);
-        this.element.text = new fabric.Text(px, {
+    setTextInTheMiddleOfLine(x1, y1, x2, y2) {
+        let px = this.calculate(x1, y1, x2, y2).toFixed(2);
+        if (!this.element.text) {
+            this.element.text = new fabric.Text(px, {
+                fontSize: 12,
+                stroke: this.canvas.freeDrawingBrush.color,
+                fill: this.canvas.freeDrawingBrush.color
+            });
+            this.canvas.simulator.setBackgroundOptions(this.element.text);
+            this.canvas.add(this.element.text);
+        }
+        this.element.text.set({
+            text: px,
             left: x1 + ((x2 - x1) / 2),
             top: y1 + ((y2 - y1) / 2),
-            fontSize: 12,
-            stroke: 'red'
         });
     }
 
