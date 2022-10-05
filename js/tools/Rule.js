@@ -13,6 +13,7 @@ class Rule extends Tool {
         this.element.line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
             startx: new Array(),
             starty: new Array(),
             endx: new Array(),
@@ -93,9 +94,11 @@ class Rule extends Tool {
 
     createPointer(top, left) {
         let circle = new fabric.Circle({
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+            stroke: this.canvas.freeDrawingBrush.color,
             radius: this.canvas.freeDrawingBrush.width * 20,
             fill: this.canvas.freeDrawingBrush.color,
-            opacity: 0.5,
+            opacity: 0.4,
             top: top,
             left: left,
             originX: 'center',

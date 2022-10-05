@@ -13,6 +13,7 @@ class RuleTriangle extends Rule {
         let line = new fabric.Line([0, 0, 0, 0], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
         });
         this.canvas.add(line);
         line.set({
