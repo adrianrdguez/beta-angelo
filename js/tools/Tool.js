@@ -53,7 +53,8 @@ class Tool {
             mr: false,
             mt: false,
         })
-        object.clipPath = this.limitClipPathField;
+        // Descomentar para limitar los objetos a la imagen
+        // object.clipPath = this.canvas.simulator.limitClipPathField;
         object.on('mousedown', this.objectMouseDownEvent);
         object.element = this.element;
     }

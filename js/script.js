@@ -26,7 +26,6 @@ class Simulator {
         }
         this.canvas.add(img);
         img.center();
-        this.setBackgroundOptions(img);
         this.limitClipPathField = new fabric.Rect({
             width: img.width + 1,
             height: img.height + 1,
@@ -34,6 +33,7 @@ class Simulator {
             left: img.left - 1,
             absolutePositioned: true
         });
+        this.setBackgroundOptions(img);
         this.canvas.simulator = this;
         this.setCurrentTool(new Drag(this.canvas))
     }
@@ -87,6 +87,8 @@ class Simulator {
             lockSkewingY: true,
             selectable: false,
         });
+        // Descomentar para limitar los objetos a la imagen
+        // object.clipPath = this.limitClipPathField;
     }
 
     removeObjectToolFromCanvas() {
