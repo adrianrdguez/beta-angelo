@@ -22,7 +22,7 @@ class Simulator {
         let img = await this.loadImageFromUrl(this.radiographyUrl);
         let imageTextureSize = img.width > img.height ? img.width : img.height;
         if (imageTextureSize > fabric.textureSize) {
-                fabric.textureSize = imageTextureSize;
+            fabric.textureSize = imageTextureSize;
         }
         this.canvas.add(img);
         img.center();
