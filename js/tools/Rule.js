@@ -52,13 +52,11 @@ class Rule extends Tool {
 
     stopDrawingLine() {
         this.element.line.setCoords();
-        var px = this.Calculate(this.element.line.startx[this.element.line.temp], this.element.line.starty[this.element.line.temp], this.element.line.endx[this.element.line.temp], this.element.line.endy[this.element.line.temp]).toFixed(2);
-        this.element.text = new fabric.Text(px, {
-            left: this.element.line.startx[this.element.line.temp] + ((this.element.line.endx[this.element.line.temp] - this.element.line.startx[this.element.line.temp]) / 2),
-            top: this.element.line.starty[this.element.line.temp] + ((this.element.line.endy[this.element.line.temp] - this.element.line.starty[this.element.line.temp]) / 2),
-            fontSize: 12,
-            stroke: 'red'
-        });
+        let startX = this.element.line.startx[this.element.line.temp];
+        let startY = this.element.line.starty[this.element.line.temp];
+        let endX = this.element.line.endx[this.element.line.temp];
+        let endY = this.element.line.endy[this.element.line.temp];
+        this.setTextinTheMiddleOfLine(startX, startY, endX, endY);
         //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
         this.canvas.add(this.element.text);
         this.element.line.on('mousedblclick', () => this.addingControlPoints());
@@ -122,6 +120,7 @@ class Rule extends Tool {
             top: newLineCoords.y2,
             left: newLineCoords.x2
         })
+        console.log("startx", this.element.line.startx)
     }
 
     lineFollowPointers() {
@@ -131,6 +130,10 @@ class Rule extends Tool {
             x2: this.element.pointer2.left,
             y2: this.element.pointer2.top
         })
+        this.element.line.startx = this.element.pointer1.left;
+        this.element.line.starty = this.element.pointer1.top;
+        this.element.line.endx = this.element.pointer2.left;
+        this.element.line.endy = this.element.pointer2.top;
         this.element.line.setCoords();
     }
 
@@ -141,6 +144,16 @@ class Rule extends Tool {
         delete this.element.pointer2;
         this.canvas.requestRenderAll();
         this.canvas.off('selection:cleared');
+    }
+
+    setTextinTheMiddleOfLine(x1, y1, x2, y2) {
+        var px = this.Calculate(x1, y1, x2, y2).toFixed(2);
+        this.element.text = new fabric.Text(px, {
+            left: x1 + ((x2 - x1) / 2),
+            top: y1 + ((y2 - y1) / 2),
+            fontSize: 12,
+            stroke: 'red'
+        });
     }
 
 }
