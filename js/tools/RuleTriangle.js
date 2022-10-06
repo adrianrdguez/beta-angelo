@@ -47,8 +47,38 @@ class RuleTriangle extends Rule {
         this.element.line1 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexTopRightX, vertexTopRightY);
         this.element.line2 = this.createLine(vertexBottomMiddleX1, vertexBottomMiddleY1, vertexTopRightX, vertexTopRightY);
         this.element.line3 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2);
+        this.getAngleBetweenLines(this.element.line1, this.element.line3);
+        this.getAngleBetweenLines(this.element.line1, this.element.line2);
+        this.getAngleBetweenLines(this.element.line2, this.element.line3, true);
         this.setTextInTheMiddleOfLine();
         this.canvas.requestRenderAll();
+    }
+
+    getAngleBetweenLines(line1, line2, line180 = false) {
+        let angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
+        let angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
+
+        angle1 = angle1 * 180 / Math.PI
+        if (angle1 < 0 && line180) {
+            angle1 += 180;
+        }
+        angle2 = angle2 * 180 / Math.PI
+        if (angle2 < 0 && line180) {
+            angle2 += 180;
+        }
+
+        let angle = angle1 - angle2;
+        let angleReal = angle;
+
+        if (angleReal < 0) {
+            angleReal = - angleReal;
+        }
+
+        if (360 - angleReal < angleReal) {
+            angleReal = 360 - angleReal;
+        }
+
+        console.log("angle", angleReal)
     }
 
     getNewLineCoordinates() {
@@ -133,6 +163,9 @@ class RuleTriangle extends Rule {
             y2: this.element.pointer3.top
         })
         this.element.line3.setCoords();
+        this.getAngleBetweenLines(this.element.line1, this.element.line3);
+        this.getAngleBetweenLines(this.element.line1, this.element.line2);
+        this.getAngleBetweenLines(this.element.line2, this.element.line3, true);
         this.setTextInTheMiddleOfLine();
     }
 
