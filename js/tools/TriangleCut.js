@@ -1,5 +1,6 @@
 class TriangleCut extends RuleTriangle {
     cutPath = [];
+    cutLinePaths = [];
     constructor(canvas) {
         super(canvas);
     }
@@ -48,14 +49,33 @@ class TriangleCut extends RuleTriangle {
     }
 
     pointer4Movement() {
+        let lineCoords = [];
+        if (!this.cutPath.length) {
+            lineCoords.push(this.element.line1.x1);
+            lineCoords.push(this.element.line1.y1);
+        } else {
+            let lastPosition = this.cutPath[this.cutPath.length - 1];
+            lineCoords.push(lastPosition.x);
+            lineCoords.push(lastPosition.y);
+        }
+        lineCoords.push(this.element.pointer4.left);
+        lineCoords.push(this.element.pointer4.top);
+        let line = new fabric.Line(lineCoords, {
+            stroke: this.canvas.freeDrawingBrush.color,
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+        });
+        this.element[Math.random() * 100000000] = line;
+        this.cutLinePaths.push(line);
+        this.canvas.add(line);
+        this.canvas.requestRenderAll();
         this.cutPath.push({
             x: this.element.pointer4.left,
             y: this.element.pointer4.top,
-        })
+        });
         this.element.line4.set({
             x1: this.element.pointer4.left,
             y1: this.element.pointer4.top,
-        })
+        });
         this.element.line4.setCoords();
     }
 
@@ -101,9 +121,9 @@ class TriangleCut extends RuleTriangle {
         let cutPath = new fabric.Polygon(this.cutPath);
         this.cutTrianglePath(cutPath);
         this.element.triangleShadow = new fabric.Polygon([
-            {x: this.element.line1.x1, y: this.element.line1.y1},
-            {x: this.element.line1.x2, y: this.element.line1.y2},
-            {x: this.element.line3.x2, y: this.element.line3.y2},
+            { x: this.element.line1.x1, y: this.element.line1.y1 },
+            { x: this.element.line1.x2, y: this.element.line1.y2 },
+            { x: this.element.line3.x2, y: this.element.line3.y2 },
         ]);
         this.canvas.add(this.element.triangleShadow);
         this.canvas.moveTo(this.element.triangleShadow, 1);
@@ -114,5 +134,9 @@ class TriangleCut extends RuleTriangle {
         this.cutPath = [];
         this.canvas.remove(this.element.line4);
         this.canvas.remove(this.element.pointer4);
+        this.cutLinePaths.forEach(element => {
+            this.canvas.remove(element);
+        });
+        this.cutLinePaths = [];
     }
 }
