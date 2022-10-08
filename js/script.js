@@ -3,6 +3,7 @@ class Simulator {
     radiographyUrl;
     limitClipPathField;
     selectedElement;
+    currentTool;
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl)
     }

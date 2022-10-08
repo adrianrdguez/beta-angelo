@@ -95,6 +95,7 @@ class FreeCut extends Tool {
         let line = new fabric.Line(lineCoords, {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
         });
         this.element[Math.random() * 100000000] = line;
         this.cutLinePaths.push(line);

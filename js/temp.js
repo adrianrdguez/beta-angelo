@@ -44,15 +44,27 @@ async function loadStartCanvas(imgUploaded) {
             document.getElementById('blackandwhite').onchange = function () {
                 applyFiltersToBackgroundImg(null, null, this.checked);
             }
+            document.getElementById('pincelcolor').onchange = function () {
+                simulator.canvas.currentTool.setBrushOptions();
+            }
+            document.getElementById('pincelsize').onchange = function () {
+                simulator.canvas.currentTool.setBrushOptions();
+            }
             document.getElementById('reset-filters').onclick = () => {
                 let elements = document.getElementsByTagName('input');
                 for (const element of elements) {
                     element.value = 0;
                     element.checked = false;
+                    if (element.id === 'pincelsize') {
+                        element.value = 1;
+                    }
+                    if (element.id === 'pincelcolor') {
+                        element.value = '#FF0000';
+                    }
                 }
                 applyFiltersToBackgroundImg(0, 0, false);
             }
-            document.getElementsByClassName('navigation')[0].style.visibility = 'visible';
+            document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
             clearInterval(interval)
         }
     }, 0.5);
@@ -66,7 +78,7 @@ script.onload = function () {
     loadStartCanvas('img/radiografia.png')
 };
 script.onerror = function () {
-    document.getElementsByClassName('navigation')[0].style.visibility = 'hidden';
+    document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
     let input = document.createElement('input');
     input.type = 'file';
     input.id = 'file';
