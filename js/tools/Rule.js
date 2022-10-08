@@ -13,6 +13,7 @@ class Rule extends Tool {
         this.element.line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
             startx: new Array(),
             starty: new Array(),
             endx: new Array(),

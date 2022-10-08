@@ -15,7 +15,7 @@ class Tool {
     setBrushOptions(width = null) {
         this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
         this.canvas.freeDrawingBrush.color = document.getElementById('pincelcolor').value;
-        this.canvas.freeDrawingBrush.width = width ?? document.getElementById('pincelsize').value;
+        this.canvas.freeDrawingBrush.width = width ?? parseFloat(document.getElementById('pincelsize').value);
         this.canvas.freeDrawingBrush.decimate = 0;
     }
 

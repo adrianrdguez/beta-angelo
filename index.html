@@ -37,14 +37,14 @@
 
     <!-- Posicionamiento de los botones -->
     <div class="botones-flotantes">
-        <a class="btn btn-success custom-radius" data-bs-toggle="offcanvas" href="#opciones" role="button"
+        <button class="btn btn-success rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#opciones"
             aria-controls="opciones">
             <i class="fa-solid fa-gear"></i>
-        </a>
-        <a class="btn btn-success custom-radius" data-bs-toggle="offcanvas" href="#herramientas" role="button"
+        </button>
+        <button class="btn btn-success rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#herramientas"
             aria-controls="herramientas">
             <i class="fa-solid fa-toolbox"></i>
-        </a>
+        </button>
     </div>
 
     <!-- Sidebar de herramientas -->
@@ -56,24 +56,27 @@
         </div>
         <div class="offcanvas-body">
             <div class="row m-3">
-                <a href="#" id="drag" class="btn btn-success"><i class="fa-solid fa-up-down-left-right"></i> Mover</a>
+                <button id="drag" class="btn btn-outline-success"><i class="fa-solid fa-up-down-left-right"></i>
+                    Mover</button>
             </div>
             <div class="row m-3">
-                <a href="#" id="rule" class="btn btn-success"><i class="fa-solid fa-ruler"></i> Medir</a>
+                <button id="rule" class="btn btn-outline-success"><i class="fa-solid fa-ruler"></i> Medir</button>
             </div>
             <div class="row m-3">
-                <a href="#" id="free-draw" class="btn btn-success"><i class="fa-solid fa-paintbrush"></i> Dibujar</a>
+                <button id="free-draw" class="btn btn-outline-success"><i class="fa-solid fa-paintbrush"></i>
+                    Dibujar</button>
             </div>
             <div class="row m-3">
-                <a href="#" id="rule-circle" class="btn btn-success"><i class="fa-solid fa-ruler-vertical"></i><i
-                        class="fa-regular fa-circle"></i> Nuevo círculo</a>
+                <button id="rule-circle" class="btn btn-outline-success"><i class="fa-solid fa-ruler-vertical"></i><i
+                        class="fa-regular fa-circle"> </i> Nuevo círculo</button>
             </div>
             <div class="row m-3">
-                <a href="#" id="rule-triangle" class="btn btn-success"><i class="fa-solid fa-ruler-vertical"></i><i
-                        class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</a>
+                <button id="rule-triangle" class="btn btn-outline-success"><i class="fa-solid fa-ruler-vertical"> </i><i
+                        class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</button>
             </div>
             <div class="row m-3">
-                <a href="#" id="free-cut" class="btn btn-success"><i class="fa-solid fa-scissors"></i> Cortar</a>
+                <button id="free-cut" class="btn btn-outline-success"><i class="fa-solid fa-scissors"></i>
+                    Cortar</button>
             </div>
         </div>
     </div>
@@ -91,8 +94,9 @@
                 <label class="btn btn-outline-success" for="blackandwhite">Blanco y negro</label>
             </div>
             <div class="row m-3 p-3">
-                <label for="customRange1"  class="form-label">Tamaño del pincel</label>
-                <input type="range" id="pincelsize" class="form-range custom-range" value="1" min="0" max="10" step="0.1">
+                <label for="customRange1" class="form-label">Tamaño del pincel</label>
+                <input type="range" id="pincelsize" class="form-range custom-range" value="1" min="0" max="10"
+                    step="0.1">
             </div>
             <div class="row">
                 <div class="col-md mt-2">
@@ -104,16 +108,18 @@
                 <div class="col-md iluminacion-rangos">
                     <div class="form-group">
                         <label for="formControlRange">Iluminación</label>
-                        <input type="range" id="brightness" class="form-range custom-range" value="0" min="-1" max="1" step="0.003921">
+                        <input type="range" id="brightness" class="form-range custom-range" value="0" min="-1" max="1"
+                            step="0.003921">
                     </div>
                     <div class="form-group">
                         <label for="formControlRange">Contraste</label>
-                        <input type="range" id="contrast" class="form-range custom-range" value="0" min="-1" max="1" step="0.003921">
+                        <input type="range" id="contrast" class="form-range custom-range" value="0" min="-1" max="1"
+                            step="0.003921">
                     </div>
                 </div>
             </div>
             <div class="row m-3">
-                <a href="#" id="reset-filters" class="btn btn-success">Reiniciar filtros</a>
+                <button id="reset-filters" class="btn btn-success">Reiniciar filtros</button>
             </div>
         </div>
     </div>
