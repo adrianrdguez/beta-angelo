@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://kit.fontawesome.com/2accd57d6d.js" crossorigin="anonymous"></script>
+    <title>Simulador</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://kit.fontawesome.com/2accd57d6d.js" defer></script>
     <script src="js/fabric.js" defer></script>
     <script src="js/tools/Tool.js" defer></script>
     <script src="js/tools/Drag.js" defer></script>
@@ -19,113 +20,104 @@
     <script src="js/tools/InitialRule.js" defer></script>
     <script src="js/script.js" defer></script>
     <script src="js/temp.js" defer></script>
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="navigation">
-        <ul>
-            <li id="drag" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-up-down-left-right"></i>
-                    </span>
-                    <span class="title">Move</span>
-                </a>
-            </li>
-            <li id="rule" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-ruler"></i>
-                    </span>
-                    <span class="title">Measure</span>
-                </a>
-            </li>
-            <li id="rule-circle" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-ruler-vertical"></i> <i class="fa-regular fa-circle"></i>
-                    </span>
-                    <span class="title">Measure circle</span>
-                </a>
-            </li>
-            <li id="rule-triangle" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-ruler-vertical"></i> <i class="fa-solid fa-circle-nodes"></i>
-                    </span>
-                    <span class="title">Measure triangle</span>
-                </a>
-            </li>
-            <li id="free-draw" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-paintbrush"></i>
-                    </span>
-                    <span class="title">Drawing</span>
-                </a>
-            </li>
-            <li id="free-cut" class="list">
-                <a href="#">
-                    <b></b>
-                    <b></b>
-                    <span class="icon">
-                        <i class="fa-solid fa-scissors"></i>
-                    </span>
-                    <span class="title">Free cut</span>
-                </a>
-            </li>
+    <!-- Canvas -->
+    <canvas id="simulador"></canvas>
 
-            <!-- Campos temporales, esto se tiene que hacer en otro sitio -->
-            <li class="list">
-                <p>
-                    <label>
-                        Brightness:
-                        <input id="brightness" type="range" value="0" min="-1" max="1" step="0.003921">
-                    </label>
-                </p>
-            </li>
-            <li class="list">
-                <p>
-                    <label>
-                        Contrast:
-                        <input id="contrast" type="range" value="0" min="-1" max="1" step="0.003921">
-                    </label>
-                </p>
-            </li>
-            <li class="list">
-                <p>
-                    <label>
-                        BlackAndWhite:
-                        <input id="blackandwhite" type="checkbox">
-                    </label>
-                </p>
-            </li>
-            <li class="list">
-                <p>
-                    <label>
-                        <button id="reset-filters">reset</button>
-                    </label>
-                </p>
-            </li>
-        </ul>
-    </div>
+    <!-- Menu contextual -->
     <div id="menu-1" class="menu">
         <div class="menu-li" id="remove-btn">
             <i class="fa-solid fa-trash"></i> Borrar elemento
         </div>
     </div>
-    <canvas id="simulador"></canvas>
+
+    <!-- Posicionamiento de los botones -->
+    <div class="botones-flotantes">
+        <a class="btn btn-success custom-radius" data-bs-toggle="offcanvas" href="#opciones" role="button"
+            aria-controls="opciones">
+            <i class="fa-solid fa-gear"></i>
+        </a>
+        <a class="btn btn-success custom-radius" data-bs-toggle="offcanvas" href="#herramientas" role="button"
+            aria-controls="herramientas">
+            <i class="fa-solid fa-toolbox"></i>
+        </a>
+    </div>
+
+    <!-- Sidebar de herramientas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="herramientas" data-bs-scroll="true" data-bs-backdrop="false"
+        aria-labelledby="herramientasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="herramientasLabel"><b>HERRAMIENTAS</b></h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row m-3">
+                <a href="#" id="drag" class="btn btn-success"><i class="fa-solid fa-up-down-left-right"></i> Mover</a>
+            </div>
+            <div class="row m-3">
+                <a href="#" id="rule" class="btn btn-success"><i class="fa-solid fa-ruler"></i> Medir</a>
+            </div>
+            <div class="row m-3">
+                <a href="#" id="free-draw" class="btn btn-success"><i class="fa-solid fa-paintbrush"></i> Dibujar</a>
+            </div>
+            <div class="row m-3">
+                <a href="#" id="rule-circle" class="btn btn-success"><i class="fa-solid fa-ruler-vertical"></i><i
+                        class="fa-regular fa-circle"></i> Nuevo círculo</a>
+            </div>
+            <div class="row m-3">
+                <a href="#" id="rule-triangle" class="btn btn-success"><i class="fa-solid fa-ruler-vertical"></i><i
+                        class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</a>
+            </div>
+            <div class="row m-3">
+                <a href="#" id="free-cut" class="btn btn-success"><i class="fa-solid fa-scissors"></i> Cortar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar de opciones de la herramienta -->
+    <div class="offcanvas offcanvas-start active" tabindex="-1" id="opciones" data-bs-scroll="true"
+        data-bs-backdrop="false" aria-labelledby="opcionesLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="opcionesLabel"><b>OPCIONES</b></h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row m-3">
+                <input type="checkbox" class="btn-check" id="blackandwhite" autocomplete="off">
+                <label class="btn btn-outline-success" for="blackandwhite">Blanco y negro</label>
+            </div>
+            <div class="row m-3 p-3">
+                <label for="customRange1"  class="form-label">Tamaño del pincel</label>
+                <input type="range" id="pincelsize" class="form-range custom-range" value="1" min="0" max="10" step="0.1">
+            </div>
+            <div class="row">
+                <div class="col-md mt-2">
+                    <div class="custom-container">
+                        <label for="pincelcolor">Color</label>
+                        <input type="color" value="#FF0000" id="pincelcolor" />
+                    </div>
+                </div>
+                <div class="col-md iluminacion-rangos">
+                    <div class="form-group">
+                        <label for="formControlRange">Iluminación</label>
+                        <input type="range" id="brightness" class="form-range custom-range" value="0" min="-1" max="1" step="0.003921">
+                    </div>
+                    <div class="form-group">
+                        <label for="formControlRange">Contraste</label>
+                        <input type="range" id="contrast" class="form-range custom-range" value="0" min="-1" max="1" step="0.003921">
+                    </div>
+                </div>
+            </div>
+            <div class="row m-3">
+                <a href="#" id="reset-filters" class="btn btn-success">Reiniciar filtros</a>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

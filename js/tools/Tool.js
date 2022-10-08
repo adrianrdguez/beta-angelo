@@ -12,10 +12,10 @@ class Tool {
         this.setBrushOptions();
     }
 
-    setBrushOptions(width = 1.5, color = 'red') {
+    setBrushOptions(width = null) {
         this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
-        this.canvas.freeDrawingBrush.color = color;
-        this.canvas.freeDrawingBrush.width = width;
+        this.canvas.freeDrawingBrush.color = document.getElementById('pincelcolor').value;
+        this.canvas.freeDrawingBrush.width = width ?? document.getElementById('pincelsize').value;
         this.canvas.freeDrawingBrush.decimate = 0;
     }
 
@@ -83,7 +83,7 @@ class Tool {
     }
 
     setActiveTool(toolName) {
-        document.querySelectorAll('.list').forEach(li => li.classList.remove("active"));
+        document.querySelectorAll('#herramientas .btn').forEach(li => li.classList.remove("active"));
         document.getElementById(toolName)?.classList.add("active");
     }
 
