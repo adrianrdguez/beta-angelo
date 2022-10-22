@@ -1,4 +1,7 @@
-class Rule extends Tool {
+import {Tool} from './Tool.js';
+import {Drag} from './Drag.js';
+
+export class Rule extends Tool {
     element = {};
     constructor(canvas) {
         super(canvas, 'rule');

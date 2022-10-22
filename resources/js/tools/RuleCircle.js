@@ -1,4 +1,6 @@
-class RuleCircle extends Rule {
+import {Rule} from './Rule.js';
+
+export class RuleCircle extends Rule {
     element = {};
     constructor(canvas) {
         super(canvas);

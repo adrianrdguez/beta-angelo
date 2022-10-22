@@ -1,3 +1,13 @@
+import './fabric.js';
+import {Drag} from './tools/Drag.js';
+import {FreeCut} from './tools/FreeCut.js';
+import {FreeDraw} from './tools/FreeDraw.js';
+import {Implant} from './tools/Implant.js';
+import {Rule} from './tools/Rule.js';
+import {RuleCircle} from './tools/RuleCircle.js';
+import {RuleTriangle} from './tools/RuleTriangle.js';
+import {InitialRule} from './tools/InitialRule.js';
+
 class Simulator {
     canvas;
     radiographyUrl;
@@ -10,7 +20,7 @@ class Simulator {
 
     async initConstructor(radiographyUrl) {
         fabric.Object.prototype.objectCaching = false;
-        this.canvas = new fabric.Canvas('simulador', {
+        this.canvas = new fabric.Canvas('simulator', {
             selection: false,
             fireRightClick: true,
             fireMiddleClick: true,
@@ -102,3 +112,64 @@ class Simulator {
     }
 
 }
+
+function applyFiltersToBackgroundImg(contrast = null, brightness = null, grayscale = null) {
+    let backgroundImg = simulator.canvas.getObjects()[0];
+    backgroundImg.filters[0].contrast = contrast ?? backgroundImg.filters[0].contrast;
+    backgroundImg.filters[1].brightness = brightness ?? backgroundImg.filters[1].brightness;
+    if (grayscale === true) {
+        backgroundImg.filters.push(new fabric.Image.filters.Grayscale());
+    } else if (grayscale === false && backgroundImg.filters.length > 2) {
+        backgroundImg.filters.pop();
+    }
+    backgroundImg.applyFilters();
+    simulator.canvas.requestRenderAll();
+}
+
+let img = document.getElementById('simulator').dataset.img;
+let simulator = new Simulator(img);
+simulator.init();
+let interval = setInterval(() => {
+    let backgroundImg = simulator.canvas.getObjects()[0];
+    if (backgroundImg) {
+        backgroundImg.filters.push(new fabric.Image.filters.Contrast({
+            contrast: 0
+        }));
+        backgroundImg.filters.push(new fabric.Image.filters.Brightness({
+            brightness: 0
+        }));
+        backgroundImg.applyFilters();
+        document.getElementById('contrast').onchange = document.getElementById('contrast').oninput =
+            function() {
+                applyFiltersToBackgroundImg(this.value);
+            }
+        document.getElementById('brightness').onchange = document.getElementById('brightness')
+            .oninput = function() {
+                applyFiltersToBackgroundImg(null, this.value);
+            }
+        document.getElementById('blackandwhite').onchange = function() {
+            applyFiltersToBackgroundImg(null, null, this.checked);
+        }
+        document.getElementById('pincelcolor').onchange = function() {
+            simulator.canvas.currentTool.setBrushOptions();
+        }
+        document.getElementById('pincelsize').onchange = function() {
+            simulator.canvas.currentTool.setBrushOptions();
+        }
+        document.getElementById('reset-filters').onclick = () => {
+            let elements = document.getElementsByTagName('input');
+            for (const element of elements) {
+                element.value = 0;
+                element.checked = false;
+                if (element.id === 'pincelsize') {
+                    element.value = 1;
+                }
+                if (element.id === 'pincelcolor') {
+                    element.value = '#FF0000';
+                }
+            }
+            applyFiltersToBackgroundImg(0, 0, false);
+        }
+        clearInterval(interval)
+    }
+}, 0.5);

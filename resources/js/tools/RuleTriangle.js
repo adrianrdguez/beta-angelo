@@ -1,4 +1,7 @@
-class RuleTriangle extends Rule {
+import {Rule} from './Rule.js';
+import {Drag} from './Drag.js';
+
+export class RuleTriangle extends Rule {
     element = {};
     constructor(canvas) {
         super(canvas);

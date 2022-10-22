@@ -1,4 +1,6 @@
-class Drag extends Tool {
+import {Tool} from './Tool.js';
+
+export class Drag extends Tool {
     isDragging = false;
     constructor(canvas) {
         super(canvas, 'drag');

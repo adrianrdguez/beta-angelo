@@ -1,4 +1,6 @@
-class Implant extends Tool {
+import {Tool} from './Tool.js';
+
+export class Implant extends Tool {
     constructor(canvas) {
         super(canvas)
     }

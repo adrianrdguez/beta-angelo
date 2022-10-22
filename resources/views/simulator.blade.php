@@ -1,32 +1,23 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Simulador</title>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" defer></script>
-    <script src="https://kit.fontawesome.com/2accd57d6d.js" defer></script>
-    <script src="js/fabric.js" defer></script>
-    <script src="js/tools/Tool.js" defer></script>
-    <script src="js/tools/Drag.js" defer></script>
-    <script src="js/tools/FreeCut.js" defer></script>
-    <script src="js/tools/FreeDraw.js" defer></script>
-    <script src="js/tools/Implant.js" defer></script>
-    <script src="js/tools/Rule.js" defer></script>
-    <script src="js/tools/RuleCircle.js" defer></script>
-    <script src="js/tools/RuleTriangle.js" defer></script>
-    <script src="js/tools/InitialRule.js" defer></script>
-    <script src="js/script.js" defer></script>
-    <script src="js/temp.js" defer></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
+
+    <!-- Scripts -->
+    @vite(['resources/js/bootstrap.bundle.min.js', 'resources/js/fontAwesome.2accd57d6d.js', 'resources/js/simulator.js', 'resources/js/app.js', 'resources/css/bootstrap.min.css', 'resources/css/app.css'])
 </head>
 
 <body>
     <!-- Canvas -->
-    <canvas id="simulador"></canvas>
+    <canvas id="simulator" data-img="img/radiografia.png"></canvas>
 
     <!-- Menu contextual -->
     <div id="menu-1" class="menu">
@@ -95,8 +86,8 @@
             </div>
             <div class="row m-3 p-3">
                 <label for="customRange1" class="form-label">Tamaño del pincel</label>
-                <input type="range" id="pincelsize" class="form-range custom-range" value="1" min="0" max="10"
-                    step="0.1">
+                <input type="range" id="pincelsize" class="form-range custom-range" value="1" min="0"
+                    max="10" step="0.1">
             </div>
             <div class="row">
                 <div class="col-md mt-2">
@@ -108,13 +99,13 @@
                 <div class="col-md iluminacion-rangos">
                     <div class="form-group">
                         <label for="formControlRange">Iluminación</label>
-                        <input type="range" id="brightness" class="form-range custom-range" value="0" min="-1" max="1"
-                            step="0.003921">
+                        <input type="range" id="brightness" class="form-range custom-range" value="0"
+                            min="-1" max="1" step="0.003921">
                     </div>
                     <div class="form-group">
                         <label for="formControlRange">Contraste</label>
-                        <input type="range" id="contrast" class="form-range custom-range" value="0" min="-1" max="1"
-                            step="0.003921">
+                        <input type="range" id="contrast" class="form-range custom-range" value="0"
+                            min="-1" max="1" step="0.003921">
                     </div>
                 </div>
             </div>

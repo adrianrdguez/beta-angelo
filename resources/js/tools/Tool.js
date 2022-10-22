@@ -1,4 +1,4 @@
-class Tool {
+export class Tool {
     canvas;
     toolName;
     element;
