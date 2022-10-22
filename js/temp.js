@@ -19,12 +19,14 @@ function applyFiltersToBackgroundImg(contrast = null, brightness = null, graysca
         backgroundImg.filters.pop();
     }
     backgroundImg.applyFilters();
+    console.log("simulator", simulator)
     simulator.canvas.requestRenderAll();
 }
 
 async function loadStartCanvas(imgUploaded) {
     simulator = new Simulator(imgUploaded);
     simulator.init();
+    console.log("simulador", simulator)
     let interval = setInterval(() => {
         let backgroundImg = simulator.canvas.getObjects()[0];
         if (backgroundImg) {
@@ -50,6 +52,10 @@ async function loadStartCanvas(imgUploaded) {
             document.getElementById('pincelsize').onchange = function () {
                 simulator.canvas.currentTool.setBrushOptions();
             }
+            document.getElementById('measure-form').onchange = function () {
+                simulator.measure = document.getElementById("measure-form").value;
+                document.getElementById('boton-herramientas').style.visibility = 'visible';
+            }
             document.getElementById('reset-filters').onclick = () => {
                 let elements = document.getElementsByTagName('input');
                 for (const element of elements) {
@@ -64,7 +70,7 @@ async function loadStartCanvas(imgUploaded) {
                 }
                 applyFiltersToBackgroundImg(0, 0, false);
             }
-            document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
+            //document.getElementsByClassName('measure-form')[0].style.visibility = 'visible';
             clearInterval(interval)
         }
     }, 0.5);

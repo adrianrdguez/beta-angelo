@@ -4,6 +4,8 @@ class Simulator {
     limitClipPathField;
     selectedElement;
     currentTool;
+    measure;
+    firstLineMeasure;
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl)
     }
@@ -36,7 +38,18 @@ class Simulator {
         });
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
-        this.setCurrentTool(new Drag(this.canvas))
+        document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
+        if (this.measure == undefined) {
+            document.getElementById('boton-herramientas').style.visibility = 'hidden';
+
+        }
+        if (this.measure > 0) {
+            document.getElementById('boton-herramientas').style.visibility = 'visible';
+
+        }
+        this.setCurrentTool(new Rule(this.canvas, true));
+        //this.setCurrentTool(new InitialRule(this.canvas, true));
+        //this.setCurrentTool(new Drag(this.canvas))
     }
 
     init() {
