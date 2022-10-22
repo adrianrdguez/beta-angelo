@@ -1,5 +1,5 @@
-import {Rule} from './Rule.js';
-import {Drag} from './Drag.js';
+import { Rule } from './Rule.js';
+import { Drag } from './Drag.js';
 
 export class RuleTriangle extends Rule {
     element = {};

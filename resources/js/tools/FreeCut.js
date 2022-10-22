@@ -1,5 +1,5 @@
-import {Tool} from './Tool.js';
-import {Drag} from './Drag.js';
+import { Tool } from './Tool.js';
+import { Drag } from './Drag.js';
 
 export class FreeCut extends Tool {
     element = {};

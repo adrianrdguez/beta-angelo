@@ -1,4 +1,4 @@
-import {Rule} from './Rule.js';
+import { Rule } from './Rule.js';
 
 export class InitialRule extends Rule {
 

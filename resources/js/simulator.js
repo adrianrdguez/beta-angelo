@@ -1,12 +1,12 @@
 import './fabric.js';
-import {Drag} from './tools/Drag.js';
-import {FreeCut} from './tools/FreeCut.js';
-import {FreeDraw} from './tools/FreeDraw.js';
-import {Implant} from './tools/Implant.js';
-import {Rule} from './tools/Rule.js';
-import {RuleCircle} from './tools/RuleCircle.js';
-import {RuleTriangle} from './tools/RuleTriangle.js';
-import {InitialRule} from './tools/InitialRule.js';
+import { Drag } from './tools/Drag.js';
+import { FreeCut } from './tools/FreeCut.js';
+import { FreeDraw } from './tools/FreeDraw.js';
+import { Implant } from './tools/Implant.js';
+import { Rule } from './tools/Rule.js';
+import { RuleCircle } from './tools/RuleCircle.js';
+import { RuleTriangle } from './tools/RuleTriangle.js';
+import { InitialRule } from './tools/InitialRule.js';
 
 class Simulator {
     canvas;
@@ -140,20 +140,20 @@ let interval = setInterval(() => {
         }));
         backgroundImg.applyFilters();
         document.getElementById('contrast').onchange = document.getElementById('contrast').oninput =
-            function() {
+            function () {
                 applyFiltersToBackgroundImg(this.value);
             }
         document.getElementById('brightness').onchange = document.getElementById('brightness')
-            .oninput = function() {
+            .oninput = function () {
                 applyFiltersToBackgroundImg(null, this.value);
             }
-        document.getElementById('blackandwhite').onchange = function() {
+        document.getElementById('blackandwhite').onchange = function () {
             applyFiltersToBackgroundImg(null, null, this.checked);
         }
-        document.getElementById('pincelcolor').onchange = function() {
+        document.getElementById('pincelcolor').onchange = function () {
             simulator.canvas.currentTool.setBrushOptions();
         }
-        document.getElementById('pincelsize').onchange = function() {
+        document.getElementById('pincelsize').onchange = function () {
             simulator.canvas.currentTool.setBrushOptions();
         }
         document.getElementById('reset-filters').onclick = () => {

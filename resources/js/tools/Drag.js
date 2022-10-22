@@ -1,4 +1,4 @@
-import {Tool} from './Tool.js';
+import { Tool } from './Tool.js';
 
 export class Drag extends Tool {
     isDragging = false;
