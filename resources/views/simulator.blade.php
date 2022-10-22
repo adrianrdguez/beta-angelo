@@ -32,8 +32,8 @@
             aria-controls="opciones">
             <i class="fa-solid fa-gear"></i>
         </button>
-        <button class="btn btn-success rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#herramientas"
-            aria-controls="herramientas">
+        <button id="boton-herramientas" class="btn btn-success rounded-circle" data-bs-toggle="offcanvas"
+            data-bs-target="#herramientas" aria-controls="herramientas">
             <i class="fa-solid fa-toolbox"></i>
         </button>
     </div>
@@ -108,6 +108,10 @@
                             min="-1" max="1" step="0.003921">
                     </div>
                 </div>
+            </div>
+            <div class="row m-3">
+                Añadir Medida
+                <input id="measure-form" type="text" class="measure" placeholder="Milímetros">
             </div>
             <div class="row m-3">
                 <button id="reset-filters" class="btn btn-success">Reiniciar filtros</button>

@@ -26,7 +26,6 @@ export class RuleTriangle extends Rule {
             x2: (this.canvas.width / 2) + x2,
             y2: (this.canvas.height / 2) + y2
         });
-        console.log("line1", line)
         this.setDefaultObjectOptions(line);
         line.set({
             hasBorders: false,
@@ -40,61 +39,6 @@ export class RuleTriangle extends Rule {
         return line;
     }
 
-    createLine2(x1, y1, x2, y2) {
-        console.log(x1, y1, x2, y2)
-        let line = new fabric.Line([0, 0, 0, 0], {
-            stroke: 'green',
-            strokeWidth: this.canvas.freeDrawingBrush.width,
-            strokeLineCap: 'round',
-        });
-        this.canvas.add(line);
-        line.set({
-            x1: (this.canvas.width / 2) + x1,
-            y1: (this.canvas.height / 2) + y1,
-            x2: (this.canvas.width / 2) + x2,
-            y2: (this.canvas.height / 2) + y2
-        });
-        console.log("line2", line)
-        this.setDefaultObjectOptions(line);
-        line.set({
-            hasBorders: false,
-            selectable: false,
-        })
-        line.setControlsVisibility({
-            mtr: false,
-        })
-        line.on('mousedblclick', () => this.addingControlPoints());
-        line.on('moving', () => this.pointersFollowLine());
-        return line;
-    }
-
-    createLine3(x1, y1, x2, y2) {
-        console.log(x1, y1, x2, y2)
-        let line = new fabric.Line([0, 0, 0, 0], {
-            stroke: "blue",
-            strokeWidth: this.canvas.freeDrawingBrush.width,
-            strokeLineCap: 'round',
-        });
-        this.canvas.add(line);
-        line.set({
-            x1: (this.canvas.width / 2) + x1,
-            y1: (this.canvas.height / 2) + y1,
-            x2: (this.canvas.width / 2) + x2,
-            y2: (this.canvas.height / 2) + y2
-        });
-        console.log("line3", line)
-        this.setDefaultObjectOptions(line);
-        line.set({
-            hasBorders: false,
-            selectable: false,
-        })
-        line.setControlsVisibility({
-            mtr: false,
-        })
-        line.on('mousedblclick', () => this.addingControlPoints());
-        line.on('moving', () => this.pointersFollowLine());
-        return line;
-    }
 
     createTriangle() {
         let triangleSize = 10;
@@ -107,8 +51,8 @@ export class RuleTriangle extends Rule {
         let vertexBottomMiddleY1 = (this.canvas.width / triangleSize);
         let vertexBottomMiddleY2 = vertexBottomMiddleY1;
         this.element.line1 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexTopRightX, vertexTopRightY);
-        this.element.line2 = this.createLine2(vertexBottomMiddleX1, vertexBottomMiddleY1, vertexTopRightX, vertexTopRightY);
-        this.element.line3 = this.createLine3(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2)
+        this.element.line2 = this.createLine(vertexBottomMiddleX1, vertexBottomMiddleY1, vertexTopRightX, vertexTopRightY);
+        this.element.line3 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2)
         this.getAngleBetweenLines(this.element.line1, this.element.line3);
         this.getAngleBetweenLines(this.element.line1, this.element.line2);
         this.getAngleBetweenLines(this.element.line2, this.element.line3, true);
@@ -287,9 +231,12 @@ export class RuleTriangle extends Rule {
     }
 
     createOrUpdateText(text, line) {
+        let realMeasure = this.canvas.simulator.measure;
+        let firstLineMeasure = this.canvas.simulator.firstLineMeasure;
         let px = this.calculate(line.x1, line.y1, line.x2, line.y2).toFixed(2);
+        let mm = ((px * realMeasure) / firstLineMeasure).toFixed(2);
         if (!text) {
-            text = new fabric.Text(px, {
+            text = new fabric.Text(mm, {
                 fontSize: 12,
                 stroke: this.canvas.freeDrawingBrush.color,
                 fill: this.canvas.freeDrawingBrush.color
@@ -298,7 +245,7 @@ export class RuleTriangle extends Rule {
             this.canvas.add(text);
         }
         text.set({
-            text: px,
+            text: mm + 'mm',
             left: line.x1 + ((line.x2 - line.x1) / 2),
             top: line.y1 + ((line.y2 - line.y1) / 2),
         });
