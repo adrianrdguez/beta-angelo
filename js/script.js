@@ -50,6 +50,7 @@ class Simulator {
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
         document.getElementById('menu-1').oncontextmenu = e => e.preventDefault();
+        document.querySelectorAll('#implants .card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
         document.getElementById('rule-triangle').addEventListener('click', () => this.setCurrentTool(new RuleTriangle(this.canvas)));
@@ -65,6 +66,15 @@ class Simulator {
 
     setCurrentTool(tool) {
         this.canvas.currentTool = tool;
+    }
+
+    async addImplantObject(element) {
+        let img = await this.loadImageFromUrl(element.querySelector('img').src);
+        this.canvas.add(img);
+        img.center();
+        this.canvas.currentTool.setDefaultObjectOptions(img);
+        this.canvas.requestRenderAll();
+        document.getElementById('implants').classList.remove('show');
     }
 
     async loadImageFromUrl(image_url) {
@@ -101,7 +111,10 @@ class Simulator {
     }
 
     removeObjectToolFromCanvas() {
-        if (this.selectedElement) {
+        if (!this.selectedElement?.element) {
+            this.selectedElement.element = this.selectedElement;
+        }
+        if (this.selectedElement?.element) {
             for (const [key, value] of Object.entries(this.selectedElement.element)) {
                 this.canvas.remove(value);
             }
