@@ -154,7 +154,6 @@ class InitialRule extends Rule {
                 simulator.measure = document.getElementById('measure-input').value;
                 document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
                 document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
-                document.getElementById('boton-herramientas').style.visibility = 'visible';
                 this.canvas.remove(this.element.line);
                 delete this.element.line;
                 this.removePointers();

@@ -38,13 +38,9 @@ class Simulator {
         });
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
-        document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
         if (this.measure == undefined) {
-            document.getElementById('boton-herramientas').style.visibility = 'hidden';
-
-        }
-        if (this.measure > 0) {
-            document.getElementById('boton-herramientas').style.visibility = 'visible';
+            console.log('hola')
+            document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
 
         }
         this.setCurrentTool(new InitialRule(this.canvas, true));

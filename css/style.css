@@ -88,7 +88,7 @@ body {
 
 /* Coloreado del input del tamano del pincel */
 .custom-range::-webkit-slider-thumb {
-    background: #DA7B08;
+    background: #ffc107;
 }
 
 .custom-range::-moz-range-thumb {

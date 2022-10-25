@@ -19,7 +19,6 @@ function applyFiltersToBackgroundImg(contrast = null, brightness = null, graysca
         backgroundImg.filters.pop();
     }
     backgroundImg.applyFilters();
-    console.log("simulator", simulator)
     simulator.canvas.requestRenderAll();
 }
 

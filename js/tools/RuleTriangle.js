@@ -23,6 +23,7 @@ class RuleTriangle extends Rule {
             x2: (this.canvas.width / 2) + x2,
             y2: (this.canvas.height / 2) + y2
         });
+        console.log("line1", line)
         this.setDefaultObjectOptions(line);
         line.set({
             hasBorders: false,
