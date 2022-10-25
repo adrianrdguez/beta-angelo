@@ -51,7 +51,7 @@ class RuleCircle extends Rule {
     adjustCircleRadiusAndPosition() {
         let newLineCoords = this.getNewLineCoordinates();
         this.element.circle?.set({
-            radius: Math.sqrt(Math.pow(newLineCoords.x2 * 1 - newLineCoords.x1 * 1, 2) + Math.pow(newLineCoords.y2 * 1 - newLineCoords.y1 * 1, 2)),
+            radius: this.calculate(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2),
             top: newLineCoords.y1,
             left: newLineCoords.x1,
         })

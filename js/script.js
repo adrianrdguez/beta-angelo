@@ -3,11 +3,13 @@ class Simulator {
     radiographyUrl;
     limitClipPathField;
     selectedElement;
+    currentTool;
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl)
     }
 
     async initConstructor(radiographyUrl) {
+        fabric.Object.prototype.objectCaching = false;
         this.canvas = new fabric.Canvas('simulador', {
             selection: false,
             fireRightClick: true,
@@ -19,9 +21,12 @@ class Simulator {
         this.radiographyUrl = radiographyUrl;
         this.setCanvasSize(this.canvas);
         let img = await this.loadImageFromUrl(this.radiographyUrl);
+        let imageTextureSize = img.width > img.height ? img.width : img.height;
+        if (imageTextureSize > fabric.textureSize) {
+            fabric.textureSize = imageTextureSize;
+        }
         this.canvas.add(img);
         img.center();
-        this.setBackgroundOptions(img);
         this.limitClipPathField = new fabric.Rect({
             width: img.width + 1,
             height: img.height + 1,
@@ -29,6 +34,7 @@ class Simulator {
             left: img.left - 1,
             absolutePositioned: true
         });
+        this.setBackgroundOptions(img);
         this.canvas.simulator = this;
         this.setCurrentTool(new Drag(this.canvas))
     }
@@ -82,6 +88,8 @@ class Simulator {
             lockSkewingY: true,
             selectable: false,
         });
+        // Descomentar para limitar los objetos a la imagen
+        // object.clipPath = this.limitClipPathField;
     }
 
     removeObjectToolFromCanvas() {

@@ -10,9 +10,11 @@ class RuleTriangle extends Rule {
     }
 
     createLine(x1, y1, x2, y2) {
+        console.log(x1, y1, x2, y2)
         let line = new fabric.Line([0, 0, 0, 0], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
         });
         this.canvas.add(line);
         line.set({
@@ -21,6 +23,63 @@ class RuleTriangle extends Rule {
             x2: (this.canvas.width / 2) + x2,
             y2: (this.canvas.height / 2) + y2
         });
+        console.log("line1", line)
+        this.setDefaultObjectOptions(line);
+        line.set({
+            hasBorders: false,
+            selectable: false,
+        })
+        line.setControlsVisibility({
+            mtr: false,
+        })
+        line.on('mousedblclick', () => this.addingControlPoints());
+        line.on('moving', () => this.pointersFollowLine());
+        return line;
+    }
+
+    createLine2(x1, y1, x2, y2) {
+        console.log(x1, y1, x2, y2)
+        let line = new fabric.Line([0, 0, 0, 0], {
+            stroke: 'green',
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
+        });
+        this.canvas.add(line);
+        line.set({
+            x1: (this.canvas.width / 2) + x1,
+            y1: (this.canvas.height / 2) + y1,
+            x2: (this.canvas.width / 2) + x2,
+            y2: (this.canvas.height / 2) + y2
+        });
+        console.log("line2", line)
+        this.setDefaultObjectOptions(line);
+        line.set({
+            hasBorders: false,
+            selectable: false,
+        })
+        line.setControlsVisibility({
+            mtr: false,
+        })
+        line.on('mousedblclick', () => this.addingControlPoints());
+        line.on('moving', () => this.pointersFollowLine());
+        return line;
+    }
+
+    createLine3(x1, y1, x2, y2) {
+        console.log(x1, y1, x2, y2)
+        let line = new fabric.Line([0, 0, 0, 0], {
+            stroke: "blue",
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
+        });
+        this.canvas.add(line);
+        line.set({
+            x1: (this.canvas.width / 2) + x1,
+            y1: (this.canvas.height / 2) + y1,
+            x2: (this.canvas.width / 2) + x2,
+            y2: (this.canvas.height / 2) + y2
+        });
+        console.log("line3", line)
         this.setDefaultObjectOptions(line);
         line.set({
             hasBorders: false,
@@ -45,9 +104,77 @@ class RuleTriangle extends Rule {
         let vertexBottomMiddleY1 = (this.canvas.width / triangleSize);
         let vertexBottomMiddleY2 = vertexBottomMiddleY1;
         this.element.line1 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexTopRightX, vertexTopRightY);
-        this.element.line2 = this.createLine(vertexBottomMiddleX1, vertexBottomMiddleY1, vertexTopRightX, vertexTopRightY);
-        this.element.line3 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2);
+        this.element.line2 = this.createLine2(vertexBottomMiddleX1, vertexBottomMiddleY1, vertexTopRightX, vertexTopRightY);
+        this.element.line3 = this.createLine3(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2)
+        this.getAngleBetweenLines(this.element.line1, this.element.line3);
+        this.getAngleBetweenLines(this.element.line1, this.element.line2);
+        this.getAngleBetweenLines(this.element.line2, this.element.line3, true);
+        this.setTextInTheMiddleOfLine();
         this.canvas.requestRenderAll();
+    }
+
+    getAngleBetweenLines(line1, line2, line180 = false) {
+        let angle1;
+        let angle2;
+        if (line180) {
+            angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
+            angle1 += Math.PI;
+            angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
+        } else {
+            angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
+            angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
+        }
+        angle1 = angle1 * 180 / Math.PI
+        angle2 = angle2 * 180 / Math.PI
+        /* 
+         if (angle1 < 0 && line180) {
+             angle1 += 180;
+         }
+         
+         if (angle2 < 0 && line180) {
+             angle2 += 180;
+         }*/
+
+        let angle = angle1 - angle2;
+        let angleReal = angle;
+
+        if (angleReal < 0) {
+            angleReal = - angleReal;
+        }
+
+        if (360 - angleReal < angleReal) {
+            angleReal = 360 - angleReal;
+        }
+
+        if (angleReal < 0) {
+            angleReal = - angleReal;
+        }
+
+        console.log("angle", angleReal)
+    }
+
+    getAngleBetweenLines2(line1, line2) {
+        let u = [line1.x2 - line1.x1, line1.y2 - line1.y1]
+        let v = [line2.x2 - line2.x1, line2.y2 - line2.y1]
+
+        let angle1 = Math.atan2(u[0], u[1]);
+        let angle2 = Math.atan2(v[0], v[1]);
+
+        console.log('angles:', angle1 * 180 / Math.PI, angle2 * 180 / Math.PI)
+
+        let angle = angle1 - angle2;
+        angle = angle * 180 / Math.PI;
+        if (angle < 0) {
+            console.log('hola')
+            angle = -angle
+        }
+        if (360 - angle < angle) {
+            console.log('adios')
+
+            angle = 360 - angle
+        }
+
+        console.log('angle', angle)
     }
 
     getNewLineCoordinates() {
@@ -107,6 +234,7 @@ class RuleTriangle extends Rule {
             top: pointerCoords.pointer3Coords.top,
             left: pointerCoords.pointer3Coords.left
         })
+        this.setTextInTheMiddleOfLine();
     }
 
     lineFollowPointers() {
@@ -131,6 +259,10 @@ class RuleTriangle extends Rule {
             y2: this.element.pointer3.top
         })
         this.element.line3.setCoords();
+        this.getAngleBetweenLines(this.element.line1, this.element.line3);
+        this.getAngleBetweenLines(this.element.line1, this.element.line2);
+        this.getAngleBetweenLines(this.element.line2, this.element.line3, true);
+        this.setTextInTheMiddleOfLine();
     }
 
     removePointers() {
@@ -142,6 +274,32 @@ class RuleTriangle extends Rule {
         delete this.element.pointer3;
         this.canvas.requestRenderAll();
         this.canvas.off('selection:cleared');
+    }
+
+    setTextInTheMiddleOfLine() {
+        this.element.text1 = this.createOrUpdateText(this.element.text1, this.element.line1);
+        this.element.text2 = this.createOrUpdateText(this.element.text2, this.element.line2);
+        this.element.text3 = this.createOrUpdateText(this.element.text3, this.element.line3);
+        this.canvas.requestRenderAll();
+    }
+
+    createOrUpdateText(text, line) {
+        let px = this.calculate(line.x1, line.y1, line.x2, line.y2).toFixed(2);
+        if (!text) {
+            text = new fabric.Text(px, {
+                fontSize: 12,
+                stroke: this.canvas.freeDrawingBrush.color,
+                fill: this.canvas.freeDrawingBrush.color
+            });
+            this.canvas.simulator.setBackgroundOptions(text);
+            this.canvas.add(text);
+        }
+        text.set({
+            text: px,
+            left: line.x1 + ((line.x2 - line.x1) / 2),
+            top: line.y1 + ((line.y2 - line.y1) / 2),
+        });
+        return text;
     }
 
 }

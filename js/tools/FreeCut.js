@@ -1,16 +1,118 @@
 class FreeCut extends Tool {
     element = {};
+    cutPath = [];
+    cutLinePaths = [];
     constructor(canvas) {
         super(canvas, 'free-cut');
-        this.canvas.isDrawingMode = true;
         this.resetEvents();
-        this.setBrushOptions(0.3);
-        this.canvas.on('mouse:down', event => this.startAddingLine(event));
-        this.canvas.on('mouse:move', event => this.startDrawingLine(event));
-        this.canvas.on('path:created', event => this.pathCreated(event));
+        this.createPointer();
+        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    async cutPath(linePath) {
+    createPointer() {
+        this.element.pointer = new fabric.Circle({
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+            radius: this.canvas.freeDrawingBrush.width * 20,
+            stroke: 'blue',
+            fill: 'blue',
+            originX: 'center',
+            originY: 'center',
+            opacity: 0.4,
+            hasBorders: false,
+            hasControls: false
+        });
+        this.element.miniPointer = new fabric.Circle({
+            radius: this.canvas.freeDrawingBrush.width,
+            fill: this.canvas.freeDrawingBrush.color,
+            originX: 'center',
+            originY: 'center',
+            hasBorders: false,
+            hasControls: false,
+            selectable: false,
+        });
+        this.element.pointer.on('moving', () => this.miniPointerFollowPointer())
+        this.element.pointer.on('mousedblclick', () => this.startCut())
+        this.canvas.add(this.element.pointer);
+        this.canvas.add(this.element.miniPointer);
+        this.element.pointer.center();
+        this.element.miniPointer.center();
+        this.canvas.bringForward(this.element.pointer);
+
+    }
+
+    miniPointerFollowPointer() {
+        this.element.miniPointer.set({
+            left: this.element.pointer.left,
+            top: this.element.pointer.top,
+        });
+        if (this.element.line) {
+            this.pointerMovement()
+        }
+    }
+
+    createLine() {
+        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, this.element.pointer.left, this.element.pointer.top], {
+            stroke: this.canvas.freeDrawingBrush.color,
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
+        });
+        this.canvas.add(this.element.line);
+        this.setDefaultObjectOptions(this.element.line);
+        this.element.line.set({
+            hasBorders: false,
+            selectable: false,
+        })
+        this.element.line.setControlsVisibility({
+            mtr: false,
+        })
+    }
+
+    startCut() {
+        this.setBrushOptions(0.3);
+        this.createLine();
+        this.element.pointer.set({
+            radius: this.element.pointer.radius + 20,
+            stroke: 'lightblue',
+            fill: 'lightblue',
+        });
+        this.element.pointer.off('mousedblclick');
+        this.element.pointer.on('mousedblclick', () => this.finishCutPath());
+        this.canvas.requestRenderAll();
+    }
+
+    pointerMovement() {
+        let lineCoords = [];
+        if (!this.cutPath.length) {
+            lineCoords.push(this.element.pointer.left);
+            lineCoords.push(this.element.pointer.top);
+        } else {
+            let lastPosition = this.cutPath[this.cutPath.length - 1];
+            lineCoords.push(lastPosition.x);
+            lineCoords.push(lastPosition.y);
+        }
+        lineCoords.push(this.element.pointer.left);
+        lineCoords.push(this.element.pointer.top);
+        let line = new fabric.Line(lineCoords, {
+            stroke: this.canvas.freeDrawingBrush.color,
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+            strokeLineCap: 'round',
+        });
+        this.element[Math.random() * 100000000] = line;
+        this.cutLinePaths.push(line);
+        this.canvas.add(line);
+        this.canvas.requestRenderAll();
+        this.cutPath.push({
+            x: this.element.pointer.left,
+            y: this.element.pointer.top,
+        });
+        this.element.line.set({
+            x1: this.element.pointer.left,
+            y1: this.element.pointer.top,
+        });
+        this.element.line.setCoords();
+    }
+
+    async cutFreePath(linePath) {
         linePath.strokeWidth = 0;
         linePath.fill = 'black';
         let imgShadow = await this.canvas.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
@@ -43,29 +145,21 @@ class FreeCut extends Tool {
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    pathCreated(event) {
-        this.cutPath(event.path);
-    }
-
-    startAddingLine(event) {
-        let pointer = this.canvas.getPointer(event.e);
-        this.element.line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
-            stroke: this.canvas.freeDrawingBrush.color,
-            strokeWidth: this.canvas.freeDrawingBrush.width
+    finishCutPath() {
+        this.cutPath.push({
+            x: this.cutPath[0].x,
+            y: this.cutPath[0].y,
         })
-        this.canvas.add(this.element.line);
-        this.canvas.requestRenderAll();
-    }
-
-    startDrawingLine(event) {
-        if (this.element.line) {
-            let pointer = this.canvas.getPointer(event.e);
-            this.element.line.set({
-                x2: pointer.x,
-                y2: pointer.y
-            });
-            this.canvas.requestRenderAll()
-        }
+        let cutPath = new fabric.Polygon(this.cutPath);
+        this.cutFreePath(cutPath);
+        this.cutPath = [];
+        this.canvas.remove(this.element.line);
+        this.canvas.remove(this.element.pointer);
+        this.canvas.remove(this.element.miniPointer);
+        this.cutLinePaths.forEach(element => {
+            this.canvas.remove(element);
+        });
+        this.cutLinePaths = [];
     }
 
 }
