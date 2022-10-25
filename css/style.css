@@ -19,12 +19,12 @@ body {
 .botones-flotantes {
     position: absolute;
     top: 15px !important;
-    left: 48% !important;
-    width: 150px;
+    left: 50% !important;
+    transform: translate(-50%, 0);
 }
 
-.botones-flotantes a {
-    margin: 0 4px;
+.botones-flotantes .btn {
+    margin: 0 2px;
 }
 
 .wrapper {
