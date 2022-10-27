@@ -10,7 +10,7 @@ class RuleTriangle extends Rule {
     }
 
     createLine(x1, y1, x2, y2) {
-        console.log(x1, y1, x2, y2)
+        console.log(x1, y1, x2, y2);
         let line = new fabric.Line([0, 0, 0, 0], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
@@ -23,15 +23,22 @@ class RuleTriangle extends Rule {
             x2: (this.canvas.width / 2) + x2,
             y2: (this.canvas.height / 2) + y2
         });
-        console.log("line1", line)
+        console.log("line1", line);
         this.setDefaultObjectOptions(line);
         line.set({
             hasBorders: false,
-            selectable: false,
-        })
+            lockMovementX: true,
+            lockMovementY: true,
+            lockRotation: true,
+            lockScalingFlip: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockSkewingX: true,
+            lockSkewingY: true,
+        });
         line.setControlsVisibility({
             mtr: false,
-        })
+        });
         line.on('mousedblclick', () => this.addingControlPoints());
         line.on('moving', () => this.pointersFollowLine());
         return line;
@@ -69,8 +76,8 @@ class RuleTriangle extends Rule {
             angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
             angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
         }
-        angle1 = angle1 * 180 / Math.PI
-        angle2 = angle2 * 180 / Math.PI
+        angle1 = angle1 * 180 / Math.PI;
+        angle2 = angle2 * 180 / Math.PI;
         /* 
          if (angle1 < 0 && line180) {
              angle1 += 180;
@@ -95,7 +102,7 @@ class RuleTriangle extends Rule {
             angleReal = - angleReal;
         }
 
-        console.log("angle", angleReal)
+        console.log("angle", angleReal);
     }
 
     getAngleBetweenLines2(line1, line2) {
@@ -105,21 +112,20 @@ class RuleTriangle extends Rule {
         let angle1 = Math.atan2(u[0], u[1]);
         let angle2 = Math.atan2(v[0], v[1]);
 
-        console.log('angles:', angle1 * 180 / Math.PI, angle2 * 180 / Math.PI)
+        console.log('angles:', angle1 * 180 / Math.PI, angle2 * 180 / Math.PI);
 
         let angle = angle1 - angle2;
         angle = angle * 180 / Math.PI;
         if (angle < 0) {
-            console.log('hola')
-            angle = -angle
+            console.log('hola');
+            angle = -angle;
         }
         if (360 - angle < angle) {
-            console.log('adios')
-
-            angle = 360 - angle
+            console.log('adios');
+            angle = 360 - angle;
         }
 
-        console.log('angle', angle)
+        console.log('angle', angle);
     }
 
     getNewLineCoordinates() {
@@ -170,15 +176,15 @@ class RuleTriangle extends Rule {
         this.element.pointer1?.set({
             top: pointerCoords.pointer1Coords.top,
             left: pointerCoords.pointer1Coords.left
-        })
+        });
         this.element.pointer2?.set({
             top: pointerCoords.pointer2Coords.top,
             left: pointerCoords.pointer2Coords.left
-        })
+        });
         this.element.pointer3?.set({
             top: pointerCoords.pointer3Coords.top,
             left: pointerCoords.pointer3Coords.left
-        })
+        });
         this.setTextInTheMiddleOfLine();
     }
 
@@ -188,21 +194,21 @@ class RuleTriangle extends Rule {
             y1: this.element.pointer1.top,
             x2: this.element.pointer2.left,
             y2: this.element.pointer2.top
-        })
+        });
         this.element.line1.setCoords();
         this.element.line2.set({
             x1: this.element.pointer3.left,
             y1: this.element.pointer3.top,
             x2: this.element.pointer2.left,
             y2: this.element.pointer2.top
-        })
+        });
         this.element.line2.setCoords();
         this.element.line3.set({
             x1: this.element.pointer1.left,
             y1: this.element.pointer1.top,
             x2: this.element.pointer3.left,
             y2: this.element.pointer3.top
-        })
+        });
         this.element.line3.setCoords();
         this.getAngleBetweenLines(this.element.line1, this.element.line3);
         this.getAngleBetweenLines(this.element.line1, this.element.line2);

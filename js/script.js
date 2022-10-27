@@ -2,12 +2,11 @@ class Simulator {
     canvas;
     radiographyUrl;
     limitClipPathField;
-    selectedElement;
     currentTool;
     measure;
     firstLineMeasure;
     constructor(radiographyUrl) {
-        this.initConstructor(radiographyUrl)
+        this.initConstructor(radiographyUrl);
     }
 
     async initConstructor(radiographyUrl) {
@@ -49,7 +48,6 @@ class Simulator {
 
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
-        document.getElementById('menu-1').oncontextmenu = e => e.preventDefault();
         document.querySelectorAll('#implants .card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
@@ -57,7 +55,6 @@ class Simulator {
         document.getElementById('free-draw').addEventListener('click', () => this.setCurrentTool(new FreeDraw(this.canvas)));
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
-        document.getElementById('remove-btn').addEventListener('click', () => this.removeObjectToolFromCanvas());
     }
 
     setCanvasSize(canvas) {
@@ -108,18 +105,6 @@ class Simulator {
         });
         // Descomentar para limitar los objetos a la imagen
         // object.clipPath = this.limitClipPathField;
-    }
-
-    removeObjectToolFromCanvas() {
-        if (!this.selectedElement?.element) {
-            this.selectedElement.element = this.selectedElement;
-        }
-        if (this.selectedElement?.element) {
-            for (const [key, value] of Object.entries(this.selectedElement.element)) {
-                this.canvas.remove(value);
-            }
-        }
-        document.getElementById('menu-1').style = `visibility: hidden;left: 0;top: 0;z-index: -100;`;
     }
 
 }

@@ -10,7 +10,9 @@ class FreeCut extends Tool {
     }
 
     createPointer() {
-        this.element.pointer = new fabric.Circle({
+        this.element.pointer = new fabric.Circle();
+        this.setDefaultObjectOptions(this.element.pointer);
+        this.element.pointer.set({
             strokeWidth: this.canvas.freeDrawingBrush.width,
             radius: this.canvas.freeDrawingBrush.width * 20,
             stroke: 'blue',
@@ -19,7 +21,9 @@ class FreeCut extends Tool {
             originY: 'center',
             opacity: 0.4,
             hasBorders: false,
-            hasControls: false
+        });
+        this.element.pointer.setControlsVisibility({
+            mtr: false,
         });
         this.element.miniPointer = new fabric.Circle({
             radius: this.canvas.freeDrawingBrush.width,
@@ -30,14 +34,13 @@ class FreeCut extends Tool {
             hasControls: false,
             selectable: false,
         });
-        this.element.pointer.on('moving', () => this.miniPointerFollowPointer())
-        this.element.pointer.on('mousedblclick', () => this.startCut())
+        this.element.pointer.on('moving', () => this.miniPointerFollowPointer());
+        this.setStartControl(this.element.pointer, () => this.startCut());
         this.canvas.add(this.element.pointer);
         this.canvas.add(this.element.miniPointer);
         this.element.pointer.center();
         this.element.miniPointer.center();
         this.canvas.bringForward(this.element.pointer);
-
     }
 
     miniPointerFollowPointer() {
@@ -46,7 +49,7 @@ class FreeCut extends Tool {
             top: this.element.pointer.top,
         });
         if (this.element.line) {
-            this.pointerMovement()
+            this.pointerMovement();
         }
     }
 
@@ -64,7 +67,7 @@ class FreeCut extends Tool {
         })
         this.element.line.setControlsVisibility({
             mtr: false,
-        })
+        });
     }
 
     startCut() {
@@ -75,8 +78,7 @@ class FreeCut extends Tool {
             stroke: 'lightblue',
             fill: 'lightblue',
         });
-        this.element.pointer.off('mousedblclick');
-        this.element.pointer.on('mousedblclick', () => this.finishCutPath());
+        this.setStartControl(this.element.pointer, () => this.finishCutPath());
         this.canvas.requestRenderAll();
     }
 
@@ -123,7 +125,7 @@ class FreeCut extends Tool {
         this.canvas.add(imgShadow);
         this.canvas.simulator.setBackgroundOptions(imgShadow);
         this.canvas.moveTo(imgShadow, 1);
-        let tmpRadiographyImg = await this.canvas.simulator.loadImageFromUrl(this.canvas.simulator.radiographyUrl)
+        let tmpRadiographyImg = await this.canvas.simulator.loadImageFromUrl(this.canvas.simulator.radiographyUrl);
         let tmpCanvas = new fabric.Canvas();
         this.canvas.simulator.setCanvasSize(tmpCanvas);
         tmpCanvas.add(tmpRadiographyImg);
@@ -135,12 +137,13 @@ class FreeCut extends Tool {
         imgCut.top = imgShadow.top;
         imgCut.width = imgShadow.width;
         imgCut.height = imgShadow.height;
+        delete imgCut.controls.startControl;
         this.canvas.add(imgCut);
         this.setDefaultObjectOptions(imgCut);
         this.element.imgCut = imgCut;
         this.element.imgShadow = imgShadow;
-        this.canvas.remove(linePath)
-        this.canvas.remove(this.element.line)
+        this.canvas.remove(linePath);
+        this.canvas.remove(this.element.line);
         this.canvas.requestRenderAll();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
@@ -149,7 +152,7 @@ class FreeCut extends Tool {
         this.cutPath.push({
             x: this.cutPath[0].x,
             y: this.cutPath[0].y,
-        })
+        });
         let cutPath = new fabric.Polygon(this.cutPath);
         this.cutFreePath(cutPath);
         this.cutPath = [];
@@ -160,6 +163,32 @@ class FreeCut extends Tool {
             this.canvas.remove(element);
         });
         this.cutLinePaths = [];
+    }
+
+    setStartControl(object, callback) {
+        object.controls.startControl = new fabric.Control({
+            x: -0.5,
+            y: -0.5,
+            offsetY: -16,
+            offsetX: -16,
+            cursorStyle: 'pointer',
+            mouseUpHandler: (eventData, transform) => {
+                callback();
+            },
+            render: function (ctx, left, top, styleOverride, fabricObject) {
+                let checkStartImg = document.createElement('img');
+                checkStartImg.src = 'img/circle-check-regular.svg';
+                checkStartImg.style.borderRadius = '1000px';
+                checkStartImg.style.backgroundColor = 'lightgreen';
+                let size = this.cornerSize;
+                ctx.save();
+                ctx.translate(left, top);
+                ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+                ctx.drawImage(checkStartImg, -size / 2, -size / 2, size, size);
+                ctx.restore();
+            },
+            cornerSize: 24
+        });
     }
 
 }
