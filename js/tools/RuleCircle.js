@@ -54,7 +54,7 @@ class RuleCircle extends Rule {
             radius: this.calculate(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2),
             top: newLineCoords.y1,
             left: newLineCoords.x1,
-        })
+        });
         this.canvas.requestRenderAll();
     }
 

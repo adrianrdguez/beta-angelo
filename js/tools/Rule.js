@@ -24,10 +24,10 @@ class Rule extends Tool {
         this.setDefaultObjectOptions(this.element.line);
         this.element.line.set({
             hasBorders: false,
-        })
+        });
         this.element.line.setControlsVisibility({
             mtr: false,
-        })
+        });
         this.element.line.startx[this.element.line.temp] = pointer.x;
         this.element.line.starty[this.element.line.temp] = pointer.y;
         this.canvas.add(this.element.line);
@@ -43,7 +43,7 @@ class Rule extends Tool {
             });
             this.element.line.endx[this.element.line.temp] = pointer.x;
             this.element.line.endy[this.element.line.temp] = pointer.y;
-            this.canvas.requestRenderAll()
+            this.canvas.requestRenderAll();
         }
     }
 
@@ -115,13 +115,13 @@ class Rule extends Tool {
         this.element.pointer1?.set({
             top: newLineCoords.y1,
             left: newLineCoords.x1
-        })
+        });
         this.element.pointer2?.set({
             top: newLineCoords.y2,
             left: newLineCoords.x2
-        })
-        this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2)
-        console.log("startx", this.element.line.startx)
+        });
+        this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2);
+        console.log("startx", this.element.line.startx);
     }
 
     lineFollowPointers() {
@@ -130,8 +130,8 @@ class Rule extends Tool {
             y1: this.element.pointer1.top,
             x2: this.element.pointer2.left,
             y2: this.element.pointer2.top
-        })
-        this.setTextInTheMiddleOfLine(this.element.line.x1, this.element.line.y1, this.element.line.x2, this.element.line.y2)
+        });
+        this.setTextInTheMiddleOfLine(this.element.line.x1, this.element.line.y1, this.element.line.x2, this.element.line.y2);
         this.element.line.startx = this.element.pointer1.left;
         this.element.line.starty = this.element.pointer1.top;
         this.element.line.endx = this.element.pointer2.left;
@@ -140,8 +140,8 @@ class Rule extends Tool {
     }
 
     removePointers() {
-        this.canvas.remove(this.element.pointer1)
-        this.canvas.remove(this.element.pointer2)
+        this.canvas.remove(this.element.pointer1);
+        this.canvas.remove(this.element.pointer2);
         delete this.element.pointer1;
         delete this.element.pointer2;
         this.canvas.requestRenderAll();

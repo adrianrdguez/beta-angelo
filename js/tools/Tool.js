@@ -52,7 +52,8 @@ class Tool {
             mb: false,
             mr: false,
             mt: false,
-        })
+        });
+        this.setDeleteControl(object);
         // Descomentar para limitar los objetos a la imagen
         // object.clipPath = this.canvas.simulator.limitClipPathField;
         object.on('mousedown', this.objectMouseDownEvent);
@@ -61,29 +62,44 @@ class Tool {
 
     objectMouseDownEvent(event) {
         this.canvas.bringToFront(event.target);
-        let menu = document.getElementById('menu-1');
-        if (event.button === 2) {
-            this.canvas.remove(event.target);
-        } else if (event.button === 3) {
-            this.canvas.simulator.selectedElement = event.target;
-            const menuWidth = menu.offsetWidth;
-            const menuHeight = menu.offsetHeight;
-            let pointX = event.pointer.x;
-            let pointY = event.pointer.y;
-            if (this.canvas.width - pointX <= menuWidth) {
-                pointX -= menuWidth;
-            }
-            if (this.canvas.height - pointY <= menuHeight) {
-                pointY -= menuHeight;
-            }
-            menu.style = `visibility: visible;left: ${pointX}px;top: ${pointY}px;z-index: 100;`;
-        } else {
-            menu.style = `visibility: hidden;left: 0;top: 0;z-index: -100;`;
-        }
+    }
+
+    setDeleteControl(object) {
+        object.controls.deleteControl = new fabric.Control({
+            x: 0.5,
+            y: -0.5,
+            offsetY: -16,
+            offsetX: 16,
+            cursorStyle: 'pointer',
+            mouseUpHandler: (eventData, transform) => {
+                let target = transform.target;
+                if (target?.element) {
+                    for (const [key, value] of Object.entries(target.element)) {
+                        this.canvas.remove(value);
+                    }
+                }
+                this.canvas.remove(target);
+                this.canvas.requestRenderAll();
+            },
+            render: function (ctx, left, top, styleOverride, fabricObject) {
+                let deleteImg = document.createElement('img');
+                deleteImg.src = 'img/circle-xmark-regular.svg';
+                deleteImg.style.width = '100%'
+                deleteImg.style.height = 'auto'
+                let size = this.cornerSize;
+                ctx.save();
+                ctx.translate(left, top);
+                ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+                ctx.drawImage(deleteImg, -size / 2, -size / 2, size, size);
+                ctx.restore();
+            },
+            cornerSize: 24
+        });
     }
 
     setActiveTool(toolName) {
         document.querySelectorAll('#herramientas .btn').forEach(li => li.classList.remove("active"));
+        document.getElementById('herramientas').classList.remove('show');
         document.getElementById(toolName)?.classList.add("active");
     }
 
