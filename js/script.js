@@ -47,7 +47,6 @@ class Simulator {
             document.getElementById('boton-herramientas').style.visibility = 'visible';
 
         }
-        //this.setCurrentTool(new Rule(this.canvas, true));
         this.setCurrentTool(new InitialRule(this.canvas, true));
         this.setCurrentTool(new Drag(this.canvas))
     }

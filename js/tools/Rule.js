@@ -38,6 +38,12 @@ class Rule extends Tool {
     startDrawingLine(event) {
         if (this.element.line) {
             let pointer = this.canvas.getPointer(event.e);
+            //Adding text to the rule while creating
+            let startX = this.element.line.startx[this.element.line.temp];
+            let startY = this.element.line.starty[this.element.line.temp];
+            let endX = this.element.line.endx[this.element.line.temp];
+            let endY = this.element.line.endy[this.element.line.temp];
+            this.setTextInTheMiddleOfLine(startX, startY, endX, endY);
             this.element.line.set({
                 x2: pointer.x,
                 y2: pointer.y
@@ -54,17 +60,6 @@ class Rule extends Tool {
 
     stopDrawingLine(event, first) {
         this.element.line.setCoords();
-        let startX = this.element.line.startx[this.element.line.temp];
-        let startY = this.element.line.starty[this.element.line.temp];
-        let endX = this.element.line.endx[this.element.line.temp];
-        let endY = this.element.line.endy[this.element.line.temp];
-        if (this.canvas.simulator.measure > 0) {
-            this.setTextInTheMiddleOfLine(startX, startY, endX, endY);
-        }
-        if (first) {
-            let px = this.calculate(startX, startY, endX, endY).toFixed(2);
-            this.canvas.simulator.firstLineMeasure = px;
-        }
         //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
         this.element.line.on('mousedblclick', () => this.addingControlPoints());
         this.element.line.on('moving', () => this.pointersFollowLine());

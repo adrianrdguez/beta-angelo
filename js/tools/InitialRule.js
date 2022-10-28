@@ -154,7 +154,10 @@ class InitialRule extends Rule {
         input.addEventListener("keyup", (event) => {
             if (event.key === "Enter") {
                 simulator.measure = document.getElementById('measure-input').value;
-                console.log(this.canvas.simulator)
+                console.log("simulator", this.canvas.line)
+                document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
+                document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
+                document.getElementById('boton-herramientas').style.visibility = 'visible';
             }
         })
     }
