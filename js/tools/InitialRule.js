@@ -2,7 +2,7 @@ class InitialRule extends Rule {
 
     constructor(canvas, first) {
         super(canvas)
-        this.element.line = this.createLine(200, 200, -200, -200, first)
+        this.element.line = this.createLine(100, 0, -100, 0, first)
     }
 
     createLine(x1, y1, x2, y2, first) {
@@ -28,6 +28,10 @@ class InitialRule extends Rule {
         })
         line.on('mousedblclick', () => this.addingControlPoints());
         line.on('moving', () => this.pointersFollowLine());
+        if (first) {
+            document.getElementsByClassName('wrapper')[0].style.visibility = 'visible';
+        }
+        console.log("simulator", this.canvas.simulator)
         return line;
     }
 
@@ -129,12 +133,29 @@ class InitialRule extends Rule {
         this.element.line.setCoords();
     }
 
+    calculate(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 * 1 - x1 * 1, 2) + Math.pow(y2 * 1 - y1 * 1, 2));
+    }
+
     removePointers() {
         this.canvas.remove(this.element.pointer1)
         this.canvas.remove(this.element.pointer2)
+        let px = this.calculate(this.element.pointer1.left, this.element.pointer1.top, this.element.pointer2.left, this.element.pointer2.top).toFixed(2);
+        this.canvas.simulator.firstLineMeasure = px;
         delete this.element.pointer1;
         delete this.element.pointer2;
         this.canvas.requestRenderAll();
         this.canvas.off('selection:cleared');
+        this.setUpMeasure();
+    }
+
+    setUpMeasure() {
+        const input = document.querySelector('input');
+        input.addEventListener("keyup", (event) => {
+            if (event.key === "Enter") {
+                simulator.measure = document.getElementById('measure-input').value;
+                console.log(this.canvas.simulator)
+            }
+        })
     }
 }

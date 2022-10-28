@@ -85,6 +85,7 @@ script.onload = function () {
 };
 script.onerror = function () {
     document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
+    document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
     let input = document.createElement('input');
     input.type = 'file';
     input.id = 'file';

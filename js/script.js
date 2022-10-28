@@ -38,7 +38,7 @@ class Simulator {
         });
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
-        document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
+        document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
         if (this.measure == undefined) {
             document.getElementById('boton-herramientas').style.visibility = 'hidden';
 
@@ -47,9 +47,9 @@ class Simulator {
             document.getElementById('boton-herramientas').style.visibility = 'visible';
 
         }
-        this.setCurrentTool(new Rule(this.canvas, true));
-        //this.setCurrentTool(new InitialRule(this.canvas, true));
-        //this.setCurrentTool(new Drag(this.canvas))
+        //this.setCurrentTool(new Rule(this.canvas, true));
+        this.setCurrentTool(new InitialRule(this.canvas, true));
+        this.setCurrentTool(new Drag(this.canvas))
     }
 
     init() {

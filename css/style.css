@@ -27,6 +27,36 @@ body {
     margin: 0 4px;
 }
 
+.wrapper {
+    position: absolute;
+    top: 820px !important;
+    left: 37% !important;
+    width: 450px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.wrapper .input-data input {
+    height: 100%;
+    width: 100%;
+    border: none;
+    font-size: 17px;
+    border-bottom: 2px solid silver;
+}
+
+.input-data input:focus~label {
+    transform: translateY(-20px);
+}
+
+.wrapper .input-data label {
+    position: absolute;
+    bottom: 35px;
+    left: 7%;
+    color: orange;
+    pointer-events: none;
+}
+
 .custom-container {
     display: flex;
     flex-direction: column;

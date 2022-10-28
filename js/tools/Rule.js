@@ -65,7 +65,6 @@ class Rule extends Tool {
             let px = this.calculate(startX, startY, endX, endY).toFixed(2);
             this.canvas.simulator.firstLineMeasure = px;
         }
-        console.log(this.canvas.simulator)
         //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
         this.element.line.on('mousedblclick', () => this.addingControlPoints());
         this.element.line.on('moving', () => this.pointersFollowLine());
@@ -104,7 +103,7 @@ class Rule extends Tool {
         let circle = new fabric.Circle({
             radius: this.canvas.freeDrawingBrush.width * 20,
             fill: this.canvas.freeDrawingBrush.color,
-            opacity: 0.5,
+            opacity: 0.15,
             top: top,
             left: left,
             originX: 'center',
