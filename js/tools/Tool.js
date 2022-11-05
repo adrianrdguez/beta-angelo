@@ -41,6 +41,8 @@ class Tool {
             cornerColor: '#f08080',
             transparentCorners: false,
             hasBorders: true,
+            fill: 'transparent',
+            absolutePositioned: true
         });
         object.controls.mtr.offsetY = -parseFloat(60);
         object.setControlsVisibility({
