@@ -29,8 +29,10 @@ body {
 
 .wrapper {
     position: absolute;
-    top: 820px !important;
-    left: 37% !important;
+    top: 90%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
     width: 450px;
     background: #fff;
     padding: 30px;
