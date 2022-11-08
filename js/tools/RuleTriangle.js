@@ -23,7 +23,6 @@ class RuleTriangle extends Rule {
             x2: (this.canvas.width / 2) + x2,
             y2: (this.canvas.height / 2) + y2
         });
-        console.log("line1", line);
         this.setDefaultObjectOptions(line);
         line.set({
             hasBorders: false,
@@ -112,20 +111,17 @@ class RuleTriangle extends Rule {
         let angle1 = Math.atan2(u[0], u[1]);
         let angle2 = Math.atan2(v[0], v[1]);
 
-        console.log('angles:', angle1 * 180 / Math.PI, angle2 * 180 / Math.PI);
 
         let angle = angle1 - angle2;
         angle = angle * 180 / Math.PI;
         if (angle < 0) {
-            console.log('hola');
             angle = -angle;
         }
         if (360 - angle < angle) {
-            console.log('adios');
             angle = 360 - angle;
         }
 
-        console.log('angle', angle);
+        console.log('angle3', angle);
     }
 
     getNewLineCoordinates() {
