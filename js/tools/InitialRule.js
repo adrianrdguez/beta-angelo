@@ -3,6 +3,8 @@ class InitialRule extends Rule {
     constructor(canvas, first) {
         super(canvas)
         this.element.line = this.createLine(100, 0, -100, 0, first)
+        this.addingControlPoints();
+        this.setUpMeasure();
     }
 
     createLine(x1, y1, x2, y2, first) {
@@ -31,12 +33,10 @@ class InitialRule extends Rule {
         if (first) {
             document.getElementsByClassName('wrapper')[0].style.visibility = 'visible';
         }
-        console.log("simulator", this.canvas.simulator)
         return line;
     }
 
     getNewLineCoordinates() {
-        console.log("line", this.element.line)
         let centerX = this.element.line.getCenterPoint().x;
         let centerY = this.element.line.getCenterPoint().y;
 
@@ -116,7 +116,6 @@ class InitialRule extends Rule {
             top: newLineCoords.y2,
             left: newLineCoords.x2
         })
-
     }
 
     lineFollowPointers() {
@@ -140,24 +139,25 @@ class InitialRule extends Rule {
     removePointers() {
         this.canvas.remove(this.element.pointer1)
         this.canvas.remove(this.element.pointer2)
-        let px = this.calculate(this.element.pointer1.left, this.element.pointer1.top, this.element.pointer2.left, this.element.pointer2.top).toFixed(2);
-        this.canvas.simulator.firstLineMeasure = px;
         delete this.element.pointer1;
         delete this.element.pointer2;
         this.canvas.requestRenderAll();
         this.canvas.off('selection:cleared');
-        this.setUpMeasure();
     }
 
     setUpMeasure() {
         const input = document.querySelector('input');
         input.addEventListener("keyup", (event) => {
             if (event.key === "Enter") {
+                let px = this.calculate(this.element.pointer1.left, this.element.pointer1.top, this.element.pointer2.left, this.element.pointer2.top).toFixed(2);
+                this.canvas.simulator.firstLineMeasure = px;
                 simulator.measure = document.getElementById('measure-input').value;
-                console.log("simulator", this.canvas.line)
                 document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
                 document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
                 document.getElementById('boton-herramientas').style.visibility = 'visible';
+                this.canvas.remove(this.element.line);
+                delete this.element.line;
+                this.removePointers();
             }
         })
     }
