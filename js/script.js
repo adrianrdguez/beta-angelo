@@ -38,7 +38,6 @@ class Simulator {
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
         if (this.measure == undefined) {
-            console.log('hola')
             document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
 
         }
