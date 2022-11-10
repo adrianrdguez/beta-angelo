@@ -27,10 +27,10 @@ export class Rule extends Tool {
         this.setDefaultObjectOptions(this.element.line);
         this.element.line.set({
             hasBorders: false,
-        })
+        });
         this.element.line.setControlsVisibility({
             mtr: false,
-        })
+        });
         this.element.line.startx[this.element.line.temp] = pointer.x;
         this.element.line.starty[this.element.line.temp] = pointer.y;
         this.canvas.add(this.element.line);
@@ -41,13 +41,19 @@ export class Rule extends Tool {
     startDrawingLine(event) {
         if (this.element.line) {
             let pointer = this.canvas.getPointer(event.e);
+            //Adding text to the rule while creating
+            let startX = this.element.line.startx[this.element.line.temp];
+            let startY = this.element.line.starty[this.element.line.temp];
+            let endX = this.element.line.endx[this.element.line.temp];
+            let endY = this.element.line.endy[this.element.line.temp];
+            this.setTextInTheMiddleOfLine(startX, startY, endX, endY);
             this.element.line.set({
                 x2: pointer.x,
                 y2: pointer.y
             });
             this.element.line.endx[this.element.line.temp] = pointer.x;
             this.element.line.endy[this.element.line.temp] = pointer.y;
-            this.canvas.requestRenderAll()
+            this.canvas.requestRenderAll();
         }
     }
 
@@ -57,18 +63,6 @@ export class Rule extends Tool {
 
     stopDrawingLine(event, first) {
         this.element.line.setCoords();
-        let startX = this.element.line.startx[this.element.line.temp];
-        let startY = this.element.line.starty[this.element.line.temp];
-        let endX = this.element.line.endx[this.element.line.temp];
-        let endY = this.element.line.endy[this.element.line.temp];
-        if (this.canvas.simulator.measure > 0) {
-            this.setTextInTheMiddleOfLine(startX, startY, endX, endY);
-        }
-        if (first) {
-            let px = this.calculate(startX, startY, endX, endY).toFixed(2);
-            this.canvas.simulator.firstLineMeasure = px;
-        }
-        console.log(this.canvas.simulator)
         //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
         this.element.line.on('mousedblclick', () => this.addingControlPoints());
         this.element.line.on('moving', () => this.pointersFollowLine());
@@ -107,7 +101,7 @@ export class Rule extends Tool {
         let circle = new fabric.Circle({
             radius: this.canvas.freeDrawingBrush.width * 20,
             fill: this.canvas.freeDrawingBrush.color,
-            opacity: 0.5,
+            opacity: 0.15,
             top: top,
             left: left,
             originX: 'center',
@@ -126,13 +120,13 @@ export class Rule extends Tool {
         this.element.pointer1?.set({
             top: newLineCoords.y1,
             left: newLineCoords.x1
-        })
+        });
         this.element.pointer2?.set({
             top: newLineCoords.y2,
             left: newLineCoords.x2
-        })
-        this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2)
-        console.log("startx", this.element.line.startx)
+        });
+        this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2);
+        console.log("startx", this.element.line.startx);
     }
 
     lineFollowPointers() {
@@ -141,8 +135,8 @@ export class Rule extends Tool {
             y1: this.element.pointer1.top,
             x2: this.element.pointer2.left,
             y2: this.element.pointer2.top
-        })
-        this.setTextInTheMiddleOfLine(this.element.line.x1, this.element.line.y1, this.element.line.x2, this.element.line.y2)
+        });
+        this.setTextInTheMiddleOfLine(this.element.line.x1, this.element.line.y1, this.element.line.x2, this.element.line.y2);
         this.element.line.startx = this.element.pointer1.left;
         this.element.line.starty = this.element.pointer1.top;
         this.element.line.endx = this.element.pointer2.left;
@@ -151,8 +145,8 @@ export class Rule extends Tool {
     }
 
     removePointers() {
-        this.canvas.remove(this.element.pointer1)
-        this.canvas.remove(this.element.pointer2)
+        this.canvas.remove(this.element.pointer1);
+        this.canvas.remove(this.element.pointer2);
         delete this.element.pointer1;
         delete this.element.pointer2;
         this.canvas.requestRenderAll();

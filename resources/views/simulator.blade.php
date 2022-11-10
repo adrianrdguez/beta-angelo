@@ -19,23 +19,28 @@
     <!-- Canvas -->
     <canvas id="simulator" data-img="img/radiografia.png"></canvas>
 
-    <!-- Menu contextual -->
-    <div id="menu-1" class="menu">
-        <div class="menu-li" id="remove-btn">
-            <i class="fa-solid fa-trash"></i> Borrar elemento
-        </div>
-    </div>
-
     <!-- Posicionamiento de los botones -->
     <div class="botones-flotantes">
-        <button class="btn btn-success rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#opciones"
+        <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#opciones"
             aria-controls="opciones">
             <i class="fa-solid fa-gear"></i>
         </button>
-        <button id="boton-herramientas" class="btn btn-success rounded-circle" data-bs-toggle="offcanvas"
-            data-bs-target="#herramientas" aria-controls="herramientas">
+        <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#implants"
+            aria-controls="implants">
+            <i class="fa-solid fa-bone"></i>
+        </button>
+        <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#herramientas"
+            aria-controls="herramientas">
             <i class="fa-solid fa-toolbox"></i>
         </button>
+    </div>
+
+    <!-- Input de las Medidas -->
+    <div class="wrapper">
+        <div class="input-data">
+            <input id="measure-input" type="text" class="measure-input">
+            <label>Medida</label>
+        </div>
     </div>
 
     <!-- Sidebar de herramientas -->
@@ -43,46 +48,48 @@
         aria-labelledby="herramientasLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="herramientasLabel"><b>HERRAMIENTAS</b></h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div class="row m-3">
-                <button id="drag" class="btn btn-outline-success"><i class="fa-solid fa-up-down-left-right"></i>
+                <button id="drag" class="btn btn-outline-warning"><i class="fa-solid fa-up-down-left-right"></i>
                     Mover</button>
             </div>
             <div class="row m-3">
-                <button id="rule" class="btn btn-outline-success"><i class="fa-solid fa-ruler"></i> Medir</button>
+                <button id="rule" class="btn btn-outline-warning"><i class="fa-solid fa-ruler"></i> Medir</button>
             </div>
             <div class="row m-3">
-                <button id="free-draw" class="btn btn-outline-success"><i class="fa-solid fa-paintbrush"></i>
+                <button id="free-draw" class="btn btn-outline-warning"><i class="fa-solid fa-paintbrush"></i>
                     Dibujar</button>
             </div>
             <div class="row m-3">
-                <button id="rule-circle" class="btn btn-outline-success"><i class="fa-solid fa-ruler-vertical"></i><i
+                <button id="rule-circle" class="btn btn-outline-warning"><i class="fa-solid fa-ruler-vertical"></i><i
                         class="fa-regular fa-circle"> </i> Nuevo círculo</button>
             </div>
             <div class="row m-3">
-                <button id="rule-triangle" class="btn btn-outline-success"><i class="fa-solid fa-ruler-vertical"> </i><i
+                <button id="rule-triangle" class="btn btn-outline-warning"><i class="fa-solid fa-ruler-vertical"> </i><i
                         class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</button>
             </div>
             <div class="row m-3">
-                <button id="free-cut" class="btn btn-outline-success"><i class="fa-solid fa-scissors"></i>
+                <button id="free-cut" class="btn btn-outline-warning"><i class="fa-solid fa-scissors"></i>
                     Cortar</button>
             </div>
         </div>
     </div>
 
     <!-- Sidebar de opciones de la herramienta -->
-    <div class="offcanvas offcanvas-start active" tabindex="-1" id="opciones" data-bs-scroll="true"
-        data-bs-backdrop="false" aria-labelledby="opcionesLabel">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="opciones" data-bs-scroll="true" data-bs-backdrop="false"
+        aria-labelledby="opcionesLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="opcionesLabel"><b>OPCIONES</b></h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div class="row m-3">
                 <input type="checkbox" class="btn-check" id="blackandwhite" autocomplete="off">
-                <label class="btn btn-outline-success" for="blackandwhite">Blanco y negro</label>
+                <label class="btn btn-outline-warning" for="blackandwhite">Blanco y negro</label>
             </div>
             <div class="row m-3 p-3">
                 <label for="customRange1" class="form-label">Tamaño del pincel</label>
@@ -110,11 +117,88 @@
                 </div>
             </div>
             <div class="row m-3">
-                Añadir Medida
-                <input id="measure-form" type="text" class="measure" placeholder="Milímetros">
+                <button id="reset-filters" class="btn btn-warning">Reiniciar filtros</button>
             </div>
-            <div class="row m-3">
-                <button id="reset-filters" class="btn btn-success">Reiniciar filtros</button>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="implants" data-bs-scroll="false"
+        data-bs-backdrop="false">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="implantsLabel"><b>IMPLANTES</b></h5>
+            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <select class="form-select mb-4" aria-label="Default select example">
+                <option value="1" selected>Distal radius plates</option>
+            </select>
+            <div class="row row-cols-1 row-cols-md-4 g-4">
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">07.15-R-1</h5>
+                        </div>
+                        <div class="card-body">
+                            <img src="img/07.15-R-1.png" class="card-img" alt="LPR1512">
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">07.15-R-2</h5>
+                        </div>
+                        <div class="card-body">
+                            <img src="img/07.15-R-2.png" class="card-img" alt="LPR1512">
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">07.35L-R-2</h5>
+                        </div>
+                        <div class="card-body">
+                            <img src="img/07.35L-R-2.png" class="card-img" alt="LPR1512">
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">07.35L-R-3</h5>
+                        </div>
+                        <div class="card-body">
+                            <img src="img/07.35L-R-3.png" class="card-img" alt="LPR1512">
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">07.35L-R-4</h5>
+                        </div>
+                        <div class="card-body">
+                            <img src="img/07.35L-R-4.png" class="card-img" alt="LPR1512">
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

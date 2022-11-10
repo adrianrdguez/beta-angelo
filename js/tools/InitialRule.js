@@ -2,7 +2,9 @@ class InitialRule extends Rule {
 
     constructor(canvas, first) {
         super(canvas)
-        this.element.line = this.createLine(200, 200, -200, -200, first)
+        this.element.line = this.createLine(100, 0, -100, 0, first)
+        this.addingControlPoints();
+        this.setUpMeasure();
     }
 
     createLine(x1, y1, x2, y2, first) {
@@ -28,11 +30,13 @@ class InitialRule extends Rule {
         })
         line.on('mousedblclick', () => this.addingControlPoints());
         line.on('moving', () => this.pointersFollowLine());
+        if (first) {
+            document.getElementsByClassName('wrapper')[0].style.visibility = 'visible';
+        }
         return line;
     }
 
     getNewLineCoordinates() {
-        console.log("line", this.element.line)
         let centerX = this.element.line.getCenterPoint().x;
         let centerY = this.element.line.getCenterPoint().y;
 
@@ -112,7 +116,6 @@ class InitialRule extends Rule {
             top: newLineCoords.y2,
             left: newLineCoords.x2
         })
-
     }
 
     lineFollowPointers() {
@@ -129,6 +132,10 @@ class InitialRule extends Rule {
         this.element.line.setCoords();
     }
 
+    calculate(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 * 1 - x1 * 1, 2) + Math.pow(y2 * 1 - y1 * 1, 2));
+    }
+
     removePointers() {
         this.canvas.remove(this.element.pointer1)
         this.canvas.remove(this.element.pointer2)
@@ -136,5 +143,21 @@ class InitialRule extends Rule {
         delete this.element.pointer2;
         this.canvas.requestRenderAll();
         this.canvas.off('selection:cleared');
+    }
+
+    setUpMeasure() {
+        const input = document.querySelector('input');
+        input.addEventListener("keyup", (event) => {
+            if (event.key === "Enter") {
+                let px = this.calculate(this.element.pointer1.left, this.element.pointer1.top, this.element.pointer2.left, this.element.pointer2.top).toFixed(2);
+                this.canvas.simulator.firstLineMeasure = px;
+                simulator.measure = document.getElementById('measure-input').value;
+                document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
+                document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
+                this.canvas.remove(this.element.line);
+                delete this.element.line;
+                this.removePointers();
+            }
+        })
     }
 }

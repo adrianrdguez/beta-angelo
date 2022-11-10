@@ -2,7 +2,7 @@ function readFile(file) {
     return new Promise((resolve, reject) => {
         let fr = new FileReader();
         fr.onload = () => {
-            resolve(fr.result)
+            resolve(fr.result);
         };
         fr.onerror = reject;
         fr.readAsDataURL(file);
@@ -70,7 +70,6 @@ async function loadStartCanvas(imgUploaded) {
                 }
                 applyFiltersToBackgroundImg(0, 0, false);
             }
-            //document.getElementsByClassName('measure-form')[0].style.visibility = 'visible';
             clearInterval(interval)
         }
     }, 0.5);
@@ -85,6 +84,7 @@ script.onload = function () {
 };
 script.onerror = function () {
     document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
+    document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
     let input = document.createElement('input');
     input.type = 'file';
     input.id = 'file';
