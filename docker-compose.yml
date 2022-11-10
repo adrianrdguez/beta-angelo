@@ -61,9 +61,9 @@ services:
             - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
 
 networks:
-  default:
-    name: WAN
-    external: true
+    default:
+        name: WAN
+        external: true
 
 volumes:
     sail-mariadb:
