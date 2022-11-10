@@ -56,7 +56,7 @@ class RuleTriangle extends Rule {
         let vertexBottomMiddleY2 = vertexBottomMiddleY1;
         this.element.line1 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexTopRightX, vertexTopRightY);
         this.element.line2 = this.createLine(vertexBottomMiddleX1, vertexBottomMiddleY1, vertexTopRightX, vertexTopRightY);
-        this.element.line3 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2);
+        this.element.line3 = this.createLine(vertexTopLeftX, vertexTopLeftY, vertexBottomMiddleX2, vertexBottomMiddleY2)
         this.getAngleBetweenLines(this.element.line1, this.element.line3);
         this.getAngleBetweenLines(this.element.line1, this.element.line2);
         this.getAngleBetweenLines(this.element.line2, this.element.line3, true);
@@ -231,9 +231,12 @@ class RuleTriangle extends Rule {
     }
 
     createOrUpdateText(text, line) {
+        let realMeasure = this.canvas.simulator.measure;
+        let firstLineMeasure = this.canvas.simulator.firstLineMeasure;
         let px = this.calculate(line.x1, line.y1, line.x2, line.y2).toFixed(2);
+        let mm = ((px * realMeasure) / firstLineMeasure).toFixed(2);
         if (!text) {
-            text = new fabric.Text(px, {
+            text = new fabric.Text(mm, {
                 fontSize: 12,
                 stroke: this.canvas.freeDrawingBrush.color,
                 fill: this.canvas.freeDrawingBrush.color
@@ -242,7 +245,7 @@ class RuleTriangle extends Rule {
             this.canvas.add(text);
         }
         text.set({
-            text: px,
+            text: mm + 'mm',
             left: line.x1 + ((line.x2 - line.x1) / 2),
             top: line.y1 + ((line.y2 - line.y1) / 2),
         });

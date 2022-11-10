@@ -3,6 +3,8 @@ class Simulator {
     radiographyUrl;
     limitClipPathField;
     currentTool;
+    measure;
+    firstLineMeasure;
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }
@@ -35,7 +37,12 @@ class Simulator {
         });
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
-        this.setCurrentTool(new Drag(this.canvas));
+        if (this.measure == undefined) {
+            document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
+
+        }
+        this.setCurrentTool(new InitialRule(this.canvas, true));
+        this.setCurrentTool(new Drag(this.canvas))
     }
 
     init() {

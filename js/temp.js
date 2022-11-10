@@ -50,6 +50,10 @@ async function loadStartCanvas(imgUploaded) {
             document.getElementById('pincelsize').onchange = function () {
                 simulator.canvas.currentTool.setBrushOptions();
             }
+            document.getElementById('measure-form').onchange = function () {
+                simulator.measure = document.getElementById("measure-form").value;
+                document.getElementById('boton-herramientas').style.visibility = 'visible';
+            }
             document.getElementById('reset-filters').onclick = () => {
                 let elements = document.getElementsByTagName('input');
                 for (const element of elements) {
@@ -64,8 +68,7 @@ async function loadStartCanvas(imgUploaded) {
                 }
                 applyFiltersToBackgroundImg(0, 0, false);
             }
-            document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
-            clearInterval(interval);
+            clearInterval(interval)
         }
     }, 0.5);
 
@@ -79,6 +82,7 @@ script.onload = function () {
 };
 script.onerror = function () {
     document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
+    document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
     let input = document.createElement('input');
     input.type = 'file';
     input.id = 'file';
