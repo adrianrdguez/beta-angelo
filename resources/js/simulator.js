@@ -2,7 +2,6 @@ import './fabric.js';
 import { Drag } from './tools/Drag.js';
 import { FreeCut } from './tools/FreeCut.js';
 import { FreeDraw } from './tools/FreeDraw.js';
-import { Implant } from './tools/Implant.js';
 import { Rule } from './tools/Rule.js';
 import { RuleCircle } from './tools/RuleCircle.js';
 import { RuleTriangle } from './tools/RuleTriangle.js';
