@@ -20,5 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('implantsTypes', [ImplantTypeController::class, 'indexApi']);
+Route::get('implantTypes', [ImplantTypeController::class, 'indexApi']);
 Route::get('implants', [ImplantController::class, 'indexApi']);
