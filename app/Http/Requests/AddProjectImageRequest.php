@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProjectImageRequest extends FormRequest
+class AddProjectImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,16 @@ class UpdateProjectImageRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100'
+            ],
+            'aboveViewImg' => [
+                'required',
+                'mimetypes:image/png,image/jpeg,image/jpg,image/svg',
+            ],
         ];
     }
 }

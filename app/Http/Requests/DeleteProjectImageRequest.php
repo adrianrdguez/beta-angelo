@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreImplantTypeRequest extends FormRequest
+class DeleteProjectImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,7 @@ class StoreImplantTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
-                'required',
-                'string',
-                'min:3',
-                'max:100'
-            ],
+            //
         ];
     }
 }

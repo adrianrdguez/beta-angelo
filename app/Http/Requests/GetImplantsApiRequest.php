@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\ImplantType;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
 class GetImplantsApiRequest extends FormRequest
@@ -27,9 +29,19 @@ class GetImplantsApiRequest extends FormRequest
     {
         return [
             'typeId' => [
+                'required',
                 'numeric',
                 Rule::exists(ImplantType::class),
             ],
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success'   => false,
+            'message'   => 'Validation errors',
+            'data'      => $validator->errors()
+        ]));
     }
 }

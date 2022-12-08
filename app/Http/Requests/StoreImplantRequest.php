@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ImplantType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreImplantRequest extends FormRequest
 {
@@ -24,7 +26,36 @@ class StoreImplantRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100'
+            ],
+            'model' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100'
+            ],
+            'measureWidth' => [
+                'required',
+                'numeric',
+                'min:1',
+            ],
+            'implantTypeId' => [
+                'required',
+                'numeric',
+                Rule::exists(ImplantType::class),
+            ],
+            'lateralViewImg' => [
+                'required',
+                'mimetypes:image/png'
+            ],
+            'aboveViewImg' => [
+                'required',
+                'mimetypes:image/png'
+            ],
         ];
     }
 }

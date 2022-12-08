@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Implant;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateImplantRequest extends FormRequest
 {
@@ -24,7 +26,34 @@ class UpdateImplantRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'id' => [
+                'numeric',
+                Rule::exists(Implant::class),
+            ],
+            'name' => [
+                'string',
+                'min:3',
+                'max:100'
+            ],
+            'model' => [
+                'string',
+                'min:3',
+                'max:100'
+            ],
+            'measureWidth' => [
+                'numeric',
+                'min:1',
+            ],
+            'implantTypeId' => [
+                'numeric',
+                Rule::exists(ImplantType::class),
+            ],
+            'lateralViewImg' => [
+                'mimetypes:image/png'
+            ],
+            'aboveViewImg' => [
+                'mimetypes:image/png'
+            ],
         ];
     }
 }

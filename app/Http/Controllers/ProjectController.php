@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddProjectImageRequest;
+use App\Http\Requests\DeleteProjectImageRequest;
 use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 
@@ -91,7 +92,7 @@ class ProjectController extends Controller
         // retornar vista
     }
 
-    public function addImage(UpdateProjectImageRequest $request, Project $project)
+    public function addImage(AddProjectImageRequest $request, Project $project)
     {
         if ($request->hasFile('radiographyImg') && $request->file('radiographyImg')->isValid()) {
             $project->addMediaFromRequest('radiographyImg')->toMediaCollection('radiographies');
@@ -99,7 +100,7 @@ class ProjectController extends Controller
         // retornar vista
     }
 
-    public function removeImage(UpdateProjectImageRequest $request, Project $project)
+    public function removeImage(DeleteProjectImageRequest $request, Project $project)
     {
         // retornar vista
     }
