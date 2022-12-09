@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GetImplantsApiRequest;
 use App\Http\Requests\StoreImplantRequest;
 use App\Http\Requests\UpdateImplantRequest;
-use App\Http\Resources\ImplantCollection;
 use App\Http\Resources\ImplantResource;
 use App\Models\Implant;
 
@@ -18,7 +17,7 @@ class ImplantController extends Controller
      */
     public function index()
     {
-        // retornar vista paginada
+        return view('implant.index', ['implants' => Implant::paginate(25)]);
     }
 
     /**
@@ -41,7 +40,7 @@ class ImplantController extends Controller
      */
     public function create()
     {
-        // retornar vista
+        return view('implant.create');
     }
 
     /**
@@ -57,7 +56,7 @@ class ImplantController extends Controller
         $implant->save();
         $implant->addMediaFromRequest('lateralViewImg')->toMediaCollection('lateralView');
         $implant->addMediaFromRequest('aboveViewImg')->toMediaCollection('aboveView');
-        // retornar vista
+        return $this->index();
     }
 
     /**
@@ -68,7 +67,7 @@ class ImplantController extends Controller
      */
     public function show(Implant $implant)
     {
-        // retornar vista
+        return view('implant.show', ['implant' => $implant]);
     }
 
     /**
@@ -79,7 +78,7 @@ class ImplantController extends Controller
      */
     public function edit(Implant $implant)
     {
-        // retornar vista
+        return view('implant.edit', ['implant' => $implant]);
     }
 
     /**
@@ -99,7 +98,7 @@ class ImplantController extends Controller
         if ($request->hasFile('aboveViewImg') && $request->file('aboveViewImg')->isValid()) {
             $implant->addMediaFromRequest('aboveViewImg')->toMediaCollection('aboveView');
         }
-        // retornar vista
+        return $this->index();
     }
 
     /**
@@ -111,6 +110,6 @@ class ImplantController extends Controller
     public function destroy(Implant $implant)
     {
         $implant->delete();
-        // retornar vista
+        return $this->index();
     }
 }

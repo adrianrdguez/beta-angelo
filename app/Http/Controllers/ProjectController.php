@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddProjectImageRequest;
 use App\Http\Requests\DeleteProjectImageRequest;
+use App\Http\Requests\SimulatorProjectImageRequest;
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -17,7 +20,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        // retornar vista
+        $projects = Auth::user()->projects()->paginate();
+        return view('project.create', ['project' => $projects]);
     }
 
     /**
@@ -27,7 +31,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        // retornar vista
+        return view('project.create');
     }
 
     /**
@@ -41,7 +45,8 @@ class ProjectController extends Controller
         $project = new Project();
         $project->fill($request->validated());
         $project->save();
-        // retornar vista
+        Auth::user()->projects()->attach($project->id);
+        return $this->index();
     }
 
     /**
@@ -52,7 +57,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        // retornar vista
+        return view('project.show', ['project' => $project]);
     }
 
     /**
@@ -63,7 +68,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        // retornar vista
+        return view('project.edit', ['project' => $project]);
     }
 
     /**
@@ -77,7 +82,7 @@ class ProjectController extends Controller
     {
         $project->fill($request->validated());
         $project->save();
-        // retornar vista
+        return $this->index();
     }
 
     /**
@@ -89,19 +94,42 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $project->delete();
-        // retornar vista
+        return $this->index();
     }
 
     public function addImage(AddProjectImageRequest $request, Project $project)
     {
         if ($request->hasFile('radiographyImg') && $request->file('radiographyImg')->isValid()) {
-            $project->addMediaFromRequest('radiographyImg')->toMediaCollection('radiographies');
+            $project->addMediaFromRequest('radiographyImg')
+                ->usingName($request->name)
+                // ->withCustomProperties($request->validated())
+                ->toMediaCollection('radiographies');
         }
-        // retornar vista
+        return $this->index();
+    }
+
+    public function updateImageApi(UpdateProjectImageRequest $request, Project $project)
+    {
+        $media = $project->getMedia('radiographies')
+            ->firstWhere('id', $request->radiographyId);
+        foreach ($request->validated() as $key => $value) {
+            $media->setCustomProperty($key, $value);
+        }
+        return response('', 204)->json();
     }
 
     public function removeImage(DeleteProjectImageRequest $request, Project $project)
     {
-        // retornar vista
+        $project->getMedia('radiographies')
+            ->firstWhere('id', $request->radiographyId)
+            ->delete();
+        return $this->index();
+    }
+
+    public function simulator(SimulatorProjectImageRequest $request, Project $project)
+    {
+        $media = $project->getMedia('radiographies')
+            ->firstWhere('id', $request->radiographyId);
+        return view('simulator', ['media' => $media]);
     }
 }

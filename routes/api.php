@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ImplantController;
 use App\Http\Controllers\ImplantTypeController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,5 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('implantTypes', [ImplantTypeController::class, 'indexApi']);
-Route::get('implants', [ImplantController::class, 'indexApi']);
+Route::get('/implantTypes', [ImplantTypeController::class, 'indexApi']);
+Route::get('/implants', [ImplantController::class, 'indexApi']);
+Route::put('/project/{project}/image/{media}', [ProjectController::class, 'updateImageApi'])->name('updateProjectImage');

@@ -15,6 +15,14 @@ class Project extends Model implements HasMedia
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'race',
+        'weight',
+        'age',
+        'description',
+    ];
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('radiographies')

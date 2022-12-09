@@ -16,7 +16,7 @@ class ImplantTypeController extends Controller
      */
     public function index()
     {
-        // retornar vista
+        return view('implantType.index', ['implants' => ImplantType::paginate(25)]);
     }
 
     /**
@@ -37,7 +37,7 @@ class ImplantTypeController extends Controller
      */
     public function create()
     {
-        // retornar vista
+        return view('implantType.create');
     }
 
     /**
@@ -51,7 +51,7 @@ class ImplantTypeController extends Controller
         $implantType = new ImplantType();
         $implantType->fill($request->validated());
         $implantType->save();
-        // retornar vista
+        return $this->index();
     }
 
     /**
@@ -62,7 +62,7 @@ class ImplantTypeController extends Controller
      */
     public function show(ImplantType $implantType)
     {
-        // retornar vista
+        return view('implantType.show', ['implantType' => $implantType]);
     }
 
     /**
@@ -73,7 +73,7 @@ class ImplantTypeController extends Controller
      */
     public function edit(ImplantType $implantType)
     {
-        // retornar vista
+        return view('implantType.edit', ['implantType' => $implantType]);
     }
 
     /**
@@ -87,7 +87,7 @@ class ImplantTypeController extends Controller
     {
         $implantType->fill($request->validated());
         $implantType->save();
-        // retornar vista
+        return $this->index();
     }
 
     /**
@@ -98,6 +98,7 @@ class ImplantTypeController extends Controller
      */
     public function destroy(ImplantType $implantType)
     {
-        // retornar vista
+        $implantType->delete();
+        return $this->index();
     }
 }

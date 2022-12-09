@@ -11,6 +11,10 @@ class ImplantType extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+    ];
+
     public function implants()
     {
         return $this->hasMany(Implant::class);
