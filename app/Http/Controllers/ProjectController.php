@@ -46,7 +46,7 @@ class ProjectController extends Controller
         $project->fill($request->validated());
         $project->save();
         Auth::user()->projects()->attach($project->id);
-        return $this->index();
+        return redirect()->route('project.index');
     }
 
     /**
@@ -82,7 +82,7 @@ class ProjectController extends Controller
     {
         $project->fill($request->validated());
         $project->save();
-        return $this->index();
+        return redirect()->route('project.index');
     }
 
     /**
@@ -94,7 +94,7 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $project->delete();
-        return $this->index();
+        return redirect()->route('project.index');
     }
 
     public function addImage(AddProjectImageRequest $request, Project $project)
@@ -105,7 +105,7 @@ class ProjectController extends Controller
                 // ->withCustomProperties($request->validated())
                 ->toMediaCollection('radiographies');
         }
-        return $this->index();
+        return redirect()->route('project.show', $project->id);
     }
 
     public function updateImageApi(UpdateProjectImageRequest $request, Project $project)
@@ -123,7 +123,7 @@ class ProjectController extends Controller
         $project->getMedia('radiographies')
             ->firstWhere('id', $request->radiographyId)
             ->delete();
-        return $this->index();
+        return redirect()->route('project.show', $project->id);
     }
 
     public function simulator(SimulatorProjectImageRequest $request, Project $project)

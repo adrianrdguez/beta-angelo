@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Implant;
+use App\Models\ImplantType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -44,9 +45,9 @@ class UpdateImplantRequest extends FormRequest
                 'numeric',
                 'min:1',
             ],
-            'implantTypeId' => [
+            'implant_type_id' => [
                 'numeric',
-                Rule::exists(ImplantType::class),
+                Rule::exists(ImplantType::class, 'id'),
             ],
             'lateralViewImg' => [
                 'mimetypes:image/png'

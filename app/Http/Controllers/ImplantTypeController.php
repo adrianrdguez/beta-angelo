@@ -51,7 +51,7 @@ class ImplantTypeController extends Controller
         $implantType = new ImplantType();
         $implantType->fill($request->validated());
         $implantType->save();
-        return $this->index();
+        return redirect()->route('implantType.index');
     }
 
     /**
@@ -87,7 +87,7 @@ class ImplantTypeController extends Controller
     {
         $implantType->fill($request->validated());
         $implantType->save();
-        return $this->index();
+        return redirect()->route('implantType.index');
     }
 
     /**
@@ -99,6 +99,6 @@ class ImplantTypeController extends Controller
     public function destroy(ImplantType $implantType)
     {
         $implantType->delete();
-        return $this->index();
+        return redirect()->route('implantType.index');
     }
 }

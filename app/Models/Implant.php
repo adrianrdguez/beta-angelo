@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Implant extends Model
+class Implant extends Model implements HasMedia
 {
     use InteractsWithMedia;
     use HasFactory;
@@ -18,7 +19,7 @@ class Implant extends Model
         'name',
         'model',
         'measureWidth',
-        'implantTypeId',
+        'implant_type_id',
     ];
 
     public function registerMediaCollections(): void

@@ -56,7 +56,7 @@ class ImplantController extends Controller
         $implant->save();
         $implant->addMediaFromRequest('lateralViewImg')->toMediaCollection('lateralView');
         $implant->addMediaFromRequest('aboveViewImg')->toMediaCollection('aboveView');
-        return $this->index();
+        return redirect()->route('implant.index');
     }
 
     /**
@@ -98,7 +98,7 @@ class ImplantController extends Controller
         if ($request->hasFile('aboveViewImg') && $request->file('aboveViewImg')->isValid()) {
             $implant->addMediaFromRequest('aboveViewImg')->toMediaCollection('aboveView');
         }
-        return $this->index();
+        return redirect()->route('implant.index');
     }
 
     /**
@@ -110,6 +110,6 @@ class ImplantController extends Controller
     public function destroy(Implant $implant)
     {
         $implant->delete();
-        return $this->index();
+        return redirect()->route('implant.index');
     }
 }

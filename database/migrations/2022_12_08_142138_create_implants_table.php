@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->string('model', 100);
             $table->double('measureWidth');
-            $table->foreignId('implantTypeId')->constrained('implant_types')->cascadeOnDelete();
+            $table->foreignId('implant_type_id')->constrained('implant_types')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -43,10 +43,10 @@ class StoreImplantRequest extends FormRequest
                 'numeric',
                 'min:1',
             ],
-            'implantTypeId' => [
+            'implant_type_id' => [
                 'required',
                 'numeric',
-                Rule::exists(ImplantType::class),
+                Rule::exists(ImplantType::class, 'id'),
             ],
             'lateralViewImg' => [
                 'required',
