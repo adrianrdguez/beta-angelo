@@ -24,6 +24,12 @@ services:
             - redis
             - mailhog
 
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
+
     mariadb:
         image: 'mariadb:10'
         ports:
