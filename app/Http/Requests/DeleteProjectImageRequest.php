@@ -32,7 +32,7 @@ class DeleteProjectImageRequest extends FormRequest
             ],
             'radiographyId' => [
                 'numeric',
-                Rule::exists(Media::class),
+                Rule::exists(Media::class, 'id'),
             ],
         ];
     }

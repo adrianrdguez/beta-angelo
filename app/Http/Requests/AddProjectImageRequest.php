@@ -30,7 +30,7 @@ class AddProjectImageRequest extends FormRequest
                 'min:3',
                 'max:100'
             ],
-            'aboveViewImg' => [
+            'radiographyImg' => [
                 'required',
                 'mimetypes:image/png,image/jpeg,image/jpg,image/svg',
             ],

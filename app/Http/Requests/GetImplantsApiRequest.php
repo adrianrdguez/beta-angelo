@@ -31,7 +31,7 @@ class GetImplantsApiRequest extends FormRequest
             'typeId' => [
                 'required',
                 'numeric',
-                Rule::exists(ImplantType::class),
+                Rule::exists(ImplantType::class, 'id'),
             ],
         ];
     }

@@ -13,7 +13,17 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-jet-nav-link href="{{ route('project.index') }}" :active="request()->routeIs('project.index')">
-                        {{ __('Project') }}
+                        {{ __('Proyectos') }}
+                    </x-jet-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="{{ route('implant.index') }}" :active="request()->routeIs('implant.index')">
+                        {{ __('Implantes') }}
+                    </x-jet-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="{{ route('implantType.index') }}" :active="request()->routeIs('implantType.index')">
+                        {{ __('Tipos de Implante') }}
                     </x-jet-nav-link>
                 </div>
             </div>
