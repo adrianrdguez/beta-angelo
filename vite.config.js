@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/bootstrap.min.css',
                 'resources/css/app.css',
+                'node_modules/tw-elements/dist/js/index.min.js'
             ],
             refresh: [
                 ...refreshPaths,
