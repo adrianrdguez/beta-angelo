@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProjectController extends Controller
 {
@@ -126,10 +127,8 @@ class ProjectController extends Controller
         return redirect()->route('project.show', $project->id);
     }
 
-    public function simulator(SimulatorProjectImageRequest $request, Project $project)
+    public function simulator(SimulatorProjectImageRequest $request, Project $project, Media $media)
     {
-        $media = $project->getMedia('radiographies')
-            ->firstWhere('id', $request->radiographyId);
-        return view('simulator', ['media' => $media]);
+        return view('simulator', ['project' => $project, 'media' => $media]);
     }
 }

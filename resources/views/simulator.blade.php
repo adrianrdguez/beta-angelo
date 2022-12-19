@@ -17,7 +17,7 @@
 
 <body>
     <!-- Canvas -->
-    <canvas id="simulator" data-img="img/radiografia.png"></canvas>
+    <canvas id="simulator" data-img="{{$media->getUrl()}}"></canvas>
 
     <!-- Posicionamiento de los botones -->
     <div class="botones-flotantes">

@@ -29,7 +29,7 @@ class ImplantController extends Controller
     public function indexApi(GetImplantsApiRequest $request)
     {
         $implants = Implant::select()
-            ->where('typeId', $request->typeId)
+            ->where('implant_type_id', $request->implant_type_id)
             ->get();
         return ImplantResource::collection($implants);
     }
