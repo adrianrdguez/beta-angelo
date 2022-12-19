@@ -73,6 +73,10 @@
                         class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</button>
             </div>
             <div class="row m-3">
+                <button id="triangle-cut" class="btn btn-outline-warning"><i class="fa-solid fa-scissors"></i><i
+                        class="fa-solid fa-circle-nodes"></i> Nuevo corte triangular</button>
+            </div>
+            <div class="row m-3">
                 <button id="free-cut" class="btn btn-outline-warning"><i class="fa-solid fa-scissors"></i>
                     Cortar</button>
             </div>
