@@ -135,23 +135,12 @@
                 aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <select class="form-select mb-4" aria-label="Default select example">
-                <option value="1" selected>Distal radius plates</option>
+            <select class="form-select mb-4" id="implant-type-selector">
+                @foreach ($implantTypes as $implantType)
+                <option value="{{$implantType->id}}" {{$implantTypes->first()->id === $implantType->id ? 'selected' : ''}}>{{$implantType->name}}</option>
+                @endforeach
             </select>
-            <div class="row row-cols-1 row-cols-md-4 g-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.15-R-1</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.15-R-1.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
+            <div class="row row-cols-1 row-cols-md-4 g-4" id="implant-cards">
             </div>
         </div>
     </div>

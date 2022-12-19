@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreImplantTypeRequest;
 use App\Http\Requests\UpdateImplantTypeRequest;
-use App\Http\Resources\ImplantTypeResource;
 use App\Models\ImplantType;
 
 class ImplantTypeController extends Controller
@@ -17,17 +16,6 @@ class ImplantTypeController extends Controller
     public function index()
     {
         return view('implantType.index', ['implantTypes' => ImplantType::paginate(25)]);
-    }
-
-    /**
-     * Display a listing of the resource api.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function indexApi()
-    {
-        $implantTypes = ImplantType::all();
-        return ImplantTypeResource::collection($implantTypes);
     }
 
     /**

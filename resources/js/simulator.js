@@ -60,6 +60,9 @@ class Simulator {
 
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
+        this.updateImplants(document.getElementById('implant-type-selector').value);
+        document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
+        document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
         document.querySelectorAll('#implants .card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
@@ -118,6 +121,33 @@ class Simulator {
         });
         // Descomentar para limitar los objetos a la imagen
         // object.clipPath = this.limitClipPathField;
+    }
+
+    updateImplants(implant_type_id) {
+        fetch(`/api/implants?implant_type_id=${implant_type_id}`)
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('implant-cards').innerHTML = '';
+                result.data.forEach(implantType => {
+                    document.getElementById('implant-cards').innerHTML += `
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title" style="color: black;">${implantType.id} - ${implantType.name}</h5>
+                            </div>
+                            <div class="card-body">
+                                <img src="${implantType.lateralViewUrl}" class="card-img" alt="Lateral">
+                                <img src="${implantType.aboveViewUrl}" class="card-img" alt="Above">
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">${implantType.model} - ${implantType.measureWidth}mm</small>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+            })
+            .catch(error => console.log('error', error));
     }
 
 }

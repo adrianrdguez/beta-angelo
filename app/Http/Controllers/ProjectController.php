@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddProjectImageRequest;
-use App\Http\Requests\DeleteProjectImageRequest;
-use App\Http\Requests\SimulatorProjectImageRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\ImplantType;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -126,6 +125,6 @@ class ProjectController extends Controller
 
     public function simulator(Project $project, Media $media)
     {
-        return view('simulator', ['project' => $project, 'media' => $media]);
+        return view('simulator', ['project' => $project, 'media' => $media, 'implantTypes' => ImplantType::all()]);
     }
 }

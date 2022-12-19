@@ -21,6 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/implantTypes', [ImplantTypeController::class, 'indexApi']);
 Route::get('/implants', [ImplantController::class, 'indexApi']);
 Route::put('/project/{project}/image/{media}', [ProjectController::class, 'updateImageApi'])->name('updateProjectImage');
