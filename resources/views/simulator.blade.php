@@ -15,9 +15,10 @@
     @vite(['resources/js/bootstrap.bundle.min.js', 'resources/js/fontAwesome.2accd57d6d.js', 'resources/js/simulator.js', 'resources/js/app.js', 'resources/css/bootstrap.min.css', 'resources/css/app.css'])
 </head>
 
-<body>
+<body data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body">
     <!-- Canvas -->
-    <canvas id="simulator" data-img="{{$media->getUrl()}}"></canvas>
+    <canvas id="simulator" data-img="{{ $media->getUrl() }}" data-firstlinemeasurepx="{{ $media->getCustomProperty('firstLineMeasurePx') }}" data-firstlinemeasuremm="{{ $media->getCustomProperty('firstLineMeasureMm') }}">
+    </canvas>
 
     <!-- Posicionamiento de los botones -->
     <div class="botones-flotantes">
@@ -141,58 +142,6 @@
                         </div>
                         <div class="card-body">
                             <img src="img/07.15-R-1.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.15-R-2</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.15-R-2.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.35L-R-2</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.35L-R-2.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.35L-R-3</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.35L-R-3.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.35L-R-4</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.35L-R-4.png" class="card-img" alt="LPR1512">
                         </div>
                         <div class="card-footer">
                             <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>

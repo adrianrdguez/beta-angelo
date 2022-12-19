@@ -20,29 +20,29 @@
                     <!-- Name -->
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="name" value="{{ __('Nombre') }}" />
-                        <x-jet-input id="name" type="text" class="mt-1 block w-full" autocomplete="name" name="name" />
+                        <x-jet-input id="name" type="text" class="mt-1 block w-full" autocomplete="name" name="name" value="{{old('name')}}"/>
                         <x-jet-input-error for="name" class="mt-2" />
                     </div>
                     <!-- Name -->
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="race" value="{{ __('Raza') }}" />
-                        <x-jet-input id="race" type="text" class="mt-1 block w-full" autocomplete="race" name="race" />
+                        <x-jet-input id="race" type="text" class="mt-1 block w-full" autocomplete="race" name="race" value="{{old('race')}}"/>
                         <x-jet-input-error for="race" class="mt-2" />
                     </div>
                     <!-- Name -->
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="weight" value="{{ __('Peso') }}" />
-                        <x-jet-input id="weight" type="number" class="mt-1 block w-full" autocomplete="weight" name="weight" />
+                        <x-jet-input id="weight" type="number" class="mt-1 block w-full" autocomplete="weight" name="weight" value="{{old('weight')}}"/>
                         <x-jet-input-error for="weight" class="mt-2" />
                     </div>
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="age" value="{{ __('Edad') }}" />
-                        <x-jet-input id="age" type="number" class="mt-1 block w-full" autocomplete="age" name="age" />
+                        <x-jet-input id="age" type="number" class="mt-1 block w-full" autocomplete="age" name="age" value="{{old('age')}}"/>
                         <x-jet-input-error for="age" class="mt-2" />
                     </div>
                     <div class="col-span-6 sm:col-span-4 mb-4">
                         <x-jet-label for="description" value="{{ __('Descripcion') }}" />
-                        <x-jet-input id="description" type="text" class="mt-1 block w-full" autocomplete="description" name="description" />
+                        <x-jet-input id="description" type="text" class="mt-1 block w-full" autocomplete="description" name="description" value="{{old('description')}}"/>
                         <x-jet-input-error for="description" class="mt-2" />
                     </div>
                     <x-jet-button>

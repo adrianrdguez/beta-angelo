@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateProjectRequest extends FormRequest
 {
@@ -26,10 +24,6 @@ class UpdateProjectRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => [
-                'numeric',
-                Rule::exists(Project::class),
-            ],
             'name' => [
                 'string',
                 'min:3',

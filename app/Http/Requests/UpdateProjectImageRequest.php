@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
 class UpdateProjectImageRequest extends FormRequest
 {
@@ -26,14 +26,26 @@ class UpdateProjectImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => [
+            'firstLineMeasurePx' => [
                 'numeric',
-                Rule::exists(Project::class),
+                'min:0',
             ],
-            'radiographyId' => [
-                'numeric',
-                Rule::exists(Media::class, 'id'),
+            'firstLineMeasureMm' => [
+                'integer',
+                'min:0',
             ],
+            'canvasJson' => [
+                'json'
+            ]
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success'   => false,
+            'message'   => 'Validation errors',
+            'data'      => $validator->errors()
+        ]));
     }
 }

@@ -234,10 +234,10 @@ export class RuleTriangle extends Rule {
     }
 
     createOrUpdateText(text, line) {
-        let realMeasure = this.canvas.simulator.measure;
-        let firstLineMeasure = this.canvas.simulator.firstLineMeasure;
+        let firstLineMeasureMm = this.canvas.simulator.firstLineMeasureMm;
+        let firstLineMeasurePx = this.canvas.simulator.firstLineMeasurePx;
         let px = this.calculate(line.x1, line.y1, line.x2, line.y2).toFixed(2);
-        let mm = ((px * realMeasure) / firstLineMeasure).toFixed(2);
+        let mm = ((px * firstLineMeasureMm) / firstLineMeasurePx).toFixed(2);
         if (!text) {
             text = new fabric.Text(mm, {
                 fontSize: 12,

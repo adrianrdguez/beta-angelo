@@ -154,10 +154,10 @@ export class Rule extends Tool {
     }
 
     setTextInTheMiddleOfLine(x1, y1, x2, y2) {
-        let realMeasure = this.canvas.simulator.measure;
-        let firstLineMeasure = this.canvas.simulator.firstLineMeasure;
+        let realMeasure = this.canvas.simulator.firstLineMeasureMm;
+        let firstLineMeasurePx = this.canvas.simulator.firstLineMeasurePx;
         let px = this.calculate(x1, y1, x2, y2).toFixed(2);
-        let mm = ((px * realMeasure) / firstLineMeasure).toFixed(2);
+        let mm = ((px * realMeasure) / firstLineMeasurePx).toFixed(2);
         if (!this.element.text) {
             this.element.text = new fabric.Text(mm, {
                 fontSize: 12,

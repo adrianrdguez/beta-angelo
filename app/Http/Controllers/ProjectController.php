@@ -109,25 +109,22 @@ class ProjectController extends Controller
         return redirect()->route('project.show', $project->id);
     }
 
-    public function updateImageApi(UpdateProjectImageRequest $request, Project $project)
+    public function updateImageApi(UpdateProjectImageRequest $request, Project $project, Media $media)
     {
-        $media = $project->getMedia('radiographies')
-            ->firstWhere('id', $request->radiographyId);
         foreach ($request->validated() as $key => $value) {
             $media->setCustomProperty($key, $value);
         }
-        return response('', 204)->json();
+        $media->save();
+        return response()->json([], 204);
     }
 
-    public function removeImage(DeleteProjectImageRequest $request, Project $project)
+    public function removeImage(Project $project, Media $media)
     {
-        $project->getMedia('radiographies')
-            ->firstWhere('id', $request->radiographyId)
-            ->delete();
+        $media->delete();
         return redirect()->route('project.show', $project->id);
     }
 
-    public function simulator(SimulatorProjectImageRequest $request, Project $project, Media $media)
+    public function simulator(Project $project, Media $media)
     {
         return view('simulator', ['project' => $project, 'media' => $media]);
     }

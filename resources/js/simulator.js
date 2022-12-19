@@ -12,13 +12,15 @@ class Simulator {
     radiographyUrl;
     limitClipPathField;
     currentTool;
-    measure;
-    firstLineMeasure;
+    firstLineMeasurePx;
+    firstLineMeasureMm;
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }
 
     async initConstructor(radiographyUrl) {
+        this.firstLineMeasurePx = document.getElementById('simulator').dataset.firstlinemeasurepx ?? null;
+        this.firstLineMeasureMm = document.getElementById('simulator').dataset.firstlinemeasuremm ?? null;
         fabric.Object.prototype.objectCaching = false;
         this.canvas = new fabric.Canvas('simulator', {
             selection: false,
@@ -46,11 +48,12 @@ class Simulator {
         });
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
-        if (this.measure == undefined) {
+        if (!this.firstLineMeasureMm && !this.firstLineMeasurePx) {
             document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
-
+            this.setCurrentTool(new InitialRule(this.canvas, true));
+        } else {
+            document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
         }
-        this.setCurrentTool(new InitialRule(this.canvas, true));
         this.setCurrentTool(new Drag(this.canvas))
     }
 
