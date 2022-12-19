@@ -8,13 +8,19 @@
     <section class="overflow-hidden text-gray-700 ">
         <div class="container px-5 py-2 mx-auto lg:pt-12 lg:px-32">
             <div class="flex flex-wrap -m-1 md:-m-2">
-                <div class="flex flex-wrap w-1/3" style="cursor: pointer" data-bs-toggle="modal"
+                <div class="flex flex-wrap w-1/3 rounded-lg shadow-xl" style="cursor: pointer" data-bs-toggle="modal"
                     data-bs-target="#addImageModal">
-                    <div class="flex w-full p-1 md:p-2 block p-6 rounded-lg shadow-lg bg-white max-w-sm items-center">
-                        <div class="flex justify-center">
+                    <div class="flex w-full p-1 md:p-2"
+                        style="
+                    flex-direction: column;
+                    justify-content: space-between;">
+                        <div></div>
+                        <div class="flex
+                        justify-center">
                             <i class="fas fa-5x fa-plus-circle"></i>
                         </div>
-                        <h2 class="text-lg font-medium text-gray-900 title-font mb-2">Add new project image</h2>
+                        <h2 class="text-lg font-medium text-gray-900 title-font mb-2" style="text-align: center;">
+                            Add new project image</h2>
                     </div>
                 </div>
                 @foreach ($project->getMedia('radiographies') as $image)
