@@ -17,7 +17,7 @@
 
 <body>
     <!-- Canvas -->
-    <canvas id="simulator" data-img="{{$media->getUrl()}}"></canvas>
+    <canvas id="simulator" data-img="{{ $media->getUrl() }}"></canvas>
 
     <!-- Posicionamiento de los botones -->
     <div class="botones-flotantes">
@@ -70,6 +70,10 @@
             <div class="row m-3">
                 <button id="rule-triangle" class="btn btn-outline-warning"><i class="fa-solid fa-ruler-vertical"> </i><i
                         class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</button>
+            </div>
+            <div class="row m-3">
+                <button id="triangle-cut" class="btn btn-outline-warning"><i class="fa-solid fa-scissors"></i><i
+                        class="fa-solid fa-circle-nodes"></i> Nuevo corte triangular</button>
             </div>
             <div class="row m-3">
                 <button id="free-cut" class="btn btn-outline-warning"><i class="fa-solid fa-scissors"></i>
