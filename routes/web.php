@@ -33,7 +33,4 @@ Route::middleware([
     Route::post('/project/{project}/image', [ProjectController::class, 'addImage'])->name('addProjectImage');
     Route::delete('/project/{project}/image/{media}', [ProjectController::class, 'removeImage'])->name('removeProjectImage');
     Route::get('/project/{project}/image/{media}', [ProjectController::class, 'simulator'])->name('simulator');
-    Route::get('/simulator', function () {
-        return view('simulator');
-    })->name('simulator');
 });

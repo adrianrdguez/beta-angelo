@@ -24,12 +24,12 @@
                     </div>
                 </div>
                 @foreach ($project->getMedia('radiographies') as $image)
-                    <div class="flex flex-wrap w-1/3" style="cursor: pointer">
+                    <a class="block flex flex-wrap w-1/3" href="{{ route('simulator', ['project' => $project, 'media' => $image]) }}">
                         <div class="w-full p-1 md:p-2">
                             <img class="block object-cover object-center w-full h-full rounded-lg"
                                 src="{{ $image->getUrl('thumbnail') }}" alt="content">
                         </div>
-                    </div>
+                    </a>
                 @endforeach
             </div>
             <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreImplantRequest;
 use App\Http\Requests\UpdateImplantRequest;
 use App\Http\Resources\ImplantResource;
 use App\Models\Implant;
+use App\Models\ImplantType;
 
 class ImplantController extends Controller
 {
@@ -28,7 +29,7 @@ class ImplantController extends Controller
     public function indexApi(GetImplantsApiRequest $request)
     {
         $implants = Implant::select()
-            ->where('typeId', $request->typeId)
+            ->where('implant_type_id', $request->implant_type_id)
             ->get();
         return ImplantResource::collection($implants);
     }
@@ -40,7 +41,7 @@ class ImplantController extends Controller
      */
     public function create()
     {
-        return view('implant.create');
+        return view('implant.create', ['implantTypes' => ImplantType::all()]);
     }
 
     /**
@@ -78,7 +79,7 @@ class ImplantController extends Controller
      */
     public function edit(Implant $implant)
     {
-        return view('implant.edit', ['implant' => $implant]);
+        return view('implant.edit', ['implant' => $implant, 'implantTypes' => ImplantType::all()]);
     }
 
     /**
