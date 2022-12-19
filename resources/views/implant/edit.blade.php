@@ -35,7 +35,11 @@
                     </div>
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="implant_type_id" value="{{ __('Tipo') }}" />
-                        <x-jet-input id="implant_type_id" type="text" class="mt-1 block w-full" autocomplete="implant_type_id" name="implant_type_id" value="{{ $implant->implant_type_id }}" />
+                        <select name="implant_type_id" id="implant_type_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                            @foreach ($implantTypes as $implantType)
+                            <option value="{{$implantType->id}}" {{ $implant->implant_type_id === $implantType->id ? 'selected' : ''}}>{{$implantType->name}}</option>
+                            @endforeach
+                        </select>
                         <x-jet-input-error for="implant_type_id" class="mt-2" />
                     </div>
                     <div class="col-span-6 sm:col-span-4">
