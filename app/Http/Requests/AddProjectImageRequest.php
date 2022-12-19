@@ -32,7 +32,8 @@ class AddProjectImageRequest extends FormRequest
             ],
             'radiographyImg' => [
                 'required',
-                'mimetypes:image/png,image/jpeg,image/jpg,image/svg',
+                'file',
+                'mimes:jpeg,png,jpg,svg',
             ],
         ];
     }
