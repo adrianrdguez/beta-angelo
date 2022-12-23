@@ -83,7 +83,7 @@ export class Tool {
             },
             render: function (ctx, left, top, styleOverride, fabricObject) {
                 let deleteImg = document.createElement('img');
-                deleteImg.src = 'img/circle-xmark-regular.svg';
+                deleteImg.src = '/img/circle-xmark-regular.svg';
                 deleteImg.style.width = '100%'
                 deleteImg.style.height = 'auto'
                 let size = this.cornerSize;
