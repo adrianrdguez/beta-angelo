@@ -9,9 +9,6 @@ export class TriangleCut extends RuleTriangle {
 
   createTriangle() {
     super.createTriangle();
-    this.element.line3.set({
-      stroke: 'blue',
-    });
   }
 
   addingControlPoints() {
@@ -45,6 +42,14 @@ export class TriangleCut extends RuleTriangle {
       this.element.pointer4.off('moving');
       this.element.pointer4.on('moving', () => this.pointer4Movement());
       this.element.pointer4.on('mousedblclick', () => this.finishCutPath());
+      this.element.triangleShadow = new fabric.Polygon([
+        { x: this.element.line1.x1, y: this.element.line1.y1 },
+        { x: this.element.line1.x2, y: this.element.line1.y2 },
+        { x: this.element.line3.x2, y: this.element.line3.y2 },
+      ]);
+      this.canvas.add(this.element.triangleShadow);
+      this.canvas.moveTo(this.element.triangleShadow, 1);
+      this.canvas.simulator.setBackgroundOptions(this.element.triangleShadow);
       this.canvas.discardActiveObject();
       this.canvas.requestRenderAll();
     }
@@ -107,6 +112,7 @@ export class TriangleCut extends RuleTriangle {
     this.canvas.add(imgCut);
     this.setDefaultObjectOptions(imgCut);
     this.element.imgCut = imgCut;
+    this.element.imgCut.rotate(this.getAngleBetweenLines(this.element.line2, this.element.line3, true));
     this.element.imgShadow = imgShadow;
     this.canvas.requestRenderAll();
   }
@@ -122,14 +128,6 @@ export class TriangleCut extends RuleTriangle {
     })
     let cutPath = new fabric.Polygon(this.cutPath);
     this.cutTrianglePath(cutPath);
-    this.element.triangleShadow = new fabric.Polygon([
-      { x: this.element.line1.x1, y: this.element.line1.y1 },
-      { x: this.element.line1.x2, y: this.element.line1.y2 },
-      { x: this.element.line3.x2, y: this.element.line3.y2 },
-    ]);
-    this.canvas.add(this.element.triangleShadow);
-    this.canvas.moveTo(this.element.triangleShadow, 1);
-    this.canvas.simulator.setBackgroundOptions(this.element.triangleShadow);
     this.canvas.simulator.setBackgroundOptions(this.element.line1);
     this.canvas.simulator.setBackgroundOptions(this.element.line2);
     this.canvas.simulator.setBackgroundOptions(this.element.line3);
