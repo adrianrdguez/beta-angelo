@@ -32,12 +32,12 @@
                     <!-- Name -->
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="weight" value="{{ __('Peso') }}" />
-                        <x-jet-input id="weight" type="number" class="mt-1 block w-full" autocomplete="weight" name="weight" value="{{old('weight')}}"/>
+                        <x-jet-input id="weight" type="number" step="0.01" class="mt-1 block w-full" autocomplete="weight" name="weight" value="{{old('weight')}}"/>
                         <x-jet-input-error for="weight" class="mt-2" />
                     </div>
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="age" value="{{ __('Edad') }}" />
-                        <x-jet-input id="age" type="number" class="mt-1 block w-full" autocomplete="age" name="age" value="{{old('age')}}"/>
+                        <x-jet-input id="age" type="number" step="0.01" class="mt-1 block w-full" autocomplete="age" name="age" value="{{old('age')}}"/>
                         <x-jet-input-error for="age" class="mt-2" />
                     </div>
                     <div class="col-span-6 sm:col-span-4 mb-4">

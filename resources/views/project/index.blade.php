@@ -23,7 +23,7 @@
             @if ($projects->count() === 0)
                 <span>No hay registros.</span>
             @else
-                <div class="grid grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     @foreach ($projects as $project)
                         <a href="{{ route('project.show', $project->id) }}">
                             <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center hover:bg-gray-50">
