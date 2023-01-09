@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateImplantRequest;
 use App\Http\Resources\ImplantResource;
 use App\Models\Implant;
 use App\Models\ImplantType;
+use Illuminate\Http\UploadedFile;
+use Spatie\Image\Image;
 
 class ImplantController extends Controller
 {
@@ -55,8 +57,8 @@ class ImplantController extends Controller
         $implant = new Implant();
         $implant->fill($request->validated());
         $implant->save();
-        $implant->addMediaFromRequest('lateralViewImg')->toMediaCollection('lateralView');
-        $implant->addMediaFromRequest('aboveViewImg')->toMediaCollection('aboveView');
+        $implant->addMedia($this->getHorizontalImg($request->lateralViewImg))->toMediaCollection('lateralView');
+        $implant->addMedia($this->getHorizontalImg($request->aboveViewImg))->toMediaCollection('aboveView');
         return redirect()->route('implant.index');
     }
 
@@ -94,10 +96,10 @@ class ImplantController extends Controller
         $implant->fill($request->validated());
         $implant->save();
         if ($request->hasFile('lateralViewImg') && $request->file('lateralViewImg')->isValid()) {
-            $implant->addMediaFromRequest('lateralViewImg')->toMediaCollection('lateralView');
+            $implant->addMedia($this->getHorizontalImg($request->lateralViewImg))->toMediaCollection('lateralView');
         }
         if ($request->hasFile('aboveViewImg') && $request->file('aboveViewImg')->isValid()) {
-            $implant->addMediaFromRequest('aboveViewImg')->toMediaCollection('aboveView');
+            $implant->addMedia($this->getHorizontalImg($request->aboveViewImg))->toMediaCollection('aboveView');
         }
         return redirect()->route('implant.index');
     }
@@ -112,5 +114,30 @@ class ImplantController extends Controller
     {
         $implant->delete();
         return redirect()->route('implant.index');
+    }
+
+    private function getHorizontalImg(UploadedFile $file)
+    {
+        $imgDimensions = $this->getDimensions($file);
+        if ($imgDimensions[1] > $imgDimensions[0]) {
+            $image = imagecreatefrompng($file->getPathname());
+            imagealphablending($image, false);
+            imagesavealpha($image, true);
+            $img = imagerotate($image, 90, imageColorAllocateAlpha($image, 0, 0, 0, 127));
+            imagealphablending($img, false);
+            imagesavealpha($img, true);
+            imagepng($img, $file->getPathname());
+        }
+        return $file;
+    }
+
+    private function getDimensions(UploadedFile $file): array
+    {
+        try {
+            $image = Image::load($file->getPathname());
+            return [$image->getWidth(), $image->getHeight()];
+        } catch (\Throwable $e) {
+            return [null, null];
+        }
     }
 }

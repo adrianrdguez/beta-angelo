@@ -62,7 +62,6 @@ class Simulator {
         window.onresize = () => this.setCanvasSize(this.canvas);
         this.updateImplants(document.getElementById('implant-type-selector').value);
         document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
-        document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
         document.querySelectorAll('#implants .card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
