@@ -62,7 +62,7 @@ class Simulator {
         window.onresize = () => this.setCanvasSize(this.canvas);
         this.updateImplants(document.getElementById('implant-type-selector').value);
         document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
-        document.querySelectorAll('#implants .card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
+        document.querySelectorAll('#implant-cards').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
         document.getElementById('rule-triangle').addEventListener('click', () => this.setCurrentTool(new RuleTriangle(this.canvas)));
@@ -83,6 +83,7 @@ class Simulator {
     async addImplantObject(element) {
         let img = await this.loadImageFromUrl(element.querySelector('img').src);
         this.canvas.add(img);
+        img.set('width', (25.6 * this.firstLineMeasurePx) / this.firstLineMeasureMm);
         img.center();
         this.canvas.currentTool.setDefaultObjectOptions(img);
         this.canvas.requestRenderAll();
@@ -135,7 +136,6 @@ class Simulator {
                                 <h5 class="card-title" style="color: black;">${implantType.id} - ${implantType.name}</h5>
                             </div>
                             <div class="card-body">
-                                <img src="${implantType.lateralViewUrl}" class="card-img" alt="Lateral">
                                 <img src="${implantType.aboveViewUrl}" class="card-img" alt="Above">
                             </div>
                             <div class="card-footer">

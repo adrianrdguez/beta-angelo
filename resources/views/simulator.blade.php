@@ -17,7 +17,9 @@
 
 <body data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body">
     <!-- Canvas -->
-    <canvas id="simulator" data-img="{{ $media->getUrl() }}" data-firstlinemeasurepx="{{ $media->getCustomProperty('firstLineMeasurePx') }}" data-firstlinemeasuremm="{{ $media->getCustomProperty('firstLineMeasureMm') }}">
+    <canvas id="simulator" data-img="{{ $media->getUrl() }}"
+        data-firstlinemeasurepx="{{ $media->getCustomProperty('firstLineMeasurePx') }}"
+        data-firstlinemeasuremm="{{ $media->getCustomProperty('firstLineMeasureMm') }}">
     </canvas>
 
     <!-- Posicionamiento de los botones -->
@@ -137,10 +139,43 @@
         <div class="offcanvas-body">
             <select class="form-select mb-4" id="implant-type-selector">
                 @foreach ($implantTypes as $implantType)
-                <option value="{{$implantType->id}}" {{$implantTypes->first()->id === $implantType->id ? 'selected' : ''}}>{{$implantType->name}}</option>
+                    <option value="{{ $implantType->id }}"
+                        {{ $implantTypes->first()->id === $implantType->id ? 'selected' : '' }}>{{ $implantType->name }}
+                    </option>
                 @endforeach
             </select>
             <div class="row row-cols-1 row-cols-md-4 g-4" id="implant-cards">
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-bottom h-48 w-50" tabindex="-1" id="implant-settings" data-bs-scroll="false"
+        data-bs-backdrop="false" style="margin: auto">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="opcionesLabel"><b>OPCIONES DEL IMPLANTE</b></h5>
+            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row">
+                <div class="col-md iluminacion-rangos">
+                    <div class="form-group">
+                        <label for="formControlRange">Iluminación</label>
+                        <input type="range" id="brightness" class="form-range custom-range" value="0"
+                            min="-1" max="1" step="0.003921">
+                    </div>
+                    <div class="form-group">
+                        <label for="formControlRange">Contraste</label>
+                        <input type="range" id="contrast" class="form-range custom-range" value="0"
+                            min="-1" max="1" step="0.003921">
+                    </div>
+                </div>
+            </div>
+            <div class="row m-3">
+                <button id="reset-filters" class="btn btn-warning">Rotar</button>
+            </div>
+            <div class="row m-3">
+                <button id="reset-filters" class="btn btn-warning">Reiniciar filtros</button>
             </div>
         </div>
     </div>
