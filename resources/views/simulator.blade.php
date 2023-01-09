@@ -28,8 +28,8 @@
             aria-controls="opciones">
             <i class="fa-solid fa-gear"></i>
         </button>
-        <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#implants"
-            aria-controls="implants">
+        <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#offcanvas-implants"
+            aria-controls="offcanvas-implants">
             <i class="fa-solid fa-bone"></i>
         </button>
         <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#herramientas"
@@ -129,7 +129,7 @@
         </div>
     </div>
 
-    <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="implants" data-bs-scroll="false"
+    <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="offcanvas-implants" data-bs-scroll="false"
         data-bs-backdrop="false">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="implantsLabel"><b>IMPLANTES</b></h5>
@@ -144,7 +144,7 @@
                     </option>
                 @endforeach
             </select>
-            <div class="row row-cols-1 row-cols-md-4 g-4" id="implant-cards">
+            <div class="row row-cols-1 row-cols-md-4 g-4" id="implants">
             </div>
         </div>
     </div>
@@ -158,21 +158,16 @@
         </div>
         <div class="offcanvas-body">
             <div class="row">
-                <div class="col-md iluminacion-rangos">
+                <div class="col-md transparencia-rangos">
                     <div class="form-group">
-                        <label for="formControlRange">Iluminación</label>
-                        <input type="range" id="brightness" class="form-range custom-range" value="0"
-                            min="-1" max="1" step="0.003921">
-                    </div>
-                    <div class="form-group">
-                        <label for="formControlRange">Contraste</label>
-                        <input type="range" id="contrast" class="form-range custom-range" value="0"
+                        <label for="formControlRange">Transparencia</label>
+                        <input type="range" id="opacity" class="form-range custom-range" value="0"
                             min="-1" max="1" step="0.003921">
                     </div>
                 </div>
             </div>
             <div class="row m-3">
-                <button id="reset-filters" class="btn btn-warning">Rotar</button>
+                <button id="rotate-implant" class="btn btn-warning">Rotar</button>
             </div>
             <div class="row m-3">
                 <button id="reset-filters" class="btn btn-warning">Reiniciar filtros</button>
