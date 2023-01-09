@@ -13,7 +13,6 @@ export class RuleTriangle extends Rule {
     }
 
     createLine(x1, y1, x2, y2) {
-        console.log(x1, y1, x2, y2);
         let line = new fabric.Line([0, 0, 0, 0], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
@@ -80,14 +79,6 @@ export class RuleTriangle extends Rule {
         }
         angle1 = angle1 * 180 / Math.PI;
         angle2 = angle2 * 180 / Math.PI;
-        /* 
-         if (angle1 < 0 && line180) {
-             angle1 += 180;
-         }
-         
-         if (angle2 < 0 && line180) {
-             angle2 += 180;
-         }*/
 
         let angle = angle1 - angle2;
         let angleReal = angle;
@@ -104,7 +95,7 @@ export class RuleTriangle extends Rule {
             angleReal = - angleReal;
         }
 
-        console.log("angle", angleReal);
+        return angleReal;
     }
 
     getAngleBetweenLines2(line1, line2) {
