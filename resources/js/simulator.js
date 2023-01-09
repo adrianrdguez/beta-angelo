@@ -62,7 +62,6 @@ class Simulator {
         window.onresize = () => this.setCanvasSize(this.canvas);
         this.updateImplants(document.getElementById('implant-type-selector').value);
         document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
-        document.querySelectorAll('#implants .card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
         document.getElementById('rule-triangle').addEventListener('click', () => this.setCurrentTool(new RuleTriangle(this.canvas)));
@@ -70,6 +69,8 @@ class Simulator {
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
+        document.getElementById('rotate-implant').addEventListener('click', () => this.rotateandFlipImplant());
+        document.getElementById('opacity').addEventListener('change', (e) => this.applyFiltersToImplant());
     }
 
     setCanvasSize(canvas) {
@@ -83,10 +84,51 @@ class Simulator {
     async addImplantObject(element) {
         let img = await this.loadImageFromUrl(element.querySelector('img').src);
         this.canvas.add(img);
+        img.scaleToWidth((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm);
         img.center();
+        img.on("selected", () => {
+            document.getElementById('implant-settings').classList.add('show');
+            document.getElementById('implant-settings').style.visibility = 'visible';
+            document.getElementById('implant-settings').setAttribute('arial-modal', 'true');
+            document.getElementById('implant-settings').setAttribute('role', 'dialog');
+        });
+        img.on("deselected", () => {
+            document.getElementById('implant-settings').classList.remove('show');
+            document.getElementById('implant-settings').style.visibility = 'hidden';
+            document.getElementById('implant-settings').removeAttribute('arial-modal');
+            document.getElementById('implant-settings').removeAttribute('role');
+            document.getElementById('implant-settings').setAttribute('aria-hidden', 'true');
+        });
         this.canvas.currentTool.setDefaultObjectOptions(img);
         this.canvas.requestRenderAll();
-        document.getElementById('implants').classList.remove('show');
+        document.getElementById('offcanvas-implants').classList.remove('show');
+    }
+
+    async rotateandFlipImplant() {
+        let activeObject = this.canvas.getActiveObject();
+        if (activeObject) {
+            if (activeObject.flipY) {
+                activeObject.set({
+                    flipY: false
+                });
+            } else {
+                activeObject.set({
+                    flipY: true
+                });
+            }
+            this.canvas.requestRenderAll();
+        }
+    }
+
+    async applyFiltersToImplant() {
+        let activeObject = this.canvas.getActiveObject();
+        if (activeObject) {
+            let opacity = document.getElementById('opacity').value;
+            activeObject.set({
+                opacity: opacity
+            });
+            this.canvas.requestRenderAll();
+        }
     }
 
     async loadImageFromUrl(image_url) {
@@ -126,29 +168,29 @@ class Simulator {
         fetch(`/api/implants?implant_type_id=${implant_type_id}`)
             .then(response => response.json())
             .then(result => {
-                document.getElementById('implant-cards').innerHTML = '';
-                result.data.forEach(implantType => {
-                    document.getElementById('implant-cards').innerHTML += `
+                document.getElementById('implants').innerHTML = '';
+                result.data.forEach(implant => {
+                    document.getElementById('implants').innerHTML += `
                     <div class="col">
-                        <div class="card h-100">
+                        <div class="card h-100" data-measure="${implant.measureWidth}">
                             <div class="card-header">
-                                <h5 class="card-title" style="color: black;">${implantType.id} - ${implantType.name}</h5>
+                                <h5 class="card-title" style="color: black;">${implant.id} - ${implant.name}</h5>
                             </div>
                             <div class="card-body">
-                                <img src="${implantType.lateralViewUrl}" class="card-img" alt="Lateral">
-                                <img src="${implantType.aboveViewUrl}" class="card-img" alt="Above">
+                                <img src="${implant.aboveViewUrl}" class="card-img" alt="Above">
                             </div>
                             <div class="card-footer">
-                                <small class="text-muted">${implantType.model} - ${implantType.measureWidth}mm</small>
+                                <small class="text-muted">${implant.model} - ${implant.measureWidth}mm</small>
                             </div>
                         </div>
                     </div>
                     `;
-                });
+                })
+            }).then(result => {
+                document.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
             })
             .catch(error => console.log('error', error));
     }
-
 }
 
 function applyFiltersToBackgroundImg(contrast = null, brightness = null, grayscale = null) {
