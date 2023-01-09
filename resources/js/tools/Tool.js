@@ -24,6 +24,19 @@ export class Tool {
         this.canvas.requestRenderAll();
         this.canvas.off();
         this.canvas.on('mouse:wheel', event => this.zoomToPoint(event));
+        this.canvas.on('touch:gesture', event => {
+            if (event.e.touches && event.e.touches.length === 2) {
+                if (event.self.state == "start") {
+                    this.canvas.zoomStartScale = this.canvas.getZoom();
+                }
+                let zoom = this.canvas.zoomStartScale * event.self.scale;
+                if (zoom > 20) zoom = 20;
+                if (zoom < 0.01) zoom = 0.01;
+                this.canvas.zoomToPoint({ x: event.self.x, y: event.self.y }, zoom);
+                event.e.preventDefault();
+                event.e.stopPropagation();
+            }
+        });
     }
 
     setDefaultObjectOptions(object) {
