@@ -6,19 +6,22 @@ import { Rule } from './tools/Rule.js';
 import { RuleCircle } from './tools/RuleCircle.js';
 import { RuleTriangle } from './tools/RuleTriangle.js';
 import { InitialRule } from './tools/InitialRule.js';
+import { TriangleCut } from './tools/TriangleCut.js';
 
 class Simulator {
     canvas;
     radiographyUrl;
     limitClipPathField;
     currentTool;
-    measure;
-    firstLineMeasure;
+    firstLineMeasurePx;
+    firstLineMeasureMm;
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }
 
     async initConstructor(radiographyUrl) {
+        this.firstLineMeasurePx = document.getElementById('simulator').dataset.firstlinemeasurepx ?? null;
+        this.firstLineMeasureMm = document.getElementById('simulator').dataset.firstlinemeasuremm ?? null;
         fabric.Object.prototype.objectCaching = false;
         this.canvas = new fabric.Canvas('simulator', {
             selection: false,
@@ -46,16 +49,19 @@ class Simulator {
         });
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
-        if (this.measure == undefined) {
+        if (!this.firstLineMeasureMm && !this.firstLineMeasurePx) {
             document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
-
+            this.setCurrentTool(new InitialRule(this.canvas, true));
+        } else {
+            document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
         }
-        this.setCurrentTool(new InitialRule(this.canvas, true));
         this.setCurrentTool(new Drag(this.canvas))
     }
 
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
+        this.updateImplants(document.getElementById('implant-type-selector').value);
+        document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
         document.querySelectorAll('#implants .card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
@@ -63,6 +69,7 @@ class Simulator {
         document.getElementById('free-draw').addEventListener('click', () => this.setCurrentTool(new FreeDraw(this.canvas)));
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
+        document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
     }
 
     setCanvasSize(canvas) {
@@ -113,6 +120,33 @@ class Simulator {
         });
         // Descomentar para limitar los objetos a la imagen
         // object.clipPath = this.limitClipPathField;
+    }
+
+    updateImplants(implant_type_id) {
+        fetch(`/api/implants?implant_type_id=${implant_type_id}`)
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('implant-cards').innerHTML = '';
+                result.data.forEach(implantType => {
+                    document.getElementById('implant-cards').innerHTML += `
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title" style="color: black;">${implantType.id} - ${implantType.name}</h5>
+                            </div>
+                            <div class="card-body">
+                                <img src="${implantType.lateralViewUrl}" class="card-img" alt="Lateral">
+                                <img src="${implantType.aboveViewUrl}" class="card-img" alt="Above">
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">${implantType.model} - ${implantType.measureWidth}mm</small>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+            })
+            .catch(error => console.log('error', error));
     }
 
 }

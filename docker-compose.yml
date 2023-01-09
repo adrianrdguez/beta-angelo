@@ -24,6 +24,12 @@ services:
             - redis
             - mailhog
 
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
+
     mariadb:
         image: 'mariadb:10'
         ports:
@@ -59,11 +65,6 @@ services:
         ports:
             - '${FORWARD_MAILHOG_PORT:-1025}:1025'
             - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
-
-networks:
-    default:
-        name: WAN
-        external: true
 
 volumes:
     sail-mariadb:

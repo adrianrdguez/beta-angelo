@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ImplantController;
+use App\Http\Controllers\ImplantTypeController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,19 +16,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-    Route::get('/simulator', function () {
-        return view('simulator');
-    })->name('simulator');
+    Route::get('/', function () {
+        return redirect(route('project.index'));
+    });
+    Route::get('/project', function () {
+        return view('project');
+    })->name('project');
+    Route::resource('/project', ProjectController::class);
+    Route::resource('/implant', ImplantController::class);
+    Route::resource('/implantType', ImplantTypeController::class);
+    Route::post('/project/{project}/image', [ProjectController::class, 'addImage'])->name('addProjectImage');
+    Route::delete('/project/{project}/image/{media}', [ProjectController::class, 'removeImage'])->name('removeProjectImage');
+    Route::get('/project/{project}/image/{media}', [ProjectController::class, 'simulator'])->name('simulator');
 });

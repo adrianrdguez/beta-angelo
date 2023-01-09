@@ -15,9 +15,10 @@
     @vite(['resources/js/bootstrap.bundle.min.js', 'resources/js/fontAwesome.2accd57d6d.js', 'resources/js/simulator.js', 'resources/js/app.js', 'resources/css/bootstrap.min.css', 'resources/css/app.css'])
 </head>
 
-<body>
+<body data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body">
     <!-- Canvas -->
-    <canvas id="simulator" data-img="img/radiografia.png"></canvas>
+    <canvas id="simulator" data-img="{{ $media->getUrl() }}" data-firstlinemeasurepx="{{ $media->getCustomProperty('firstLineMeasurePx') }}" data-firstlinemeasuremm="{{ $media->getCustomProperty('firstLineMeasureMm') }}">
+    </canvas>
 
     <!-- Posicionamiento de los botones -->
     <div class="botones-flotantes">
@@ -70,6 +71,10 @@
             <div class="row m-3">
                 <button id="rule-triangle" class="btn btn-outline-warning"><i class="fa-solid fa-ruler-vertical"> </i><i
                         class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</button>
+            </div>
+            <div class="row m-3">
+                <button id="triangle-cut" class="btn btn-outline-warning"><i class="fa-solid fa-scissors"></i><i
+                        class="fa-solid fa-circle-nodes"></i> Nuevo corte triangular</button>
             </div>
             <div class="row m-3">
                 <button id="free-cut" class="btn btn-outline-warning"><i class="fa-solid fa-scissors"></i>
@@ -130,75 +135,12 @@
                 aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <select class="form-select mb-4" aria-label="Default select example">
-                <option value="1" selected>Distal radius plates</option>
+            <select class="form-select mb-4" id="implant-type-selector">
+                @foreach ($implantTypes as $implantType)
+                <option value="{{$implantType->id}}" {{$implantTypes->first()->id === $implantType->id ? 'selected' : ''}}>{{$implantType->name}}</option>
+                @endforeach
             </select>
-            <div class="row row-cols-1 row-cols-md-4 g-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.15-R-1</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.15-R-1.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.15-R-2</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.15-R-2.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.35L-R-2</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.35L-R-2.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.35L-R-3</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.35L-R-3.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title">07.35L-R-4</h5>
-                        </div>
-                        <div class="card-body">
-                            <img src="img/07.35L-R-4.png" class="card-img" alt="LPR1512">
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">8 orificios - 10mm - Acero - Titanio</small>
-                        </div>
-                    </div>
-                </div>
+            <div class="row row-cols-1 row-cols-md-4 g-4" id="implant-cards">
             </div>
         </div>
     </div>

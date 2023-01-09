@@ -152,8 +152,23 @@ export class InitialRule extends Rule {
         input.addEventListener("keyup", (event) => {
             if (event.key === "Enter") {
                 let px = this.calculate(this.element.pointer1.left, this.element.pointer1.top, this.element.pointer2.left, this.element.pointer2.top).toFixed(2);
-                this.canvas.simulator.firstLineMeasure = px;
-                this.canvas.simulator.measure = document.getElementById('measure-input').value;
+                this.canvas.simulator.firstLineMeasurePx = px;
+                this.canvas.simulator.firstLineMeasureMm = document.getElementById('measure-input').value;
+                let body = JSON.stringify({
+                    "firstLineMeasurePx": this.canvas.simulator.firstLineMeasurePx,
+                    "firstLineMeasureMm": this.canvas.simulator.firstLineMeasureMm
+                });
+                let headers = new Headers();
+                headers.append("Content-Type", "application/json");
+                let requestOptions = {
+                    method: 'PUT',
+                    headers: headers,
+                    body: body
+                };
+                let projectId = document.getElementById('body').dataset.projectid;
+                let mediaId = document.getElementById('body').dataset.mediaid;
+                fetch(`/api/project/${projectId}/image/${mediaId}`, requestOptions)
+                    .catch(error => console.log('error', error));
                 document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
                 document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
                 this.canvas.remove(this.element.line);
