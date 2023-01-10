@@ -133,6 +133,12 @@
         data-bs-backdrop="false">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="implantsLabel"><b>IMPLANTES</b></h5>
+            <div class="flex items-center justify-center">
+                <div class="inline-flex shadow-md hover:shadow-lg focus:shadow-lg" role="group">
+                    <button type="button" id="frontalImplants" class="btn btn-warning">Frontal</button>
+                    <button type="button" id="lateralImplants" class="btn btn-warning">Lateral</button>
+                </div>
+            </div>
             <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
         </div>

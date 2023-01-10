@@ -71,6 +71,8 @@ class Simulator {
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
         document.getElementById('rotate-implant').addEventListener('click', () => this.rotateandFlipImplant());
         document.getElementById('opacity').addEventListener('change', (e) => this.applyFiltersToImplant());
+        document.getElementById('frontalImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, true));
+        document.getElementById('lateralImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, false));
     }
 
     setCanvasSize(canvas) {
@@ -164,7 +166,7 @@ class Simulator {
         // object.clipPath = this.limitClipPathField;
     }
 
-    updateImplants(implant_type_id) {
+    updateImplants(implant_type_id, view = true) {
         fetch(`/api/implants?implant_type_id=${implant_type_id}`)
             .then(response => response.json())
             .then(result => {
@@ -177,7 +179,7 @@ class Simulator {
                                 <h5 class="card-title" style="color: black;">${implant.id} - ${implant.name}</h5>
                             </div>
                             <div class="card-body">
-                                <img src="${implant.aboveViewUrl}" class="card-img" alt="Above">
+                                <img src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="card-img">
                             </div>
                             <div class="card-footer">
                                 <small class="text-muted">${implant.model} - ${implant.measureWidth}mm</small>
