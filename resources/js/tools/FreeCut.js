@@ -180,7 +180,7 @@ export class FreeCut extends Tool {
             },
             render: function (ctx, left, top, styleOverride, fabricObject) {
                 let checkStartImg = document.createElement('img');
-                checkStartImg.src = 'img/circle-check-regular.svg';
+                checkStartImg.src = '/img/circle-check-regular.svg';
                 checkStartImg.style.borderRadius = '1000px';
                 checkStartImg.style.backgroundColor = 'lightgreen';
                 let size = this.cornerSize;

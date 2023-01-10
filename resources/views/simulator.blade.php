@@ -175,9 +175,6 @@
             <div class="row m-3">
                 <button id="rotate-implant" class="btn btn-warning">Rotar</button>
             </div>
-            <div class="row m-3">
-                <button id="reset-filters" class="btn btn-warning">Reiniciar filtros</button>
-            </div>
         </div>
     </div>
 
