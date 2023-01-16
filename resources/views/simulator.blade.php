@@ -167,8 +167,8 @@
                 <div class="col-md transparencia-rangos">
                     <div class="form-group">
                         <label for="formControlRange">Transparencia</label>
-                        <input type="range" id="opacity" class="form-range custom-range" value="0"
-                            min="-1" max="1" step="0.003921">
+                        <input type="range" id="opacity" class="form-range custom-range" value="1"
+                            min="0" max="1" step="0.003921">
                     </div>
                 </div>
             </div>
