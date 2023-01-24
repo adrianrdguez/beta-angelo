@@ -17,7 +17,9 @@
 
 <body data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body">
     <!-- Canvas -->
-    <canvas id="simulator" data-img="{{ $media->getUrl() }}" data-firstlinemeasurepx="{{ $media->getCustomProperty('firstLineMeasurePx') }}" data-firstlinemeasuremm="{{ $media->getCustomProperty('firstLineMeasureMm') }}">
+    <canvas id="simulator" data-img="{{ $media->getUrl() }}"
+        data-firstlinemeasurepx="{{ $media->getCustomProperty('firstLineMeasurePx') }}"
+        data-firstlinemeasuremm="{{ $media->getCustomProperty('firstLineMeasureMm') }}">
     </canvas>
 
     <!-- Posicionamiento de los botones -->
@@ -26,8 +28,8 @@
             aria-controls="opciones">
             <i class="fa-solid fa-gear"></i>
         </button>
-        <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#implants"
-            aria-controls="implants">
+        <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#offcanvas-implants"
+            aria-controls="offcanvas-implants">
             <i class="fa-solid fa-bone"></i>
         </button>
         <button class="btn btn-warning rounded-circle" data-bs-toggle="offcanvas" data-bs-target="#herramientas"
@@ -127,20 +129,51 @@
         </div>
     </div>
 
-    <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="implants" data-bs-scroll="false"
+    <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="offcanvas-implants" data-bs-scroll="false"
         data-bs-backdrop="false">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="implantsLabel"><b>IMPLANTES</b></h5>
+            <div class="flex items-center justify-center">
+                <div class="inline-flex shadow-md hover:shadow-lg focus:shadow-lg" role="group">
+                    <button type="button" id="frontalImplants" class="btn btn-warning">Frontal</button>
+                    <button type="button" id="lateralImplants" class="btn btn-warning">Lateral</button>
+                </div>
+            </div>
             <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <select class="form-select mb-4" id="implant-type-selector">
                 @foreach ($implantTypes as $implantType)
-                <option value="{{$implantType->id}}" {{$implantTypes->first()->id === $implantType->id ? 'selected' : ''}}>{{$implantType->name}}</option>
+                    <option value="{{ $implantType->id }}"
+                        {{ $implantTypes->first()->id === $implantType->id ? 'selected' : '' }}>{{ $implantType->name }}
+                    </option>
                 @endforeach
             </select>
-            <div class="row row-cols-1 row-cols-md-4 g-4" id="implant-cards">
+            <div class="row row-cols-1 row-cols-md-4 g-4" id="implants">
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-bottom h-48 w-50" tabindex="-1" id="implant-settings" data-bs-scroll="false"
+        data-bs-backdrop="false" style="margin: auto">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="opcionesLabel"><b>OPCIONES DEL IMPLANTE</b></h5>
+            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row">
+                <div class="col-md transparencia-rangos">
+                    <div class="form-group">
+                        <label for="formControlRange">Transparencia</label>
+                        <input type="range" id="opacity" class="form-range custom-range" value="1"
+                            min="0" max="1" step="0.003921">
+                    </div>
+                </div>
+            </div>
+            <div class="row m-3">
+                <button id="rotate-implant" class="btn btn-warning">Rotar</button>
             </div>
         </div>
     </div>

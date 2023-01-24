@@ -14,26 +14,46 @@ export class Drag extends Tool {
         if (!event.target) {
             this.isDragging = true;
             event = event.e;
-            this.canvas.lastPosX = event.clientX;
-            this.canvas.lastPosY = event.clientY;
+            let coords = this.getClientCoords(event);
+            this.canvas.lastPosX = coords.clientX;
+            this.canvas.lastPosY = coords.clientY;
         }
     }
 
     dragScreen(event) {
         if (this.isDragging) {
-            let e = event.e;
-            let vpt = this.canvas.viewportTransform;
-            vpt[4] += e.clientX - this.canvas.lastPosX;
-            vpt[5] += e.clientY - this.canvas.lastPosY;
+            event = event.e;
+            let coords = this.getClientCoords(event);
+            this.canvas.viewportTransform[4] += coords.clientX - this.canvas.lastPosX;
+            this.canvas.viewportTransform[5] += coords.clientY - this.canvas.lastPosY;
             this.canvas.requestRenderAll();
-            this.canvas.lastPosX = e.clientX;
-            this.canvas.lastPosY = e.clientY;
+            this.canvas.lastPosX = coords.clientX;
+            this.canvas.lastPosY = coords.clientY;
         }
     }
 
     disableDraggingMode() {
         this.canvas.setViewportTransform(this.canvas.viewportTransform);
         this.isDragging = false;
+    }
+
+    getClientCoords(event) {
+        let clientX = this.canvas.lastPosX;
+        let clientY = this.canvas.lastPosY;
+        if (event.clientX) {
+            clientX = event.clientX;
+        }
+        if (event.clientY) {
+            clientY = event.clientY;
+        }
+        if (event.touches?.length > 0) {
+            clientX = event.touches[0].clientX;
+            clientY = event.touches[0].clientY;
+        }
+        return {
+            clientX: clientX,
+            clientY: clientY,
+        }
     }
 
 }

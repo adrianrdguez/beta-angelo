@@ -59,7 +59,7 @@
                                             class="flex items-center text-sm px-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap">
                                             <span class="mr-2"><i class="fa-solid fa-weight-scale"></i></span>
                                             @if (!empty($project->weight))
-                                                <span class="text-gray-600">{{ $project->weight }} g</span>
+                                                <span class="text-gray-600">{{ $project->weight }} kg</span>
                                             @else
                                                 No especificado.
                                             @endif
