@@ -12,7 +12,7 @@ class ImplantSubType extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'type',
+        'name',
     ];
 
     public function implants()
