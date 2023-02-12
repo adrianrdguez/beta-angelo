@@ -80,11 +80,15 @@
                                                 </td>
                                                 <td
                                                     class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                    <img class="w-20" src="{{ $implant->getFirstMedia('lateralView')->getUrl('thumbnail') }}" alt="">
+                                                    <img class="w-20"
+                                                        src="{{ $implant->getFirstMedia('lateralView') ? $implant->getFirstMedia('lateralView')->getUrl('thumbnail') : ' ' }}"
+                                                        alt="">
                                                 </td>
                                                 <td
                                                     class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                    <img class="w-20" src="{{ $implant->getFirstMedia('aboveView')->getUrl('thumbnail') }}" alt="">
+                                                    <img class="w-20"
+                                                        src="{{ $implant->getFirstMedia('aboveView') ? $implant->getFirstMedia('aboveView')->getUrl('thumbnail') : ' ' }}"
+                                                        alt="">
                                                 </td>
                                                 <td
                                                     class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
