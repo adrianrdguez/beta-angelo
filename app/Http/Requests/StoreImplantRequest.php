@@ -49,11 +49,13 @@ class StoreImplantRequest extends FormRequest
                 Rule::exists(ImplantType::class, 'id'),
             ],
             'lateralViewImg' => [
-                'required',
+                'required_without:aboveViewImg',
+                'nullable',
                 'mimetypes:image/png'
             ],
             'aboveViewImg' => [
-                'required',
+                'required_without:lateralViewImg',
+                'nullable',
                 'mimetypes:image/png'
             ],
         ];
