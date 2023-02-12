@@ -57,8 +57,12 @@ class ImplantController extends Controller
         $implant = new Implant();
         $implant->fill($request->validated());
         $implant->save();
-        $implant->addMedia($this->getHorizontalImg($request->lateralViewImg))->toMediaCollection('lateralView');
-        $implant->addMedia($this->getHorizontalImg($request->aboveViewImg))->toMediaCollection('aboveView');
+        if ($request->hasFile('lateralViewImg') && $request->file('lateralViewImg')->isValid()) {
+            $implant->addMedia($this->getHorizontalImg($request->lateralViewImg))->toMediaCollection('lateralView');
+        }
+        if ($request->hasFile('aboveViewImg') && $request->file('aboveViewImg')->isValid()) {
+            $implant->addMedia($this->getHorizontalImg($request->aboveViewImg))->toMediaCollection('aboveView');
+        }
         return redirect()->route('implant.index');
     }
 
