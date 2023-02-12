@@ -3,6 +3,7 @@
 use App\Http\Controllers\ImplantController;
 use App\Http\Controllers\ImplantTypeController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ImplantSubTypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,6 +31,7 @@ Route::middleware([
     Route::resource('/project', ProjectController::class);
     Route::resource('/implant', ImplantController::class);
     Route::resource('/implantType', ImplantTypeController::class);
+    Route::resource('/implantSubType', ImplantSubTypeController::class);
     Route::post('/project/{project}/image', [ProjectController::class, 'addImage'])->name('addProjectImage');
     Route::delete('/project/{project}/image/{media}', [ProjectController::class, 'removeImage'])->name('removeProjectImage');
     Route::get('/project/{project}/image/{media}', [ProjectController::class, 'simulator'])->name('simulator');
