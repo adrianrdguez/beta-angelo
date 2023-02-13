@@ -3,11 +3,11 @@ export class Tool {
     toolName;
     element;
     constructor(canvas, toolName = null) {
+        this.canvas = canvas;
         if (toolName) {
             this.toolName = toolName;
             this.setActiveTool(toolName);
         }
-        this.canvas = canvas;
         this.canvas.isDrawingMode = false;
         this.setBrushOptions();
     }
@@ -111,9 +111,9 @@ export class Tool {
     }
 
     setActiveTool(toolName) {
-        document.querySelectorAll('#herramientas .btn').forEach(li => li.classList.remove("active"));
-        document.getElementById('herramientas').classList.remove('show');
-        document.getElementById(toolName)?.classList.add("active");
+        document.querySelectorAll('#offcanvas-herramientas button').forEach(li => li.classList.remove('bg-yellow-500', 'text-black'));
+        this.canvas.simulator.offcanvasToggler('offcanvas-herramientas', false);
+        document.getElementById(toolName)?.classList.add('bg-yellow-500', 'text-black');
     }
 
     zoomToPoint(event) {

@@ -55,12 +55,16 @@ class Simulator {
         } else {
             document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
         }
-        this.setCurrentTool(new Drag(this.canvas))
+        this.setCurrentTool(new Drag(this.canvas));
     }
 
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
         this.updateImplants(document.getElementById('implant-type-selector').value);
+        document.querySelectorAll('.offcanvas .offcanvas-header button.btn-close').forEach((e) => e.addEventListener('click', () => this.closeAllCanvas()));
+        document.getElementById('button-offcanvas-opciones').addEventListener('click', () => this.offcanvasToggler('offcanvas-opciones'));
+        document.getElementById('button-offcanvas-implants').addEventListener('click', () => this.offcanvasToggler('offcanvas-implants'));
+        document.getElementById('button-offcanvas-herramientas').addEventListener('click', () => this.offcanvasToggler('offcanvas-herramientas'));
         document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
@@ -69,7 +73,7 @@ class Simulator {
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
-        document.getElementById('rotate-implant').addEventListener('click', () => this.rotateandFlipImplant());
+        document.getElementById('rotate-implant').addEventListener('click', () => this.rotateAndFlipImplant());
         document.getElementById('opacity').addEventListener('change', (e) => this.applyFiltersToImplant());
         document.getElementById('frontalImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, true));
         document.getElementById('lateralImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, false));
@@ -88,25 +92,17 @@ class Simulator {
         this.canvas.add(img);
         img.scaleToWidth((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm);
         img.center();
-        img.on("selected", () => {
-            document.getElementById('implant-settings').classList.add('show');
-            document.getElementById('implant-settings').style.visibility = 'visible';
-            document.getElementById('implant-settings').setAttribute('arial-modal', 'true');
-            document.getElementById('implant-settings').setAttribute('role', 'dialog');
-        });
-        img.on("deselected", () => {
-            document.getElementById('implant-settings').classList.remove('show');
-            document.getElementById('implant-settings').style.visibility = 'hidden';
-            document.getElementById('implant-settings').removeAttribute('arial-modal');
-            document.getElementById('implant-settings').removeAttribute('role');
-            document.getElementById('implant-settings').setAttribute('aria-hidden', 'true');
+        img.on("selected", () => this.offcanvasToggler('offcanvas-implants-settings', true));
+        img.on("deselected", () => this.offcanvasToggler('offcanvas-implants-settings', false));
+        img.on('selected', () => {
+            document.getElementById('opacity').value = img.opacity;
         });
         this.canvas.currentTool.setDefaultObjectOptions(img);
         this.canvas.requestRenderAll();
-        document.getElementById('offcanvas-implants').classList.remove('show');
+        this.offcanvasToggler('offcanvas-implants', false);
     }
 
-    async rotateandFlipImplant() {
+    async rotateAndFlipImplant() {
         let activeObject = this.canvas.getActiveObject();
         if (activeObject) {
             if (activeObject.flipY) {
@@ -173,17 +169,15 @@ class Simulator {
                 document.getElementById('implants').innerHTML = '';
                 result.data.forEach(implant => {
                     document.getElementById('implants').innerHTML += `
-                    <div class="col">
-                        <div class="card h-100" data-measure="${implant.measureWidth}">
-                            <div class="card-header">
-                                <h5 class="card-title" style="color: black;">${implant.id} - ${implant.name}</h5>
-                            </div>
-                            <div class="card-body">
-                                <img src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="card-img">
-                            </div>
-                            <div class="card-footer">
-                                <small class="text-muted">${implant.model} - ${implant.measureWidth}mm</small>
-                            </div>
+                    <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center card" data-measure="${implant.measureWidth}">
+                        <div class="py-3 px-6 border-b border-gray-300">
+                            <h5 style="color: black;">${implant.id} - ${implant.name}</h5>
+                        </div>
+                        <div class="p-6 h-40">
+                            <img src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="h-full w-full">
+                        </div>
+                        <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
+                            ${implant.model} - ${implant.measureWidth}mm
                         </div>
                     </div>
                     `;
@@ -192,6 +186,42 @@ class Simulator {
                 document.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
             })
             .catch(error => console.log('error', error));
+    }
+
+    offcanvasToggler(id, open = null) {
+        let offcanvas = document.getElementById(id);
+        if (open === null) {
+            if (offcanvas.classList.contains('show')) {
+                this.offcanvasToggler(id, false);
+            } else {
+                this.offcanvasToggler(id, true);
+            }
+        } else if (open) {
+            this.closeAllCanvas();
+            let body = document.getElementById('body');
+            body.style.overflow = 'hidden';
+            body.style.paddingRight = '0px';
+            offcanvas.style.visibility = 'visible';
+            offcanvas.classList.add('show');
+            offcanvas.removeAttribute('arial-hidden');
+            offcanvas.setAttribute('arial-modal', 'true');
+            offcanvas.setAttribute('role', 'dialog');
+        } else {
+            document.getElementById('body').removeAttribute('style');
+            offcanvas.classList.remove('show');
+            offcanvas.style.visibility = 'hidden';
+            offcanvas.removeAttribute('arial-modal');
+            offcanvas.removeAttribute('role');
+            offcanvas.setAttribute('arial-hidden', 'true');
+            document.querySelector('.offcanvas-backdrop')?.remove();
+        }
+    }
+
+    closeAllCanvas() {
+        let allOffcanvas = document.getElementsByClassName('offcanvas');
+        for (const offcanvas of allOffcanvas) {
+            this.offcanvasToggler(offcanvas.id, false);
+        }
     }
 }
 

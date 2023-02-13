@@ -126,7 +126,6 @@ export class Rule extends Tool {
             left: newLineCoords.x2
         });
         this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2);
-        console.log("startx", this.element.line.startx);
     }
 
     lineFollowPointers() {
