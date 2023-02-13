@@ -114,8 +114,6 @@ export class RuleTriangle extends Rule {
         if (360 - angle < angle) {
             angle = 360 - angle;
         }
-
-        console.log('angle3', angle);
     }
 
     getNewLineCoordinates() {

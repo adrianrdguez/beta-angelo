@@ -34,7 +34,6 @@ export class Rule extends Tool {
         this.element.line.startx[this.element.line.temp] = pointer.x;
         this.element.line.starty[this.element.line.temp] = pointer.y;
         this.canvas.add(this.element.line);
-        console.log("canvas", this.element.line)
         this.canvas.requestRenderAll();
     }
 
@@ -126,7 +125,6 @@ export class Rule extends Tool {
             left: newLineCoords.x2
         });
         this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2);
-        console.log("startx", this.element.line.startx);
     }
 
     lineFollowPointers() {
