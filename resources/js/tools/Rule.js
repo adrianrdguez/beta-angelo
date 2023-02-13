@@ -65,6 +65,7 @@ export class Rule extends Tool {
         //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
         this.element.line.on('mousedblclick', () => this.addingControlPoints());
         this.element.line.on('moving', () => this.pointersFollowLine());
+        console.log("canvas", this.canvas);
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
