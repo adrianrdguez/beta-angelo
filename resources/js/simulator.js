@@ -13,6 +13,7 @@ class Simulator {
     radiographyUrl;
     limitClipPathField;
     currentTool;
+    initialLine;
     firstLineMeasurePx;
     firstLineMeasureMm;
     constructor(radiographyUrl) {
@@ -50,16 +51,18 @@ class Simulator {
         this.setBackgroundOptions(img);
         this.canvas.simulator = this;
         if (!this.firstLineMeasureMm && !this.firstLineMeasurePx) {
-            document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'hidden';
+            document.getElementById('botones-flotantes').classList.add('invisible');
             this.setCurrentTool(new InitialRule(this.canvas, true));
         } else {
-            document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
+            this.closeAllCanvas();
         }
         this.setCurrentTool(new Drag(this.canvas));
     }
 
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
+        document.getElementById('measure-input').addEventListener('keyup', (e) => {e.key === 'Enter' ? this.setUpMeasure() : null});
+        document.getElementById('measure-input-button').addEventListener('click', () => this.setUpMeasure());
         this.updateImplants(document.getElementById('implant-type-selector').value);
         document.querySelectorAll('.offcanvas .offcanvas-header button.btn-close').forEach((e) => e.addEventListener('click', () => this.closeAllCanvas()));
         document.getElementById('button-offcanvas-opciones').addEventListener('click', () => this.offcanvasToggler('offcanvas-opciones'));
@@ -166,26 +169,56 @@ class Simulator {
         fetch(`/api/implants?implant_type_id=${implant_type_id}`)
             .then(response => response.json())
             .then(result => {
-                document.getElementById('implants').innerHTML = '';
-                result.data.forEach(implant => {
-                    document.getElementById('implants').innerHTML += `
-                    <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center card" data-measure="${implant.measureWidth}">
-                        <div class="py-3 px-6 border-b border-gray-300">
-                            <h5 style="color: black;">${implant.id} - ${implant.name}</h5>
+                if (result.success) {
+                    document.getElementById('implants').innerHTML = '';
+                    result.data.forEach(implant => {
+                        document.getElementById('implants').innerHTML += `
+                        <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center card" data-measure="${implant.measureWidth}">
+                            <div class="py-3 px-6 border-b border-gray-300">
+                                <h5 style="color: black;">${implant.id} - ${implant.name}</h5>
+                            </div>
+                            <div class="p-6 h-40">
+                                <img src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="h-full w-full">
+                            </div>
+                            <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
+                                ${implant.model} - ${implant.measureWidth}mm
+                            </div>
                         </div>
-                        <div class="p-6 h-40">
-                            <img src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="h-full w-full">
-                        </div>
-                        <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
-                            ${implant.model} - ${implant.measureWidth}mm
-                        </div>
-                    </div>
-                    `;
-                })
+                        `;
+                    })
+                } else {
+                    document.getElementById('implants').innerHTML = '<p class="text-white">Ha habido un error.</p>';
+                }
             }).then(result => {
                 document.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
             })
             .catch(error => console.log('error', error));
+    }
+
+    setUpMeasure() {
+        let px = this.initialLine.calculate(this.initialLine.element.pointer1.left, this.initialLine.element.pointer1.top, this.initialLine.element.pointer2.left, this.initialLine.element.pointer2.top).toFixed(2);
+        this.firstLineMeasurePx = px;
+        this.firstLineMeasureMm = document.getElementById('measure-input').value;
+        let body = JSON.stringify({
+            "firstLineMeasurePx": this.firstLineMeasurePx,
+            "firstLineMeasureMm": this.firstLineMeasureMm
+        });
+        let headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        let requestOptions = {
+            method: 'PUT',
+            headers: headers,
+            body: body
+        };
+        let projectId = document.getElementById('body').dataset.projectid;
+        let mediaId = document.getElementById('body').dataset.mediaid;
+        fetch(`/api/project/${projectId}/image/${mediaId}`, requestOptions)
+            .catch(error => console.log('error', error));
+        this.offcanvasToggler('offcanvas-initial-settings', false);
+        document.getElementById('botones-flotantes').classList.remove('invisible');
+        this.canvas.remove(this.initialLine.element.line);
+        delete this.initialLine.element.line;
+        this.initialLine.removePointers();
     }
 
     offcanvasToggler(id, open = null) {

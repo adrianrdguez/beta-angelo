@@ -6,7 +6,7 @@ export class InitialRule extends Rule {
         super(canvas)
         this.element.line = this.createLine(100, 0, -100, 0, first)
         this.addingControlPoints();
-        this.setUpMeasure();
+        canvas.simulator.initialLine = this;
     }
 
     createLine(x1, y1, x2, y2, first) {
@@ -33,7 +33,9 @@ export class InitialRule extends Rule {
         line.on('mousedblclick', () => this.addingControlPoints());
         line.on('moving', () => this.pointersFollowLine());
         if (first) {
-            document.getElementsByClassName('wrapper')[0].style.visibility = 'visible';
+            setTimeout(() => {
+                this.canvas.simulator.offcanvasToggler('offcanvas-initial-settings', true);
+            }, 500);
         }
         return line;
     }
@@ -134,10 +136,6 @@ export class InitialRule extends Rule {
         this.element.line.setCoords();
     }
 
-    calculate(x1, y1, x2, y2) {
-        return Math.sqrt(Math.pow(x2 * 1 - x1 * 1, 2) + Math.pow(y2 * 1 - y1 * 1, 2));
-    }
-
     removePointers() {
         this.canvas.remove(this.element.pointer1)
         this.canvas.remove(this.element.pointer2)
@@ -147,34 +145,4 @@ export class InitialRule extends Rule {
         this.canvas.off('selection:cleared');
     }
 
-    setUpMeasure() {
-        const input = document.querySelector('input');
-        input.addEventListener("keyup", (event) => {
-            if (event.key === "Enter") {
-                let px = this.calculate(this.element.pointer1.left, this.element.pointer1.top, this.element.pointer2.left, this.element.pointer2.top).toFixed(2);
-                this.canvas.simulator.firstLineMeasurePx = px;
-                this.canvas.simulator.firstLineMeasureMm = document.getElementById('measure-input').value;
-                let body = JSON.stringify({
-                    "firstLineMeasurePx": this.canvas.simulator.firstLineMeasurePx,
-                    "firstLineMeasureMm": this.canvas.simulator.firstLineMeasureMm
-                });
-                let headers = new Headers();
-                headers.append("Content-Type", "application/json");
-                let requestOptions = {
-                    method: 'PUT',
-                    headers: headers,
-                    body: body
-                };
-                let projectId = document.getElementById('body').dataset.projectid;
-                let mediaId = document.getElementById('body').dataset.mediaid;
-                fetch(`/api/project/${projectId}/image/${mediaId}`, requestOptions)
-                    .catch(error => console.log('error', error));
-                document.getElementsByClassName('wrapper')[0].style.visibility = 'hidden';
-                document.getElementsByClassName('botones-flotantes')[0].style.visibility = 'visible';
-                this.canvas.remove(this.element.line);
-                delete this.element.line;
-                this.removePointers();
-            }
-        })
-    }
 }

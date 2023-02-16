@@ -23,7 +23,7 @@
     </canvas>
 
     <!-- Posicionamiento de los botones -->
-    <div class="fixed absolute left-1/2 top-10 -translate-x-1/2 -translate-y-1/2 menus">
+    <div class="fixed absolute left-1/2 top-10 -translate-x-1/2 -translate-y-1/2" id="botones-flotantes">
         <button id="button-offcanvas-opciones" type="button"
             class="inline-block rounded-full bg-yellow-500 text-black leading-normal uppercase shadow-md hover:bg-yellow-700 hover:shadow-lg focus:bg-yellow-700 focus:shadow-lg focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-10 h-10">
             <i class="fa-solid fa-gear"></i>
@@ -36,14 +36,6 @@
             class="inline-block rounded-full bg-yellow-500 text-black leading-normal uppercase shadow-md hover:bg-yellow-700 hover:shadow-lg focus:bg-yellow-700 focus:shadow-lg focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-10 h-10">
             <i class="fa-solid fa-toolbox"></i>
         </button>
-    </div>
-
-    <!-- Input de las Medidas -->
-    <div class="wrapper invisible absolute left-0 top-0">
-        <div>
-            <input id="measure-input" type="text">
-            <label>Medida</label>
-        </div>
     </div>
 
     <!-- Sidebar de offcanvas-herramientas -->
@@ -110,7 +102,8 @@
         class="offcanvas offcanvas-start fixed bottom-0 flex flex-col max-w-full bg-slate-800 invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-white top-0 left-0 border-none w-96"
         tabindex="-1" aria-labelledby="offcanvas-opcionesLabel">
         <div class="offcanvas-header flex items-center justify-between p-4">
-            <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-opcionesLabel">HERRAMIENTAS</h5>
+            <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-opcionesLabel">HERRAMIENTAS
+            </h5>
             <button type="button"
                 class="btn-close btn-close-white box-content w-4 h-4 p-2 -my-5 -mr-2 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
                 aria-label="Close"></button>
@@ -156,12 +149,15 @@
             <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-implantsLabel">IMPLANTES</h5>
             <div class="flex">
                 <div>
-                    <input type="radio" id="frontalImplants" name="size" class="peer hidden" value="1" checked="checked">
-                    <label for="frontalImplants" class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Frontal</label>
+                    <input type="radio" id="frontalImplants" name="size" class="peer hidden" value="1"
+                        checked="checked">
+                    <label for="frontalImplants"
+                        class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Frontal</label>
                 </div>
                 <div>
                     <input type="radio" id="lateralImplants" name="size" class="peer hidden" value="2">
-                    <label for="lateralImplants" class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Lateral</label>
+                    <label for="lateralImplants"
+                        class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Lateral</label>
                 </div>
             </div>
             <button type="button"
@@ -191,7 +187,7 @@
     </div>
 
     <div id="offcanvas-implants-settings"
-        class="offcanvas offcanvas-bottom fixed bottom-0 flex flex-col w-4/12 mx-auto my-0 bg-slate-800 invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-white left-0 right-0 border-none h-3/12 max-h-full"
+        class="offcanvas offcanvas-bottom fixed bottom-0 flex flex-col w-full sm:w-8/12 md:w-6/12 lg:w-4/12 mx-auto my-0 bg-slate-800 invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-white left-0 right-0 border-none h-3/12 max-h-full"
         tabindex="-1" aria-labelledby="offcanvas-implants-settingsLabel">
         <div class="offcanvas-header flex items-center justify-between p-4">
             <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-implants-settingsLabel">
@@ -207,6 +203,28 @@
             <div class="w-full mb-4">
                 <button id="rotate-implant"
                     class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Rotar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="offcanvas-initial-settings"
+        class="offcanvas offcanvas-bottom fixed bottom-0 flex flex-col w-full sm:w-8/12 md:w-6/12 lg:w-4/12 mx-auto my-0 bg-slate-800 invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-white left-0 right-0 border-none h-3/12 max-h-full"
+        tabindex="-1" aria-labelledby="offcanvas-initial-settingsLabel">
+        <div class="offcanvas-header flex items-center justify-between p-4">
+            <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-initial-settingsLabel">
+                OPCIONES INICIALES</h5>
+        </div>
+        <div class="offcanvas-body flex-grow p-4 overflow-y-auto small">
+            <label for="measure-input">Medida</label>
+            <div class="flex items-stretch py-2 w-full">
+                <input id="measure-input" autofocus pattern="^[0-9]*\.[0-9]*$"
+                    class="form-range appearance-none w-full p-0 pl-2 focus:outline-none focus:ring-0 focus:shadow-none mr-2 text-black"
+                    type="number">
+                <button id="measure-input-button"
+                    class="select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black"
+                    type="button">
+                    Confirmar
+                </button>
             </div>
         </div>
     </div>

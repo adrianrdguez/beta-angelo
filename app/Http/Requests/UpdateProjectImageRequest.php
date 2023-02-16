@@ -31,7 +31,7 @@ class UpdateProjectImageRequest extends FormRequest
                 'min:0',
             ],
             'firstLineMeasureMm' => [
-                'integer',
+                'numeric',
                 'min:0',
             ],
             'canvasJson' => [
