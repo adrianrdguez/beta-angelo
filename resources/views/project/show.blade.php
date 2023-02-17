@@ -1,31 +1,38 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ $project->name }}
-        </h2>
+        <div class="flex space-x-2 justify-between items-center">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ $project->name }}
+                </h2>
+            </div>
+            <div>
+                <button
+                    class="inline-block px-2 py-2 bg-transparent text-gray-600 font-medium text-xs leading-tight uppercase rounded hover:text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out"
+                    data-bs-toggle="modal" data-bs-target="#addImageModal">
+                    <span class="mr-2">
+                        <i class="fa-solid fa-plus"></i>
+                    </span>
+                    {{ __('Añadir radiografía') }}
+                </button>
+            </div>
+        </div>
     </x-slot>
 
     <section class="overflow-hidden text-gray-700 ">
         <div class="container px-5 py-2 mx-auto lg:pt-12 lg:px-32">
             <div class="flex flex-wrap -m-1 md:-m-2">
-                <div class="flex flex-wrap w-1/3 rounded-lg shadow-xl" style="cursor: pointer" data-bs-toggle="modal"
-                    data-bs-target="#addImageModal">
-                    <div class="flex w-full p-1 md:p-2"
-                        style="
-                    flex-direction: column;
-                    justify-content: space-between;">
-                        <div></div>
-                        <div class="flex
-                        justify-center">
-                            <i class="fas fa-5x fa-plus-circle"></i>
-                        </div>
-                        <h2 class="text-lg font-medium text-gray-900 title-font mb-2" style="text-align: center;">
-                            Add new project image</h2>
-                    </div>
-                </div>
                 @foreach ($project->getMedia('radiographies') as $image)
-                    <a class="block flex flex-wrap w-1/3" href="{{ route('simulator', ['project' => $project, 'media' => $image]) }}">
-                        <div class="w-full p-1 md:p-2">
+                    <a class="block flex flex-wrap w-2/12"
+                        href="{{ route('simulator', ['project' => $project, 'media' => $image]) }}">
+                        <div class="w-full p-1 md:p-2 relative">
+                            <div class="rounded-lg z-50 absolute inset-x-0 -bottom-2 pt-30 text-white flex items-end">
+                                <div>
+                                    <div class="rounded-lg p-4 space-y-3 text-xl translate-y-0 translate-y-4 pb-10">
+                                        <div class="font-bold rounded-lg bg-black/50 p-1">{{ $image->name }}</div>
+                                    </div>
+                                </div>
+                            </div>
                             <img class="block object-cover object-center w-full h-full rounded-lg"
                                 src="{{ $image->getUrl('thumbnail') }}" alt="content">
                         </div>
@@ -33,7 +40,7 @@
                 @endforeach
             </div>
             <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-                id="addImageModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-modal="true"
+                id="addImageModal" tabindex="-1" data-bs-backdrop="static" aria-modal="true"
                 role="dialog">
                 <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
                     <div
@@ -53,15 +60,44 @@
                                 method="post">
                                 @method('POST')
                                 @csrf
-                                Nombre de la imagen
-                                <input type="text" name="name">
-                                <x-jet-input-error for="name" class="mt-2" />
-                                <input type="file" name="radiographyImg">
-                                <x-jet-input-error for="radiographyImg" class="mt-2" />
-                                <button type="submit"
-                                    class="inline-block px-6 py-2.5 bg-purple-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out">
-                                    Subir
-                                </button>
+
+                                <div class="flex items-center justify-center w-full mb-4">
+                                    <label
+                                        class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative">
+                                        <div class="absolute flex flex-col w-full h-full items-center justify-center pt-7">
+                                            <img id="preview" class="absolute inset-0 w-full h-full invisible">
+                                            <i class="fa-solid fa-image text-6xl"></i>
+                                            <p
+                                                class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                                                Sube una radiograífia</p>
+                                        </div>
+                                        <input type="hidden" name="rotation" id="rotation" value="0"/>
+                                        <input type="file" class="absolute opacity-0" accept="image/*"
+                                            name="radiographyImg" onchange="showPreview(event)" required>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-center justify-center mb-4">
+                                    <div class="inline-flex" role="group">
+                                        <button type="button" onclick="rotateLeft()"
+                                            class="rounded-l px-6 py-2 border border-gray-600 text-gray-600 font-medium text-xs leading-tight uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                                            <i class="fa-solid fa-rotate-left"></i>
+                                        </button>
+                                        <button type="button" onclick="rotateRight()"
+                                            class="rounded-r px-6 py-2 border border-gray-600 text-gray-600 font-medium text-xs leading-tight uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                                            <i class="fa-solid fa-rotate-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="modal-footer flex flex-shrink-0 items-center justify-end px-4 pt-4 border-t border-gray-200 rounded-b-md">
+                                    <x-jet-input id="name" type="text" class="block w-full mr-4"
+                                        autocomplete="name" name="name" placeholder="Descripción" required />
+                                    <x-jet-button type="submit" class="block">
+                                        {{ __('Subir') }}
+                                    </x-jet-button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -69,5 +105,40 @@
             </div>
         </div>
     </section>
+
+    <script>
+        var rotation = 0;
+        var preview = document.getElementById("preview");
+        function showPreview(event) {
+            if (event.target.files.length > 0) {
+                let src = URL.createObjectURL(event.target.files[0]);
+                let preview = document.getElementById("preview");
+                preview.classList.remove('invisible');
+                preview.src = src;
+                preview.style.display = "block";
+                rotation = 0;
+            }
+        }
+
+        function rotateLeft() {
+            if (!preview?.src) {
+                return;
+            }
+            rotation = (rotation - 90) % 360;
+            preview.style.transform = 'rotate(' + rotation + 'deg)';
+            [preview.style.width, preview.style.height] = [preview.style.height, preview.style.width];
+            document.getElementById('rotation').value = (rotation * -1);
+        }
+
+        function rotateRight() {
+            if (!preview?.src) {
+                return;
+            }
+            rotation = (rotation + 90) % 360;
+            preview.style.transform = 'rotate(' + rotation + 'deg)';
+            [preview.style.width, preview.style.height] = [preview.style.height, preview.style.width];
+            document.getElementById('rotation').value = (rotation * -1);
+        }
+    </script>
 
 </x-app-layout>

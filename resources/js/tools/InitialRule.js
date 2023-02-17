@@ -100,7 +100,6 @@ export class InitialRule extends Rule {
     }
 
     /* miniPointerFollowPointer() {
-        console.log("cirlce", this.canvas.circle)
         this.element.miniPointer.set({
             left: this.canvas.circle.left,
             top: this.canvas.circle.top,

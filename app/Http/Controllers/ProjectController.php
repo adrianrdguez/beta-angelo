@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Models\ImplantType;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProjectController extends Controller
@@ -100,9 +101,14 @@ class ProjectController extends Controller
     public function addImage(AddProjectImageRequest $request, Project $project)
     {
         if ($request->hasFile('radiographyImg') && $request->file('radiographyImg')->isValid()) {
+            $img = Image::make($request->file('radiographyImg')->getPathName());
+            $img->rotate($request->rotation);
+            $img->save();
             $project->addMediaFromRequest('radiographyImg')
                 ->usingName($request->name)
-                // ->withCustomProperties($request->validated())
+                ->withCustomProperties([
+                    'rotation' => $request->rotation
+                ])
                 ->toMediaCollection('radiographies');
         }
         return redirect()->route('project.show', $project->id);
