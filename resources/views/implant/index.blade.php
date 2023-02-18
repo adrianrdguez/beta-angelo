@@ -34,25 +34,28 @@
                                                 Id
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-                                                Nombre
+                                                {{ __('Name') }}
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-                                                Modelo
+                                                {{ __('Modelo') }}
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-                                                Medida
+                                                {{ __('Medida') }}
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-                                                Tipo de implante
+                                                {{ __('Tipo de implante') }}
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-                                                Imagen desde lateral
+                                                {{ __('Subtipo de implante') }}
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-                                                Imagen desde arriba
+                                                {{ __('Imagen desde lateral') }}
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-                                                Actions
+                                                {{ __('Imagen desde arriba') }}
+                                            </th>
+                                            <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                                                {{ __('Actions') }}
                                             </th>
                                         </tr>
                                     </thead class="border-b">
@@ -77,6 +80,10 @@
                                                 <td
                                                     class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                                                     {{ $implant->implantType->name }}
+                                                </td>
+                                                <td
+                                                    class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                    {{ $implant->implantSubType->name }}
                                                 </td>
                                                 <td
                                                     class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
@@ -136,7 +143,7 @@
                     <button type="button"
                         class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
                         data-bs-dismiss="modal">
-                        Cancelar
+                        {{ __('Cancel') }}
                     </button>
                     <form action="#" method="post" id="delete">
                         @method('DELETE')

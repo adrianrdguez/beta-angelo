@@ -217,7 +217,7 @@
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto small">
             <label for="measure-input">Medida</label>
             <div class="flex items-stretch py-2 w-full">
-                <input id="measure-input" autofocus pattern="^[0-9]*\.[0-9]*$"
+                <input id="measure-input" autofocus pattern="^[0-9]+\.[0-9]+$"
                     class="form-range appearance-none w-full p-0 pl-2 focus:outline-none focus:ring-0 focus:shadow-none mr-2 text-black"
                     type="number">
                 <button id="measure-input-button"

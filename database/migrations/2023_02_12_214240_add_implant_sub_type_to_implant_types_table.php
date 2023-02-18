@@ -26,8 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('implant_types', function (Blueprint $table) {
-            $table->dropForeign(['implant_sub_type_id']);
-            $table->dropColumn('implant_sub_type_id');
+            $table->dropConstrainedForeignId('implant_sub_type_id');
         });
     }
 };

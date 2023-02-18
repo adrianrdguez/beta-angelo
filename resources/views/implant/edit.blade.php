@@ -17,23 +17,22 @@
                 <form action="{{ route('implant.update', $implant->id) }}" method="post" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
-                    <!-- Name -->
-                    <div class="col-span-6 sm:col-span-4">
-                        <x-jet-label for="name" value="{{ __('Nombre') }}" />
+                    <div class="col-span-6 sm:col-span-4 mt-4">
+                        <x-jet-label for="name" value="{{ __('Name') }}" />
                         <x-jet-input id="name" type="text" class="mt-1 block w-full" autocomplete="name" name="name" value="{{ $implant->name }}"/>
                         <x-jet-input-error for="name" class="mt-2" />
                     </div>
-                    <div class="col-span-6 sm:col-span-4">
+                    <div class="col-span-6 sm:col-span-4 mt-4">
                         <x-jet-label for="model" value="{{ __('Modelo') }}" />
                         <x-jet-input id="model" type="text" class="mt-1 block w-full" autocomplete="model" name="model" value="{{ $implant->model }}" />
                         <x-jet-input-error for="model" class="mt-2" />
                     </div>
-                    <div class="col-span-6 sm:col-span-4">
+                    <div class="col-span-6 sm:col-span-4 mt-4">
                         <x-jet-label for="measureWidth" value="{{ __('Medida') }}" />
                         <x-jet-input id="measureWidth" type="text" class="mt-1 block w-full" autocomplete="measureWidth" name="measureWidth" value="{{ $implant->measureWidth }}" />
                         <x-jet-input-error for="measureWidth" class="mt-2" />
                     </div>
-                    <div class="col-span-6 sm:col-span-4">
+                    <div class="col-span-6 sm:col-span-4 mt-4">
                         <x-jet-label for="implant_type_id" value="{{ __('Tipo') }}" />
                         <select name="implant_type_id" id="implant_type_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                             @foreach ($implantTypes as $implantType)
@@ -42,19 +41,22 @@
                         </select>
                         <x-jet-input-error for="implant_type_id" class="mt-2" />
                     </div>
-                    <div class="col-span-6 sm:col-span-4">
+                    <div class="col-span-6 sm:col-span-4 mt-4">
                         <x-jet-label for="lateralViewImg" value="{{ __('Imagen desde lateral') }}" />
                         <x-jet-input id="lateralViewImg" type="file" class="mt-1 block w-full" autocomplete="lateralViewImg" name="lateralViewImg" />
                         <x-jet-input-error for="lateralViewImg" class="mt-2" />
                     </div>
-                    <div class="col-span-6 sm:col-span-4">
+                    <div class="col-span-6 sm:col-span-4 mt-4">
                         <x-jet-label for="aboveViewImg" value="{{ __('Imagen desde arriba') }}" />
                         <x-jet-input id="aboveViewImg" type="file" class="mt-1 block w-full" autocomplete="aboveViewImg" name="aboveViewImg" />
                         <x-jet-input-error for="aboveViewImg" class="mt-2" />
                     </div>
-                    <x-jet-button>
-                        {{ __('Save') }}
-                    </x-jet-button>
+                    <div
+                        class="flex flex-shrink-0 items-center justify-end px-4 pt-4 rounded-b-md">
+                        <x-jet-button>
+                            {{ __('Save') }}
+                        </x-jet-button>
+                    </div>
                 </form>
             </div>
         </div>
