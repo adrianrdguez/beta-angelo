@@ -63,12 +63,12 @@ class Simulator {
         window.onresize = () => this.setCanvasSize(this.canvas);
         document.getElementById('measure-input').addEventListener('keyup', (e) => {e.key === 'Enter' ? this.setUpMeasure() : null});
         document.getElementById('measure-input-button').addEventListener('click', () => this.setUpMeasure());
-        this.updateImplants(document.getElementById('implant-type-selector').value);
         document.querySelectorAll('.offcanvas .offcanvas-header button.btn-close').forEach((e) => e.addEventListener('click', () => this.closeAllCanvas()));
         document.getElementById('button-offcanvas-opciones').addEventListener('click', () => this.offcanvasToggler('offcanvas-opciones'));
         document.getElementById('button-offcanvas-implants').addEventListener('click', () => this.offcanvasToggler('offcanvas-implants'));
         document.getElementById('button-offcanvas-herramientas').addEventListener('click', () => this.offcanvasToggler('offcanvas-herramientas'));
-        document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateImplants(e.target.value));
+        document.getElementById('implant-type-selector').addEventListener('change', (e) => this.updateSubTypeSelect('implant-sub-type-selector', e.target.value));
+        document.getElementById('implant-sub-type-selector').addEventListener('change', (e) => this.updateImplants(document.getElementById('implant-type-selector').value, e.target.value));
         document.getElementById('rule').addEventListener('click', () => this.setCurrentTool(new Rule(this.canvas)));
         document.getElementById('rule-circle').addEventListener('click', () => this.setCurrentTool(new RuleCircle(this.canvas)));
         document.getElementById('rule-triangle').addEventListener('click', () => this.setCurrentTool(new RuleTriangle(this.canvas)));
@@ -78,8 +78,8 @@ class Simulator {
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
         document.getElementById('rotate-implant').addEventListener('click', () => this.rotateAndFlipImplant());
         document.getElementById('opacity').addEventListener('change', (e) => this.applyFiltersToImplant());
-        document.getElementById('frontalImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, true));
-        document.getElementById('lateralImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, false));
+        document.getElementById('frontalImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, document.getElementById('implant-sub-type-selector').value, true));
+        document.getElementById('lateralImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, document.getElementById('implant-sub-type-selector').value, false));
     }
 
     setCanvasSize(canvas) {
@@ -165,11 +165,11 @@ class Simulator {
         // object.clipPath = this.limitClipPathField;
     }
 
-    updateImplants(implant_type_id, view = true) {
-        fetch(`/api/implants?implant_type_id=${implant_type_id}`)
+    updateImplants(implant_type_id, implant_sub_type_id, view = true) {
+        fetch(`/api/implants?implant_type_id=${implant_type_id}&implant_sub_type_id=${implant_sub_type_id}`)
             .then(response => response.json())
             .then(result => {
-                if (result.success) {
+                if (Array.isArray(result.data) && result?.success !== false) {
                     document.getElementById('implants').innerHTML = '';
                     result.data.forEach(implant => {
                         document.getElementById('implants').innerHTML += `
@@ -178,7 +178,7 @@ class Simulator {
                                 <h5 style="color: black;">${implant.id} - ${implant.name}</h5>
                             </div>
                             <div class="p-6 h-40">
-                                <img src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="h-full w-full">
+                                <img data-above=${implant.aboveViewUrl} data-lateral=${implant.aboveViewUrl} src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="h-full w-full">
                             </div>
                             <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
                                 ${implant.model} - ${implant.measureWidth}mm
@@ -193,6 +193,22 @@ class Simulator {
                 document.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
             })
             .catch(error => console.log('error', error));
+    }
+
+    updateSubTypeSelect(selectInput, implant_type_id, implant_sub_type_id = null) {
+        fetch(`/api/implantSubTypes?implant_type_id=${implant_type_id}`)
+            .then(response => response.json())
+            .then(result => {
+                if (Array.isArray(result.data) && result?.success !== false) {
+                    let select = document.getElementById(selectInput);
+                    select.innerHTML = '<option selected disabled hidden>Selecciona un subtipo</option>';
+                    result.data.forEach(implantSubType => {
+                        select.innerHTML += `
+                        <option value="${implantSubType.id}">${implantSubType.name}</option>
+                        `;
+                    })
+                }
+            }).catch(error => console.log('error', error));
     }
 
     setUpMeasure() {

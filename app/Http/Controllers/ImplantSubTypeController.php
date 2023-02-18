@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetImplantSubTypeApiRequest;
 use App\Http\Requests\StoreImplantSubTypeRequest;
 use App\Http\Requests\UpdateImplantSubTypeRequest;
+use App\Http\Resources\ImplantSubTypeResource;
 use App\Models\ImplantSubType;
+use App\Models\ImplantType;
 
 class ImplantSubTypeController extends Controller
 {
@@ -17,6 +20,13 @@ class ImplantSubTypeController extends Controller
     {
         return view('implantSubType.index', ['implantSubTypes' => ImplantSubType::paginate(25)]);
     }
+
+    public function indexApi(GetImplantSubTypeApiRequest $request)
+    {
+        $implantType = ImplantType::find($request->implant_type_id);
+        return ImplantSubTypeResource::collection($implantType->implantSubTypes);
+    }
+
 
     /**
      * Show the form for creating a new resource.

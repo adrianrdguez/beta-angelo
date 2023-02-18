@@ -165,15 +165,16 @@
         </div>
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto small">
             <select class="mb-4 w-full text-black" id="implant-type-selector">
+                <option selected disabled hidden>Selecciona un tipo</option>
                 @foreach ($implantTypes as $implantType)
-                    <option value="{{ $implantType->id }}"
-                        {{ $implantTypes->first()->id === $implantType->id ? 'selected' : '' }}>{{ $implantType->name }}
-                    </option>
+                    <option value="{{ $implantType->id }}">{{ $implantType->name }}</option>
                 @endforeach
+            </select>
+            <select class="mb-4 w-full text-black" id="implant-sub-type-selector">
             </select>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
                 id="implants">
-                <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center">
+                <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center invisible">
                     <div class="py-3 px-6 border-b border-gray-300">
                         <h5 style="color: black;">Sin implantes</h5>
                     </div>

@@ -42,6 +42,12 @@
                         <x-jet-input-error for="implant_type_id" class="mt-2" />
                     </div>
                     <div class="col-span-6 sm:col-span-4 mt-4">
+                        <x-jet-label for="implant_sub_type_id" value="{{ __('Subtipo') }}" />
+                        <select name="implant_sub_type_id" id="implant_sub_type_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" value="{{old('implant_sub_type_id')}}">
+                        </select>
+                        <x-jet-input-error for="implant_sub_type_id" class="mt-2" />
+                    </div>
+                    <div class="col-span-6 sm:col-span-4 mt-4">
                         <x-jet-label for="lateralViewImg" value="{{ __('Imagen desde lateral') }}" />
                         <x-jet-input id="lateralViewImg" type="file" class="mt-1 block w-full" autocomplete="lateralViewImg" name="lateralViewImg" />
                         <x-jet-input-error for="lateralViewImg" class="mt-2" />
@@ -61,4 +67,25 @@
             </div>
         </div>
     </div>
+    <script>
+        let implant_type_id = {{ $implant->implant_type_id }};
+        let implant_sub_type_id = {{ $implant->implant_sub_type_id }};
+        function listImplantSubTypes(selectInput, implant_type_id, implant_sub_type_id = null) {
+            fetch(`/api/implantSubTypes?implant_type_id=${implant_type_id}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (Array.isArray(result.data) && result?.success !== false) {
+                        let select = document.getElementById(selectInput);
+                        select.innerHTML = '';
+                        result.data.forEach(implantSubType => {
+                            select.innerHTML += `
+                            <option value="${implantSubType.id}" ${implant_sub_type_id === implantSubType.id ? 'selected' : ''}>${implantSubType.name}</option>
+                            `;
+                        })
+                    }
+                }).catch(error => console.log('error', error));
+        }
+        listImplantSubTypes('implant_sub_type_id', implant_type_id, implant_sub_type_id)
+        document.getElementById('implant_type_id').addEventListener('change', (e) => listImplantSubTypes('implant_sub_type_id', e.target.value));
+    </script>
 </x-app-layout>

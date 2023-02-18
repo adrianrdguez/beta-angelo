@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ImplantSubType;
 use App\Models\ImplantType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -46,7 +47,12 @@ class StoreImplantRequest extends FormRequest
             'implant_type_id' => [
                 'required',
                 'numeric',
-                Rule::exists(ImplantType::class, 'id'),
+                Rule::exists(ImplantType::class, 'id')->withoutTrashed(),
+            ],
+            'implant_sub_type_id' => [
+                'required',
+                'numeric',
+                Rule::exists(ImplantSubType::class, 'id')->withoutTrashed(),
             ],
             'lateralViewImg' => [
                 'required_without:aboveViewImg',

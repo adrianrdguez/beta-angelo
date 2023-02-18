@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Models\ImplantSubType;
 use App\Models\ImplantType;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
-class GetImplantsApiRequest extends FormRequest
+class GetImplantSubTypeApiRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,11 +32,6 @@ class GetImplantsApiRequest extends FormRequest
                 'required',
                 'numeric',
                 Rule::exists(ImplantType::class, 'id')->withoutTrashed(),
-            ],
-            'implant_sub_type_id' => [
-                'required',
-                'numeric',
-                Rule::exists(ImplantSubType::class, 'id')->withoutTrashed(),
             ],
         ];
     }

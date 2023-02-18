@@ -32,6 +32,7 @@ class ImplantController extends Controller
     {
         $implants = Implant::select()
             ->where('implant_type_id', $request->implant_type_id)
+            ->where('implant_sub_type_id', $request->implant_sub_type_id)
             ->get();
         return ImplantResource::collection($implants);
     }
