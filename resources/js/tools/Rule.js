@@ -62,9 +62,64 @@ export class Rule extends Tool {
 
     stopDrawingLine(event, first) {
         this.element.line.setCoords();
-        //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
         this.element.line.on('mousedblclick', () => this.addingControlPoints());
         this.element.line.on('moving', () => this.pointersFollowLine());
+        var lines = [];
+        this.canvas.forEachObject(function (obj) {
+            if (obj instanceof fabric.Line) {
+                lines.push(obj);
+            }
+        });
+        var intersectingLines = [];
+        for (var i = 0; i < lines.length; i++) {
+            for (var j = i + 1; j < lines.length; j++) {
+                if (lines[i].intersectsWithObject(lines[j], true)) {
+                    intersectingLines.push([lines[i], lines[j]]);
+                }
+            }
+        }
+        console.log(intersectingLines);
+        if (intersectingLines.length > 0) {
+            const A1 = intersectingLines[0][0].y2 - intersectingLines[0][0].y1;
+            const B1 = intersectingLines[0][0].x1 - intersectingLines[0][0].x2;
+            const C1 = A1 * intersectingLines[0][0].x1 + B1 * intersectingLines[0][0].y1;
+
+            const A2 = intersectingLines[0][1].y2 - intersectingLines[0][1].y1;
+            const B2 = intersectingLines[0][1].x1 - intersectingLines[0][1].x2;
+            const C2 = A2 * intersectingLines[0][1].x1 + B2 * intersectingLines[0][1].y1;
+
+            // Determinante
+            const det = A1 * B2 - A2 * B1;
+
+            if (det === 0) {
+                return null;
+            } else {
+                // Usamos cramers rule
+                const x = (B2 * C1 - B1 * C2) / det;
+                const y = (A1 * C2 - A2 * C1) / det;
+                console.log("x, y", x, y);
+            }
+
+            const angle1 = Math.atan2(intersectingLines[0][0].y2 - intersectingLines[0][0].y1, intersectingLines[0][0].x2 - intersectingLines[0][0].x1);
+            const angle2 = Math.atan2(intersectingLines[0][1].y2 - intersectingLines[0][1].y1, intersectingLines[0][1].x2 - intersectingLines[0][1].x1);
+
+            // Valor absoluto para el angulo
+            let angle = Math.abs(angle2 - angle1);
+
+            // Calcular el angulo más pequeño
+            if (angle > Math.PI) {
+                angle = 2 * Math.PI - angle;
+            }
+
+            angle = angle * 180 / Math.PI;
+
+            if (angle > 90) {
+                angle = 180 - angle;
+                console.log("angle", angle)
+            } else {
+                console.log("angle", angle);
+            }
+        }
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
@@ -139,6 +194,7 @@ export class Rule extends Tool {
         this.element.line.starty = this.element.pointer1.top;
         this.element.line.endx = this.element.pointer2.left;
         this.element.line.endy = this.element.pointer2.top;
+        console.log("hola")
         this.element.line.setCoords();
     }
 
