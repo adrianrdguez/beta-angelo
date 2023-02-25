@@ -74,7 +74,9 @@ export class Tool {
     }
 
     objectMouseDownEvent(event) {
-        this.canvas.bringToFront(event.target);
+        if (event.target) {
+            this.canvas?.bringToFront(event.target);
+        }
     }
 
     setDeleteControl(object, offset = 16, position = 0.5) {

@@ -147,19 +147,6 @@
         tabindex="-1" aria-labelledby="offcanvas-implantsLabel">
         <div class="offcanvas-header flex items-center justify-between p-4">
             <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-implantsLabel">IMPLANTES</h5>
-            <div class="flex">
-                <div>
-                    <input type="radio" id="frontalImplants" name="size" class="peer hidden" value="1"
-                        checked="checked">
-                    <label for="frontalImplants"
-                        class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Frontal</label>
-                </div>
-                <div>
-                    <input type="radio" id="lateralImplants" name="size" class="peer hidden" value="2">
-                    <label for="lateralImplants"
-                        class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Lateral</label>
-                </div>
-            </div>
             <button type="button"
                 class="btn-close btn-close-white box-content w-4 h-4 p-2 -my-5 -mr-2 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"aria-label="Close"></button>
         </div>

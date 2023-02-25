@@ -14,13 +14,15 @@ class ImplantResource extends JsonResource
      */
     public function toArray($request)
     {
+        $lateralViewUrl = $this->getFirstMediaUrl('lateralView');
+        $aboveViewUrl = $this->getFirstMediaUrl('aboveView');
         return [
             'id' => $this->id,
             'name' => $this->name,
             'model' => $this->model,
             'measureWidth' => $this->measureWidth,
-            'lateralViewUrl' => $this->getFirstMediaUrl('lateralView'),
-            'aboveViewUrl' => $this->getFirstMediaUrl('aboveView'),
+            'lateralViewUrl' => !empty($lateralViewUrl) ? $lateralViewUrl : null,
+            'aboveViewUrl' => !empty($aboveViewUrl) ? $aboveViewUrl : null,
         ];
     }
 }
