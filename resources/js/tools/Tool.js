@@ -221,6 +221,7 @@ export class Tool {
             });
             return acc;
         }, {});
+        polygon.set(this.canvas.simulator.getCenterOfView(polygon));
         return polygon;
     }
 

@@ -4,27 +4,22 @@ import { Drag } from './Drag.js';
 export class RuleTriangle extends Tool {
     constructor(canvas) {
         super(canvas, 'rule-triangle');
-        this.element.triangle = this.createTriangle();
-        //this.movingControlPointsCallback();
+        this.element.triangle = this.createTriangle(100, 0, -100, 0);
+        this.movingControlPointsCallback();
         this.canvas.requestRenderAll();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    createTriangle() {
-        let triangleSize = 10;
-        let vertexTopLeftX = -(this.canvas.width / triangleSize);
-        let vertexTopLeftY = -(this.canvas.width / triangleSize);
-        let vertexTopRightX = (this.canvas.width / triangleSize);
-        let vertexTopRightY = -(this.canvas.width / triangleSize);
-        let vertexBottomMiddleX1 = vertexTopRightX + vertexTopLeftX;
-        let vertexBottomMiddleY1 = (this.canvas.width / triangleSize);
-        return this.createPolygon([{
-            x: 150, y: 150
+    createTriangle(x1, y1, x2, y2) {
+        let triangle = this.createPolygon([{
+            x: x1, y: y1
         }, {
-            x: vertexTopRightX, y: vertexTopRightY
-        }, {
-            x: vertexBottomMiddleX1, y: vertexBottomMiddleY1
-        }])
+            x: x2, y: y2
+        },{
+            x: 0, y: x1 * 2
+        },]);
+        this.canvas.add(triangle);
+        return triangle;
     }
 
     getAngleBetweenLines(line1, line2, line180 = false) {
@@ -116,18 +111,18 @@ export class RuleTriangle extends Tool {
     setTextInCanvas(measures) {
         Object.keys(measures).forEach(point => {
             let text = measures[point] + 'mm';
-            if (!this.element.text) {
-                this.element.text = new fabric.Text(text, {
+            if (!this.element['text' + point]) {
+                this.element['text' + point] = new fabric.Text(text, {
                     fontSize: 12,
                     stroke: this.canvas.freeDrawingBrush.color,
                     fill: this.canvas.freeDrawingBrush.color
                 });
-                this.canvas.simulator.setBackgroundOptions(this.element.text);
-                this.canvas.add(this.element.text);
+                this.canvas.simulator.setBackgroundOptions(this.element['text' + point]);
+                this.canvas.add(this.element['text' + point]);
             }
             let p0 = this.getPointCoord(this.element.triangle, parseInt(point));
             let p1 = this.getPointCoord(this.element.triangle, parseInt((point == 2) ? 0 : parseInt(point) + 1));
-            this.element.text.set({
+            this.element['text' + point].set({
                 text: text,
                 left: p0.x + ((p1.x - p0.x) / 2),
                 top: p0.y + ((p1.y - p0.y) / 2),

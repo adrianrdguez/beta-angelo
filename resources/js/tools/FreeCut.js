@@ -40,9 +40,10 @@ export class FreeCut extends Tool {
         this.setStartControl(this.element.pointer, () => this.startCut());
         this.canvas.add(this.element.pointer);
         this.canvas.add(this.element.miniPointer);
-        this.element.pointer.center();
-        this.element.miniPointer.center();
+        this.element.pointer.set(this.canvas.simulator.getCenterOfView(this.element.pointer));
+        this.miniPointerFollowPointer();
         this.canvas.bringForward(this.element.pointer);
+        this.canvas.requestRenderAll();
     }
 
     miniPointerFollowPointer() {
@@ -165,6 +166,7 @@ export class FreeCut extends Tool {
             this.canvas.remove(element);
         });
         this.cutLinePaths = [];
+        this.canvas.requestRenderAll();
     }
 
     setStartControl(object, callback) {

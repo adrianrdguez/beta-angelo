@@ -1,4 +1,5 @@
 import { Rule } from './Rule.js';
+import { Drag } from './Drag.js';
 
 export class RuleCircle extends Rule {
     constructor(canvas) {

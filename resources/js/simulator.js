@@ -1,4 +1,4 @@
-import './fabric.js';
+import { fabric } from 'fabric';
 import { Drag } from './tools/Drag.js';
 import { FreeCut } from './tools/FreeCut.js';
 import { FreeDraw } from './tools/FreeDraw.js';
@@ -88,6 +88,14 @@ class Simulator {
 
     setCurrentTool(tool) {
         this.canvas.currentTool = tool;
+    }
+
+    getCenterOfView(object = null) {
+        let zoom=this.canvas.getZoom();
+        return {
+            left: (fabric.util.invertTransform(this.canvas.viewportTransform)[4]+(this.canvas.width/zoom)/2) - (object ? (object.width / 2) : 0),
+            top: (fabric.util.invertTransform(this.canvas.viewportTransform)[5]+(this.canvas.height/zoom)/2) - (object ? (object.height / 2) : 0)
+        };
     }
 
     async addImplantObject(element) {

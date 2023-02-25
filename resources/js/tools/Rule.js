@@ -5,22 +5,7 @@ export class Rule extends Tool {
     constructor(canvas) {
         super(canvas, 'rule');
         this.resetEvents();
-        // -------------------
-        let vpCenter = this.canvas.getVpCenter();
-        // -------------------
         this.element.line = this.createLine(100, 0, -100, 0);
-        console.log(this.element.line.getCenterPoint());
-        console.log(this.element.line.left, this.element.line.top);
-        console.log(this.getPointCoord(this.element.line, 0));
-        console.log(this.getPointCoord(this.element.line, 1));
-        this.element.line.set({
-            left: vpCenter.x - 100,
-            top: vpCenter.y
-        })
-        console.log(this.element.line.getCenterPoint());
-        console.log(this.element.line.left, this.element.line.top);
-        console.log(this.getPointCoord(this.element.line, 0));
-        console.log(this.getPointCoord(this.element.line, 1));
         this.movingControlPointsCallback();
         this.element.line.element = this.element;
         this.setDeleteControl(this.element.line, 40, 0);
@@ -35,7 +20,6 @@ export class Rule extends Tool {
             x: x2, y: y2
         }]);
         this.canvas.add(line);
-        line.center();
         return line;
     }
 
