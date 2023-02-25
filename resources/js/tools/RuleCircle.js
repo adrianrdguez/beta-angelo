@@ -8,6 +8,7 @@ export class RuleCircle extends Rule {
         this.createCircle();
         this.adjustCircleRadiusAndPosition();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.canvas.requestRenderAll();
     }
 
     createCircle() {

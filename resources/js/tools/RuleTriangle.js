@@ -5,6 +5,8 @@ export class RuleTriangle extends Tool {
     constructor(canvas) {
         super(canvas, 'rule-triangle');
         this.element.triangle = this.createTriangle(100, 0, -100, 0);
+        this.element.triangle.element = this.element;
+        this.setDeleteControl(this.element.triangle, 40, 0);
         this.movingControlPointsCallback();
         this.canvas.requestRenderAll();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
