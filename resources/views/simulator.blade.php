@@ -151,13 +151,13 @@
                 class="btn-close btn-close-white box-content w-4 h-4 p-2 -my-5 -mr-2 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"aria-label="Close"></button>
         </div>
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto small">
-            <select class="mb-4 w-full text-black" id="implant-type-selector">
+            <select class="mb-4 w-full text-black" id="implant-type-selector" autocomplete="off">
                 <option selected disabled hidden>Selecciona un tipo</option>
                 @foreach ($implantTypes as $implantType)
                     <option value="{{ $implantType->id }}">{{ $implantType->name }}</option>
                 @endforeach
             </select>
-            <select class="mb-4 w-full text-black" id="implant-sub-type-selector">
+            <select class="mb-4 w-full text-black" id="implant-sub-type-selector" autocomplete="off">
             </select>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
                 id="implants">
