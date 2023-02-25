@@ -99,8 +99,8 @@ class Simulator {
     async addImplantObject(element) {
         let img = await this.loadImageFromUrl(element.src);
         this.canvas.add(img);
-        img.scaleToWidth((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm);
-        img.center();
+        img.scale(((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm) / img.width);
+        img.set(this.getCenterOfView());
         img.on("selected", () => this.offcanvasToggler('offcanvas-implants-settings', true));
         img.on("deselected", () => this.offcanvasToggler('offcanvas-implants-settings', false));
         img.on('selected', () => {
@@ -108,6 +108,7 @@ class Simulator {
         });
         this.canvas.currentTool.setDefaultObjectOptions(img);
         this.canvas.requestRenderAll();
+        this.canvas.setViewportTransform(this.canvas.viewportTransform);
         this.offcanvasToggler('offcanvas-implants', false);
     }
 
