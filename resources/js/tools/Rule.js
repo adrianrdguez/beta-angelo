@@ -9,7 +9,6 @@ export class Rule extends Tool {
         this.movingControlPointsCallback();
         this.element.line.element = this.element;
         this.setDeleteControl(this.element.line, 40, 0);
-        this.canvas.requestRenderAll();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
@@ -47,7 +46,8 @@ export class Rule extends Tool {
         if (!this.element.text) {
             this.element.text = new fabric.Text(text, {
                 fontSize: 12,
-                stroke: this.canvas.freeDrawingBrush.color,
+                stroke: 'black',
+                strokeWidth: 0.05,
                 fill: this.canvas.freeDrawingBrush.color
             });
             this.canvas.simulator.setBackgroundOptions(this.element.text);

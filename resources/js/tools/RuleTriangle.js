@@ -8,7 +8,6 @@ export class RuleTriangle extends Tool {
         this.element.triangle.element = this.element;
         this.setDeleteControl(this.element.triangle, 40, 0);
         this.movingControlPointsCallback();
-        this.canvas.requestRenderAll();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
@@ -17,10 +16,11 @@ export class RuleTriangle extends Tool {
             x: x1, y: y1
         }, {
             x: x2, y: y2
-        },{
+        }, {
             x: 0, y: x1 * 2
         },]);
         this.canvas.add(triangle);
+        triangle.absolutePositioned = true;
         return triangle;
     }
 
@@ -79,7 +79,59 @@ export class RuleTriangle extends Tool {
             return;
         }
         let measures = this.calculateTextMeasure();
-        this.setTextInCanvas(measures)
+        this.setTextInCanvas(measures);
+        let angles = this.calculateTextAngles();
+        this.setAnglesInCanvas(angles);
+    }
+
+    calculateTextAngles() {
+        return {
+            '0': 90,
+            '1': 90,
+            '2': 90,
+        };
+    }
+
+    setAnglesInCanvas(angles) {
+        Object.keys(angles).forEach(point => {
+            let text = angles[point] + 'º';
+            if (!this.element['circle' + point]) {
+                this.element['circle' + point] = new fabric.Circle({
+                    fill: 'transparent',
+                    strokeWidth: this.canvas.freeDrawingBrush.width,
+                    stroke: this.canvas.freeDrawingBrush.color,
+                    originX: 'center',
+                    originY: 'center',
+                    hasBorders: false,
+                    hasControls: false,
+                    selectable: false,
+                    radius: 10,
+                });
+                this.canvas.simulator.setBackgroundOptions(this.element['circle' + point]);
+                this.canvas.add(this.element['circle' + point]);
+            }
+            if (!this.element['angle' + point]) {
+                this.element['angle' + point] = new fabric.Text(text, {
+                    fontSize: 12,
+                    stroke: 'black',
+                    strokeWidth: 0.1,
+                    fill: this.canvas.freeDrawingBrush.color
+                });
+                this.canvas.simulator.setBackgroundOptions(this.element['angle' + point]);
+                this.canvas.add(this.element['angle' + point]);
+            }
+            let p = this.getPointCoord(this.element.triangle, parseInt(point));
+            this.element['circle' + point].set({
+                left: p.x,
+                top: p.y,
+            });
+            this.element['angle' + point].set({
+                text: text,
+                left: p.x,
+                top: p.y,
+            });
+            this.element['circle' + point].clipPath = this.element.triangle;
+        });
     }
 
     calculateTextMeasure() {
@@ -116,7 +168,8 @@ export class RuleTriangle extends Tool {
             if (!this.element['text' + point]) {
                 this.element['text' + point] = new fabric.Text(text, {
                     fontSize: 12,
-                    stroke: this.canvas.freeDrawingBrush.color,
+                    stroke: 'black',
+                    strokeWidth: 0.05,
                     fill: this.canvas.freeDrawingBrush.color
                 });
                 this.canvas.simulator.setBackgroundOptions(this.element['text' + point]);

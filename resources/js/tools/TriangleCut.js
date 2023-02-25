@@ -7,10 +7,6 @@ export class TriangleCut extends RuleTriangle {
         super(canvas);
     }
 
-    createTriangle() {
-        super.createTriangle();
-    }
-
     addingControlPoints() {
         if (!this.element.pointer4) {
             super.addingControlPoints();

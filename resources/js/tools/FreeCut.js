@@ -43,7 +43,6 @@ export class FreeCut extends Tool {
         this.element.pointer.set(this.canvas.simulator.getCenterOfView(this.element.pointer));
         this.miniPointerFollowPointer();
         this.canvas.bringForward(this.element.pointer);
-        this.canvas.requestRenderAll();
     }
 
     miniPointerFollowPointer() {
@@ -147,7 +146,6 @@ export class FreeCut extends Tool {
         this.element.imgShadow = imgShadow;
         this.canvas.remove(linePath);
         this.canvas.remove(this.element.line);
-        this.canvas.requestRenderAll();
         this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
