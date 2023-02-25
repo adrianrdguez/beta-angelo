@@ -89,10 +89,10 @@ class Simulator {
     }
 
     getCenterOfView(object = null) {
-        let zoom=this.canvas.getZoom();
+        let zoom = this.canvas.getZoom();
         return {
-            left: (fabric.util.invertTransform(this.canvas.viewportTransform)[4]+(this.canvas.width/zoom)/2) - (object ? (object.width / 2) : 0),
-            top: (fabric.util.invertTransform(this.canvas.viewportTransform)[5]+(this.canvas.height/zoom)/2) - (object ? (object.height / 2) : 0)
+            left: (fabric.util.invertTransform(this.canvas.viewportTransform)[4] + (this.canvas.width / zoom) / 2) - (object ? (object.width / 2) : 0),
+            top: (fabric.util.invertTransform(this.canvas.viewportTransform)[5] + (this.canvas.height / zoom) / 2) - (object ? (object.height / 2) : 0)
         };
     }
 
