@@ -52,16 +52,16 @@ class Simulator {
         this.canvas.simulator = this;
         if (!this.firstLineMeasureMm && !this.firstLineMeasurePx) {
             document.getElementById('botones-flotantes').classList.add('invisible');
-            this.setCurrentTool(new InitialRule(this.canvas, true));
+            this.setCurrentTool(new InitialRule(this.canvas));
         } else {
             this.closeAllCanvas();
+            this.setCurrentTool(new Drag(this.canvas));
         }
-        this.setCurrentTool(new Drag(this.canvas));
     }
 
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
-        document.getElementById('measure-input').addEventListener('keyup', (e) => {e.key === 'Enter' ? this.setUpMeasure() : null});
+        document.getElementById('measure-input').addEventListener('keyup', (e) => { e.key === 'Enter' ? this.setUpMeasure() : null });
         document.getElementById('measure-input-button').addEventListener('click', () => this.setUpMeasure());
         document.querySelectorAll('.offcanvas .offcanvas-header button.btn-close').forEach((e) => e.addEventListener('click', () => this.closeAllCanvas()));
         document.getElementById('button-offcanvas-opciones').addEventListener('click', () => this.offcanvasToggler('offcanvas-opciones'));
@@ -212,7 +212,7 @@ class Simulator {
     }
 
     setUpMeasure() {
-        let px = this.initialLine.calculate(this.initialLine.element.pointer1.left, this.initialLine.element.pointer1.top, this.initialLine.element.pointer2.left, this.initialLine.element.pointer2.top).toFixed(2);
+        let px = this.initialLine.calculate(this.initialLine.element.line.points[0].x, this.initialLine.element.line.points[0].y, this.initialLine.element.line.points[1].x, this.initialLine.element.line.points[1].y).toFixed(2);
         this.firstLineMeasurePx = px;
         this.firstLineMeasureMm = document.getElementById('measure-input').value;
         let body = JSON.stringify({
@@ -233,8 +233,6 @@ class Simulator {
         this.offcanvasToggler('offcanvas-initial-settings', false);
         document.getElementById('botones-flotantes').classList.remove('invisible');
         this.canvas.remove(this.initialLine.element.line);
-        delete this.initialLine.element.line;
-        this.initialLine.removePointers();
     }
 
     offcanvasToggler(id, open = null) {
@@ -331,6 +329,6 @@ let interval = setInterval(() => {
             }
             applyFiltersToBackgroundImg(0, 0, false);
         }
-        clearInterval(interval)
+        clearInterval(interval);
     }
 }, 0.5);

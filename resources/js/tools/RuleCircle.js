@@ -1,34 +1,19 @@
 import { Rule } from './Rule.js';
 
 export class RuleCircle extends Rule {
-    element = {};
     constructor(canvas) {
         super(canvas);
-        this.toolName = 'rule-circle';
-        this.setActiveTool(this.toolName);
-    }
-
-    startAddingLine(event) {
-        super.startAddingLine(event);
+        this.element.line.controls.p0.positionHandler = () => [0, 0, 0, 0, 0, 0];
         this.createCircle();
-    }
-
-    startDrawingLine(event) {
-        super.startDrawingLine(event);
-        if (this.element.line) {
-            this.adjustCircleRadiusAndPosition();
-        }
+        this.adjustCircleRadiusAndPosition();
+        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     createCircle() {
-        let newLineCoords = this.getNewLineCoordinates();
         let circle = new fabric.Circle({
             fill: 'transparent',
-            radius: 60,
             strokeWidth: this.canvas.freeDrawingBrush.width,
             stroke: this.canvas.freeDrawingBrush.color,
-            top: newLineCoords.y1,
-            left: newLineCoords.x1,
             originX: 'center',
             originY: 'center',
             hasBorders: false,
@@ -37,27 +22,26 @@ export class RuleCircle extends Rule {
         });
         this.canvas.add(circle);
         this.element.circle = circle;
-        this.canvas.requestRenderAll();
-    }
-
-    pointersFollowLine() {
-        super.pointersFollowLine();
-        this.adjustCircleRadiusAndPosition();
-    }
-
-    lineFollowPointers() {
-        super.lineFollowPointers();
-        this.adjustCircleRadiusAndPosition();
     }
 
     adjustCircleRadiusAndPosition() {
-        let newLineCoords = this.getNewLineCoordinates();
+        let p0 = this.getPointCoord(this.element.line, 0);
+        let p1 = this.getPointCoord(this.element.line, 1);
         this.element.circle?.set({
-            radius: this.calculate(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2),
-            top: newLineCoords.y1,
-            left: newLineCoords.x1,
+            radius: this.calculate(p0.x, p0.y, p1.x, p1.y),
+            left: p0.x,
+            top: p0.y,
         });
         this.canvas.requestRenderAll();
     }
+
+    movingControlPointsCallback() {
+        super.movingControlPointsCallback();
+        if (!this.element.line) {
+            return;
+        }
+        this.adjustCircleRadiusAndPosition();
+    }
+
 
 }
