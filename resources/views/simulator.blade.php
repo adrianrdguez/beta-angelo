@@ -77,6 +77,13 @@
                     Nuevo círculo</button>
             </div>
             <div class="mb-4 w-full">
+                <button id="circle-cut"
+                    class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
+                    <i class="fa-solid fa-scissors"></i>
+                    <i class="fa-regular fa-circle"></i>
+                    Nuevo corte circular</button>
+            </div>
+            <div class="mb-4 w-full">
                 <button id="rule-triangle"
                     class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
                     <i class="fa-solid fa-ruler-vertical"> </i>
