@@ -92,6 +92,9 @@ export class Tool {
                     for (const [key, value] of Object.entries(target.element)) {
                         this.canvas.remove(value);
                     }
+                    this.canvas.simulator.arrayOfLines = this.canvas.simulator.arrayOfLines.filter(function (item) {
+                        return item !== object;
+                    });
                 }
                 this.canvas.remove(target);
                 this.canvas.requestRenderAll();
