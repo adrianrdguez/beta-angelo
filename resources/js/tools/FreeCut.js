@@ -8,7 +8,7 @@ export class FreeCut extends Tool {
         super(canvas, 'free-cut');
         this.resetEvents();
         this.createPointer();
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     createPointer() {
@@ -40,7 +40,7 @@ export class FreeCut extends Tool {
         this.setStartControl(this.element.pointer, () => this.startCut());
         this.canvas.add(this.element.pointer);
         this.canvas.add(this.element.miniPointer);
-        this.element.pointer.set(this.canvas.simulator.getCenterOfView(this.element.pointer));
+        this.element.pointer.set(this.simulator.getCenterOfView(this.element.pointer));
         this.miniPointerFollowPointer();
         this.canvas.bringForward(this.element.pointer);
     }
@@ -119,22 +119,22 @@ export class FreeCut extends Tool {
     async cutFreePath(linePath) {
         linePath.strokeWidth = 0;
         linePath.fill = 'black';
-        let imgShadow = await this.canvas.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
+        let imgShadow = await this.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
         imgShadow.left = linePath.left;
         imgShadow.top = linePath.top;
         imgShadow.width = linePath.width;
         imgShadow.height = linePath.height;
         this.canvas.add(imgShadow);
-        this.canvas.simulator.setBackgroundOptions(imgShadow);
+        this.simulator.setBackgroundOptions(imgShadow);
         this.canvas.moveTo(imgShadow, 1);
-        let tmpRadiographyImg = await this.canvas.simulator.loadImageFromUrl(this.canvas.simulator.radiographyUrl);
+        let tmpRadiographyImg = await this.simulator.loadImageFromUrl(this.simulator.radiographyUrl);
         let tmpCanvas = new fabric.Canvas();
-        this.canvas.simulator.setCanvasSize(tmpCanvas);
+        this.simulator.setCanvasSize(tmpCanvas);
         tmpCanvas.add(tmpRadiographyImg);
         tmpRadiographyImg.center();
         imgShadow.absolutePositioned = true;
         tmpRadiographyImg.clipPath = imgShadow;
-        let imgCut = await this.canvas.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
+        let imgCut = await this.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
         imgCut.left = imgShadow.left;
         imgCut.top = imgShadow.top;
         imgCut.width = imgShadow.width;
@@ -146,7 +146,7 @@ export class FreeCut extends Tool {
         this.element.imgShadow = imgShadow;
         this.canvas.remove(linePath);
         this.canvas.remove(this.element.line);
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     finishCutPath() {

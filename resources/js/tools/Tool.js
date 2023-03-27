@@ -4,6 +4,7 @@ export class Tool {
     element = {};
     constructor(canvas, toolName = null) {
         this.canvas = canvas;
+        this.simulator = canvas.simulator;
         if (toolName) {
             this.toolName = toolName;
             this.setActiveTool(toolName);
@@ -68,7 +69,7 @@ export class Tool {
         });
         this.setDeleteControl(object);
         // Descomentar para limitar los objetos a la imagen
-        // object.clipPath = this.canvas.simulator.limitClipPathField;
+        // object.clipPath = this.simulator.limitClipPathField;
         object.on('mousedown', this.objectMouseDownEvent);
         object.element = this.element;
     }
@@ -92,7 +93,7 @@ export class Tool {
                     for (const [key, value] of Object.entries(target.element)) {
                         this.canvas.remove(value);
                     }
-                    this.canvas.simulator.arrayOfLines = this.canvas.simulator.arrayOfLines.filter(function (item) {
+                    this.simulator.arrayOfLines = this.simulator.arrayOfLines.filter(function (item) {
                         return item !== object;
                     });
                 }
@@ -117,7 +118,7 @@ export class Tool {
 
     setActiveTool(toolName) {
         document.querySelectorAll('#offcanvas-herramientas button').forEach(li => li.classList.remove('bg-yellow-500', 'text-black'));
-        this.canvas.simulator.offcanvasToggler('offcanvas-herramientas', false);
+        this.simulator.offcanvasToggler('offcanvas-herramientas', false);
         document.getElementById(toolName)?.classList.add('bg-yellow-500', 'text-black');
     }
 
@@ -226,7 +227,7 @@ export class Tool {
             });
             return acc;
         }, {});
-        polygon.set(this.canvas.simulator.getCenterOfView(polygon));
+        polygon.set(this.simulator.getCenterOfView(polygon));
         return polygon;
     }
 

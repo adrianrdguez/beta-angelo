@@ -8,7 +8,7 @@ export class RuleTriangle extends Tool {
         this.element.triangle.element = this.element;
         this.setDeleteControl(this.element.triangle, 40, 0);
         this.movingControlPointsCallback();
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     createTriangle(x1, y1, x2, y2) {
@@ -107,7 +107,7 @@ export class RuleTriangle extends Tool {
                     selectable: false,
                     radius: 10,
                 });
-                this.canvas.simulator.setBackgroundOptions(this.element['circle' + point]);
+                this.simulator.setBackgroundOptions(this.element['circle' + point]);
                 this.canvas.add(this.element['circle' + point]);
             }
             if (!this.element['angle' + point]) {
@@ -117,7 +117,7 @@ export class RuleTriangle extends Tool {
                     strokeWidth: 0.1,
                     fill: this.canvas.freeDrawingBrush.color
                 });
-                this.canvas.simulator.setBackgroundOptions(this.element['angle' + point]);
+                this.simulator.setBackgroundOptions(this.element['angle' + point]);
                 this.canvas.add(this.element['angle' + point]);
             }
             let p = this.getPointCoord(this.element.triangle, parseInt(point));
@@ -135,8 +135,8 @@ export class RuleTriangle extends Tool {
     }
 
     calculateTextMeasure() {
-        let realMeasure = this.canvas.simulator.firstLineMeasureMm;
-        let firstLineMeasurePx = this.canvas.simulator.firstLineMeasurePx;
+        let realMeasure = this.simulator.firstLineMeasureMm;
+        let firstLineMeasurePx = this.simulator.firstLineMeasurePx;
         let px1 = this.calculate(
             this.element.triangle.points[0].x,
             this.element.triangle.points[0].y,
@@ -172,7 +172,7 @@ export class RuleTriangle extends Tool {
                     strokeWidth: 0.05,
                     fill: this.canvas.freeDrawingBrush.color
                 });
-                this.canvas.simulator.setBackgroundOptions(this.element['text' + point]);
+                this.simulator.setBackgroundOptions(this.element['text' + point]);
                 this.canvas.add(this.element['text' + point]);
             }
             let p0 = this.getPointCoord(this.element.triangle, parseInt(point));

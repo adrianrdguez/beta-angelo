@@ -6,10 +6,10 @@ export class InitialRule extends Rule {
         super(canvas);
         this.canvas.remove(this.element.text);
         setTimeout(() => {
-            this.canvas.simulator.offcanvasToggler('offcanvas-initial-settings', true);
+            this.simulator.offcanvasToggler('offcanvas-initial-settings', true);
         }, 100);
         canvas.simulator.initialLine = this;
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     movingControlPointsCallback() {

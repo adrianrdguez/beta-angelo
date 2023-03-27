@@ -45,7 +45,7 @@ export class TriangleCut extends RuleTriangle {
             ]);
             this.canvas.add(this.element.triangleShadow);
             this.canvas.moveTo(this.element.triangleShadow, 1);
-            this.canvas.simulator.setBackgroundOptions(this.element.triangleShadow);
+            this.simulator.setBackgroundOptions(this.element.triangleShadow);
             this.canvas.discardActiveObject();
             this.canvas.requestRenderAll();
         }
@@ -85,22 +85,22 @@ export class TriangleCut extends RuleTriangle {
     async cutTrianglePath(linePath) {
         linePath.strokeWidth = 0;
         linePath.fill = 'black';
-        let imgShadow = await this.canvas.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
+        let imgShadow = await this.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
         imgShadow.left = linePath.left;
         imgShadow.top = linePath.top;
         imgShadow.width = linePath.width;
         imgShadow.height = linePath.height;
         this.canvas.add(imgShadow);
-        this.canvas.simulator.setBackgroundOptions(imgShadow);
+        this.simulator.setBackgroundOptions(imgShadow);
         this.canvas.moveTo(imgShadow, 1);
-        let tmpRadiographyImg = await this.canvas.simulator.loadImageFromUrl(this.canvas.simulator.radiographyUrl)
+        let tmpRadiographyImg = await this.simulator.loadImageFromUrl(this.simulator.radiographyUrl)
         let tmpCanvas = new fabric.Canvas();
-        this.canvas.simulator.setCanvasSize(tmpCanvas);
+        this.simulator.setCanvasSize(tmpCanvas);
         tmpCanvas.add(tmpRadiographyImg);
         tmpRadiographyImg.center();
         imgShadow.absolutePositioned = true;
         tmpRadiographyImg.clipPath = imgShadow;
-        let imgCut = await this.canvas.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
+        let imgCut = await this.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
         imgCut.left = imgShadow.left;
         imgCut.top = imgShadow.top;
         imgCut.width = imgShadow.width;
@@ -124,9 +124,9 @@ export class TriangleCut extends RuleTriangle {
         })
         let cutPath = new fabric.Polygon(this.cutPath);
         this.cutTrianglePath(cutPath);
-        this.canvas.simulator.setBackgroundOptions(this.element.line1);
-        this.canvas.simulator.setBackgroundOptions(this.element.line2);
-        this.canvas.simulator.setBackgroundOptions(this.element.line3);
+        this.simulator.setBackgroundOptions(this.element.line1);
+        this.simulator.setBackgroundOptions(this.element.line2);
+        this.simulator.setBackgroundOptions(this.element.line3);
         this.cutPath = [];
         this.canvas.remove(this.element.line4);
         this.canvas.remove(this.element.pointer4);

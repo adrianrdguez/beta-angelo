@@ -22,7 +22,7 @@ export class FreeDraw extends Tool {
     }
 
     pathCreated(event) {
-        this.canvas.simulator.setBackgroundOptions(event.path);
+        this.simulator.setBackgroundOptions(event.path);
     }
 
 }

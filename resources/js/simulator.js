@@ -17,7 +17,7 @@ class Simulator {
     initialLine;
     firstLineMeasurePx;
     firstLineMeasureMm;
-    arrayOfLines = [];
+    lineAngles = {};
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }

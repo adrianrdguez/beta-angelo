@@ -7,7 +7,7 @@ export class RuleCircle extends Rule {
         this.element.line.controls.p0.positionHandler = () => [0, 0, 0, 0, 0, 0];
         this.createCircle();
         this.adjustCircleRadiusAndPosition();
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     createCircle() {
