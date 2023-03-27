@@ -16,6 +16,7 @@ class Simulator {
     initialLine;
     firstLineMeasurePx;
     firstLineMeasureMm;
+    arrayOfLines = [];
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }
