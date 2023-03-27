@@ -7,6 +7,7 @@ import { RuleCircle } from './tools/RuleCircle.js';
 import { RuleTriangle } from './tools/RuleTriangle.js';
 import { InitialRule } from './tools/InitialRule.js';
 import { TriangleCut } from './tools/TriangleCut.js';
+import { CircleCut } from './tools/CircleCut.js';
 
 class Simulator {
     canvas;
@@ -77,6 +78,7 @@ class Simulator {
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
+        document.getElementById('circle-cut').addEventListener('click', () => this.setCurrentTool(new CircleCut(this.canvas)));
         document.getElementById('rotate-implant').addEventListener('click', () => this.rotateAndFlipImplant());
         document.getElementById('opacity').addEventListener('change', (e) => this.applyFiltersToImplant());
     }
