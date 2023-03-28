@@ -95,7 +95,7 @@ export class Tool {
                             this.canvas.remove(value);
                         } else {
                             for (const [subKey, subValue] of Object.entries(value)) {
-                                if (value instanceof fabric.Object) {
+                                if (subValue instanceof fabric.Object) {
                                     this.canvas.remove(subValue);
                                 }
                             }
