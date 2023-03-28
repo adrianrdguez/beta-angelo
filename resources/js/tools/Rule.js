@@ -46,14 +46,19 @@ export class Rule extends Tool {
         let coords = this.getCoordsOfCollidingLines(line1, line2);
         let angle = this.getAngleBetweenRules(line1, line2);
         let p1 = coords.p1;
+        let p3 = coords.p3;
         if (angle > 90) {
-            angle = (180 - angle).toFixed(2);
+            angle = 180 - angle;
             p1 = coords.p0;
         }
-        let text = angle + 'º';
+        if (this.checkDistanceToCollidePoint(coords.pc.x, coords.pc.y, p1.x, p1.y, coords.p3.x, coords.p3.y)) {
+            p1 = (angle > 90) ? coords.p1 : coords.p0;
+            p3 = (angle > 90) ? coords.p3 : coords.p2;
+        }
+        let text = (angle >= 89.95 || angle >= 90.05 ? '90' : (angle).toFixed(2)) + 'º';
         if (!this.simulator.lineAngles[keyAngle]) {
             this.simulator.lineAngles[keyAngle] = {};
-            this.simulator.lineAngles[keyAngle].triangle = this.createTriangle(coords.pc.x, coords.pc.y, p1.x, p1.y, coords.p3.x, coords.p3.y);
+            this.simulator.lineAngles[keyAngle].triangle = this.createTriangle(coords.pc.x, coords.pc.y, p1.x, p1.y, p3.x, p3.y);
             this.simulator.lineAngles[keyAngle].circle = this.createAngleCircle(this.simulator.lineAngles[keyAngle].triangle);
             this.simulator.lineAngles[keyAngle].text = this.createAngleText(text);
         }
@@ -61,7 +66,7 @@ export class Rule extends Tool {
             points: [
                 {x: coords.pc.x, y: coords.pc.y},
                 {x: p1.x, y: p1.y},
-                {x: coords.p3.x, y: coords.p3.y},
+                {x: p3.x, y: p3.y},
             ],
         });
         this.simulator.lineAngles[keyAngle].triangle._setPositionDimensions({});
@@ -74,6 +79,18 @@ export class Rule extends Tool {
             left: coords.pc.x,
             top: coords.pc.y,
         });
+    }
+
+    checkDistanceToCollidePoint(x1, y1, x2, y2, x3, y3) {
+        let x2diff = x1 - x2;
+        let y2diff = y1 - y2;
+        let distance1 = Math.sqrt(x2diff ** 2 + y2diff ** 2);
+
+        let x3diff = x1 - x3;
+        let y3diff = y1 - y3;
+        let distance2 = Math.sqrt(x3diff ** 2 + y3diff ** 2);
+
+        return !!(distance1 < 15 || distance2 < 15);
     }
 
     removeAngle(keyAngle) {
@@ -166,7 +183,7 @@ export class Rule extends Tool {
         let angle = Math.acos(dot / (mag1 * mag2));
         let angle_degrees = angle * 180 / Math.PI;
 
-        return angle_degrees.toFixed(2);
+        return angle_degrees;
     };
 
     createTriangle(x1, y1, x2, y2, x3, y3) {
@@ -178,6 +195,7 @@ export class Rule extends Tool {
             x: x3, y: y3
         },], {
             objectCaching: false,
+            fill: 'transparent',
             absolutePositioned: true,
         });
         this.simulator.setBackgroundOptions(triangle);
