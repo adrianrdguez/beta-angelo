@@ -91,11 +91,17 @@ export class Tool {
                 let target = transform.target;
                 if (target?.element) {
                     for (const [key, value] of Object.entries(target.element)) {
-                        this.canvas.remove(value);
+                        if (value instanceof fabric.Object) {
+                            this.canvas.remove(value);
+                        } else {
+                            for (const [subKey, subValue] of Object.entries(value)) {
+                                if (value instanceof fabric.Object) {
+                                    this.canvas.remove(subValue);
+                                }
+                            }
+                            delete this.simulator.lineAngles[key];
+                        }
                     }
-                    this.simulator.arrayOfLines = this.simulator.arrayOfLines.filter(function (item) {
-                        return item !== object;
-                    });
                 }
                 this.canvas.remove(target);
                 this.canvas.requestRenderAll();

@@ -61,6 +61,11 @@ export class Rule extends Tool {
             this.simulator.lineAngles[keyAngle].triangle = this.createTriangle(coords.pc.x, coords.pc.y, p1.x, p1.y, p3.x, p3.y);
             this.simulator.lineAngles[keyAngle].circle = this.createAngleCircle(this.simulator.lineAngles[keyAngle].triangle);
             this.simulator.lineAngles[keyAngle].text = this.createAngleText(text);
+            this.element[keyAngle] = {
+                triangle: this.simulator.lineAngles[keyAngle].triangle,
+                circle: this.simulator.lineAngles[keyAngle].circle,
+                text: this.simulator.lineAngles[keyAngle].text
+            };
         }
         this.simulator.lineAngles[keyAngle].triangle.set({
             points: [
