@@ -26,74 +26,21 @@ export class RuleTriangle extends Tool {
 
 
     getAngleBetweenLines(line1, line2, line180 = false) {
-        let angle1;
-        let angle2;
+        const angle1 = Math.atan2(line1.p2y - line1.p1y, line1.p2x - line1.p1x);
+        let angle2 = Math.atan2(line2.p2y - line2.p1y, line2.p2x - line2.p1x);
+
         if (line180) {
-            angle1 = Math.atan2(line1.p2y - line1.p1y, line1.p2x - line1.p1x);
-            angle1 += Math.PI;
-            angle2 = Math.atan2(line2.p2y - line2.p1y, line2.p2x - line2.p1x);
-        } else {
-            angle1 = Math.atan2(line1.p2y - line1.p1y, line1.p2x - line1.p1x);
-            angle2 = Math.atan2(line2.p2y - line2.p1y, line2.p2x - line2.p1x);
-        }
-        angle1 = angle1 * 180 / Math.PI;
-        angle2 = angle2 * 180 / Math.PI;
-
-        let angle = angle1 - angle2;
-        let angleReal = angle;
-
-        if (angleReal < 0) {
-            angleReal = - angleReal;
+            angle2 += Math.PI;
         }
 
-        if (360 - angleReal < angleReal) {
-            angleReal = 360 - angleReal;
-        }
+        let angle = (angle1 - angle2) * 180 / Math.PI;
 
-        if (angleReal < 0) {
-            angleReal = - angleReal;
-        }
+        angle = Math.abs(angle);
 
-        return angleReal;
-    }
-
-    /* 
-    function getAngleBetweenLines(line1, line2, line180 = false) {
-  const angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
-  let angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
-  
-  if (line180) {
-    angle2 += Math.PI;
-  }
-
-  let angle = (angle1 - angle2) * 180 / Math.PI;
-
-  angle = Math.abs(angle);
-
-  if (angle > 180) {
-    angle = 360 - angle;
-  }
-
-  return angle;
-}
-    */
-
-    getAngleBetweenLines2(line1, line2) {
-        let u = [line1.x2 - line1.x1, line1.y2 - line1.y1]
-        let v = [line2.x2 - line2.x1, line2.y2 - line2.y1]
-
-        let angle1 = Math.atan2(u[0], u[1]);
-        let angle2 = Math.atan2(v[0], v[1]);
-
-
-        let angle = angle1 - angle2;
-        angle = angle * 180 / Math.PI;
-        if (angle < 0) {
-            angle = -angle;
-        }
-        if (360 - angle < angle) {
+        if (angle > 180) {
             angle = 360 - angle;
         }
+
         return angle;
     }
 
