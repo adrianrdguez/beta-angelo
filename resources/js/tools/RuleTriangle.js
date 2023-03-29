@@ -24,16 +24,17 @@ export class RuleTriangle extends Tool {
         return triangle;
     }
 
+
     getAngleBetweenLines(line1, line2, line180 = false) {
         let angle1;
         let angle2;
         if (line180) {
-            angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
+            angle1 = Math.atan2(line1.p2y - line1.p1y, line1.p2x - line1.p1x);
             angle1 += Math.PI;
-            angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
+            angle2 = Math.atan2(line2.p2y - line2.p1y, line2.p2x - line2.p1x);
         } else {
-            angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
-            angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
+            angle1 = Math.atan2(line1.p2y - line1.p1y, line1.p2x - line1.p1x);
+            angle2 = Math.atan2(line2.p2y - line2.p1y, line2.p2x - line2.p1x);
         }
         angle1 = angle1 * 180 / Math.PI;
         angle2 = angle2 * 180 / Math.PI;
@@ -56,6 +57,27 @@ export class RuleTriangle extends Tool {
         return angleReal;
     }
 
+    /* 
+    function getAngleBetweenLines(line1, line2, line180 = false) {
+  const angle1 = Math.atan2(line1.y2 - line1.y1, line1.x2 - line1.x1);
+  let angle2 = Math.atan2(line2.y2 - line2.y1, line2.x2 - line2.x1);
+  
+  if (line180) {
+    angle2 += Math.PI;
+  }
+
+  let angle = (angle1 - angle2) * 180 / Math.PI;
+
+  angle = Math.abs(angle);
+
+  if (angle > 180) {
+    angle = 360 - angle;
+  }
+
+  return angle;
+}
+    */
+
     getAngleBetweenLines2(line1, line2) {
         let u = [line1.x2 - line1.x1, line1.y2 - line1.y1]
         let v = [line2.x2 - line2.x1, line2.y2 - line2.y1]
@@ -72,6 +94,7 @@ export class RuleTriangle extends Tool {
         if (360 - angle < angle) {
             angle = 360 - angle;
         }
+        return angle;
     }
 
     movingControlPointsCallback() {
@@ -85,12 +108,35 @@ export class RuleTriangle extends Tool {
     }
 
     calculateTextAngles() {
-        return {
-            '0': 90,
-            '1': 90,
-            '2': 90,
+        let line1 = {
+            p1x: this.element.triangle.points[0].x,
+            p1y: this.element.triangle.points[0].y,
+            p2x: this.element.triangle.points[1].x,
+            p2y: this.element.triangle.points[1].y
         };
-    }
+        let line2 = {
+            p1x: this.element.triangle.points[1].x,
+            p1y: this.element.triangle.points[1].y,
+            p2x: this.element.triangle.points[2].x,
+            p2y: this.element.triangle.points[2].y
+        };
+        let line3 = {
+            p1x: this.element.triangle.points[2].x,
+            p1y: this.element.triangle.points[2].y,
+            p2x: this.element.triangle.points[0].x,
+            p2y: this.element.triangle.points[0].y
+        };
+
+        let angle1 = this.getAngleBetweenLines(line1, line3);
+        let angle2 = this.getAngleBetweenLines(line1, line2);
+        let angle3 = this.getAngleBetweenLines(line2, line3, true);
+
+        return {
+            '0': (180 - angle1).toFixed(2),
+            '1': (180 - angle2).toFixed(2),
+            '2': angle3.toFixed(2),
+        };
+    };
 
     setAnglesInCanvas(angles) {
         Object.keys(angles).forEach(point => {
