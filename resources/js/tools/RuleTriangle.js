@@ -170,10 +170,23 @@ export class RuleTriangle extends Tool {
             }
             let p0 = this.getPointCoord(this.element.triangle, parseInt(point));
             let p1 = this.getPointCoord(this.element.triangle, parseInt((point == 2) ? 0 : parseInt(point) + 1));
+
+            let angle = Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI;
+            let centerX = (p0.x + p1.x) / 2;
+            let centerY = (p0.y + p1.y) / 2;
+            let distance = -10;
+            let dx = distance * Math.sin(angle * Math.PI / 180);
+            let dy = distance * Math.cos(angle * Math.PI / 180);
+
             this.element['text' + point].set({
                 text: text,
-                left: p0.x + ((p1.x - p0.x) / 2),
-                top: p0.y + ((p1.y - p0.y) / 2),
+                left: centerX + dx,
+                top: centerY - dy,
+                angle: angle,
+                originX: 'center',
+                originY: 'center',
+                flipY: (angle >= 90 && angle <= 270),
+                flipX: (angle >= 90 && angle <= 270)
             });
         });
     }
