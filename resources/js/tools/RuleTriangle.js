@@ -79,9 +79,9 @@ export class RuleTriangle extends Tool {
         let angle3 = this.getAngleBetweenLines(line2, line3, true);
 
         return {
-            '0': (180 - angle1).toFixed(2),
-            '1': (180 - angle2).toFixed(2),
-            '2': angle3.toFixed(2),
+            '0': Math.abs(180 - angle1).toFixed(2),
+            '1': Math.abs(180 - angle2).toFixed(2),
+            '2': Math.abs(angle3).toFixed(2),
         };
     };
 

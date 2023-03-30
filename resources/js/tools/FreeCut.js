@@ -4,8 +4,10 @@ import { Drag } from './Drag.js';
 export class FreeCut extends Tool {
     cutPath = [];
     cutLinePaths = [];
-    constructor(canvas) {
+    callbackOnFinishedCut = null;
+    constructor(canvas, callbackOnFinishedCut = null) {
         super(canvas, 'free-cut');
+        this.callbackOnFinishedCut = callbackOnFinishedCut;
         this.resetEvents();
         this.createPointer();
         this.simulator.setCurrentTool(new Drag(this.canvas));
@@ -55,14 +57,14 @@ export class FreeCut extends Tool {
         }
     }
 
-    createLine() {
-        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, this.element.pointer.left, this.element.pointer.top], {
+    createLine(x2 = null, y2 = null) {
+        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, x2 ?? this.element.pointer.left, y2 ?? this.element.pointer.top], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
             strokeLineCap: 'round',
         });
         this.canvas.add(this.element.line);
-        this.setDefaultObjectOptions(this.element.line);
+        this.simulator.setBackgroundOptions(this.element.line);
         this.element.line.set({
             hasBorders: false,
             selectable: false,
@@ -72,15 +74,15 @@ export class FreeCut extends Tool {
         });
     }
 
-    startCut() {
+    startCut(x2 = null, y2 = null) {
         this.setBrushOptions(0.3);
-        this.createLine();
+        this.createLine(x2, y2);
         this.element.pointer.set({
             radius: this.element.pointer.radius + 20,
             stroke: 'lightblue',
             fill: 'lightblue',
         });
-        this.setStartControl(this.element.pointer, () => this.finishCutPath());
+        this.setStartControl(this.element.pointer, () => this.finishCutPath(x2, y2));
         this.canvas.requestRenderAll();
     }
 
@@ -101,6 +103,7 @@ export class FreeCut extends Tool {
             strokeWidth: this.canvas.freeDrawingBrush.width,
             strokeLineCap: 'round',
         });
+        this.simulator.setBackgroundOptions(line);
         this.element[Math.random() * 100000000] = line;
         this.cutLinePaths.push(line);
         this.canvas.add(line);
@@ -149,7 +152,13 @@ export class FreeCut extends Tool {
         this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    finishCutPath() {
+    finishCutPath(x2 = null, y2 = null) {
+        if (x2 && y2) {
+            this.cutPath.push({
+                x: x2,
+                y: y2,
+            });
+        }
         this.cutPath.push({
             x: this.cutPath[0].x,
             y: this.cutPath[0].y,
@@ -164,6 +173,9 @@ export class FreeCut extends Tool {
             this.canvas.remove(element);
         });
         this.cutLinePaths = [];
+        if (this.callbackOnFinishedCut) {
+            this.callbackOnFinishedCut();
+        }
         this.canvas.requestRenderAll();
     }
 
