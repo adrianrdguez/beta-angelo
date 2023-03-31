@@ -6,7 +6,7 @@ export class RuleCircle extends Rule {
         super(canvas);
         this.element.line.controls.p0.positionHandler = () => [0, 0, 0, 0, 0, 0];
         this.createCircle();
-        this.adjustCircleRadiusAndPosition();
+        this.movingControlPointsCallback();
         this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
@@ -33,7 +33,10 @@ export class RuleCircle extends Rule {
             left: p0.x,
             top: p0.y,
         });
-        this.canvas.requestRenderAll();
+        return {
+            p0: p0,
+            p1: p1
+        }
     }
 
     movingControlPointsCallback() {

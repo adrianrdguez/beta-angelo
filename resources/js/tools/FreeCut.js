@@ -5,9 +5,11 @@ export class FreeCut extends Tool {
     cutPath = [];
     cutLinePaths = [];
     callbackOnFinishedCut = null;
-    constructor(canvas, callbackOnFinishedCut = null) {
+    pathToAddToCut = null;
+    constructor(canvas, callbackOnFinishedCut = null, pathToAddToCut = null) {
         super(canvas, 'free-cut');
         this.callbackOnFinishedCut = callbackOnFinishedCut;
+        this.pathToAddToCut = pathToAddToCut;
         this.resetEvents();
         this.createPointer();
         this.simulator.setCurrentTool(new Drag(this.canvas));
@@ -150,6 +152,9 @@ export class FreeCut extends Tool {
         this.canvas.remove(linePath);
         this.canvas.remove(this.element.line);
         this.simulator.setCurrentTool(new Drag(this.canvas));
+        if (this.callbackOnFinishedCut) {
+            this.callbackOnFinishedCut(this.element.imgCut);
+        }
     }
 
     finishCutPath(x2 = null, y2 = null) {
@@ -164,6 +169,9 @@ export class FreeCut extends Tool {
             y: this.cutPath[0].y,
         });
         let cutPath = new fabric.Polygon(this.cutPath);
+        if (this.pathToAddToCut) {
+            
+        }
         this.cutFreePath(cutPath);
         this.cutPath = [];
         this.canvas.remove(this.element.line);
@@ -173,9 +181,6 @@ export class FreeCut extends Tool {
             this.canvas.remove(element);
         });
         this.cutLinePaths = [];
-        if (this.callbackOnFinishedCut) {
-            this.callbackOnFinishedCut();
-        }
         this.canvas.requestRenderAll();
     }
 

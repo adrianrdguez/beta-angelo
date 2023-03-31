@@ -80,7 +80,11 @@ class Simulator {
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
         document.getElementById('circle-cut').addEventListener('click', () => this.setCurrentTool(new CircleCut(this.canvas)));
         document.getElementById('rotate-implant').addEventListener('click', () => this.rotateAndFlipImplant());
-        document.getElementById('opacity').addEventListener('change', (e) => this.applyFiltersToImplant());
+        document.getElementById('opacity').addEventListener('input', (e) => this.applyFiltersToImplant());
+        document.getElementById('angle-input').addEventListener('input', () => this.setCircleCutOptions('angle-input'));
+        document.getElementById('radius-input').addEventListener('input', () => this.setCircleCutOptions('radius-input'));
+        this.setCircleCutOptions('angle-input')
+        this.setCircleCutOptions('radius-input')
     }
 
     setCanvasSize(canvas) {
@@ -305,6 +309,31 @@ class Simulator {
             this.offcanvasToggler(offcanvas.id, false);
         }
     }
+
+    setCircleCutOptions(id) {
+        let radioRanges = [10, 12, 15, 18, 21, 24, 27, 30];
+        let input = document.querySelector('#' + id);
+        let bubble = document.querySelector('#' + id + '-value');
+        let tool = this.canvas.getActiveObject()?.tool;
+        if (tool) {
+            if (input.max !== '359') {
+                tool.element.line.points[0].x = 0;
+                tool.element.line.points[1].y = 0;
+                tool.element.line.points[1].x = (tool.element.line.points[1].x < 0 ? -1 : 1) * ((radioRanges[input.value]) * this.firstLineMeasurePx) / this.firstLineMeasureMm;
+                tool.movingControlPointsCallback();
+            } else {
+                tool.element.semicircle.endAngle = (input.value / 2);
+                tool.element.semicircle.startAngle = -input.value / 2;
+            }
+            this.canvas.requestRenderAll();
+        }
+        bubble.textContent = input.id === 'radius-input' ? radioRanges[input.value] + 'mm' : input.value + 'º';
+        const percent = (input.value - input.min) / (input.max - input.min);
+        const x = percent * input.offsetWidth - bubble.offsetWidth / 2;
+        bubble.style.left = `${x}px`;
+        bubble.style.top = `-4px`;
+    };
+
 }
 
 function applyFiltersToBackgroundImg(contrast = null, brightness = null, grayscale = null) {

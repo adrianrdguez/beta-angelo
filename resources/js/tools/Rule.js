@@ -5,7 +5,7 @@ export class Rule extends Tool {
     constructor(canvas) {
         super(canvas, 'rule');
         this.resetEvents();
-        this.element.line = this.createLine(100, 0, -100, 0);
+        this.element.line = this.createLine(-100, 0, 100, 0);
         this.movingControlPointsCallback();
         this.element.line.element = this.element;
         this.setDeleteControl(this.element.line, 40, 0);
@@ -130,10 +130,23 @@ export class Rule extends Tool {
         }
         let p0 = this.getPointCoord(this.element.line, 0);
         let p1 = this.getPointCoord(this.element.line, 1);
+
+        let angle = Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI;
+        let centerX = (p0.x + p1.x) / 2;
+        let centerY = (p0.y + p1.y) / 2;
+        let distance = -10;
+        let dx = distance * Math.sin(angle * Math.PI / 180);
+        let dy = distance * Math.cos(angle * Math.PI / 180);
+
         this.element.text.set({
             text: text,
-            left: p0.x + ((p1.x - p0.x) / 2),
-            top: p0.y + ((p1.y - p0.y) / 2),
+            left: centerX + dx,
+            top: centerY - dy,
+            angle: angle,
+            originX: 'center',
+            originY: 'center',
+            flipY: (angle >= 90 && angle <= 270),
+            flipX: (angle >= 90 && angle <= 270)
         });
     }
 

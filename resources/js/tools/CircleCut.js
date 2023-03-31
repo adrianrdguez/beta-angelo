@@ -1,45 +1,50 @@
 import { RuleCircle } from './RuleCircle.js';
 import { Drag } from './Drag.js';
+import { FreeCut } from './FreeCut.js';
 
 export class CircleCut extends RuleCircle {
     constructor(canvas) {
         super(canvas);
-        this.setStartControl(this.element.line, () => this.startCut);
+        this.element.line.tool = this;
+        this.setStartControl(this.element.line, () => this.startCut());
+        this.element.line.on('selected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', true));
+        this.element.line.on('deselected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', false));
+        this.createSemiCircle();
+        this.movingControlPointsCallback();
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    startCut() {
-        this.setBrushOptions(0.3);
-        this.createFollowLine();
-        this.element.pointer.set({
-            radius: this.element.pointer.radius + 20,
-            stroke: 'lightblue',
-            fill: 'lightblue',
+    adjustCircleRadiusAndPosition() {
+        let coords = super.adjustCircleRadiusAndPosition();
+        this.element.semicircle?.set({
+            radius: this.calculate(coords.p0.x, coords.p0.y, coords.p1.x, coords.p1.y),
+            left: coords.p0.x,
+            top: coords.p0.y,
         });
-        this.setStartControl(this.element.pointer, () => this.finishCutPath());
-        this.canvas.requestRenderAll();
     }
 
-    createFollowLine() {
-        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, this.element.pointer.left, this.element.pointer.top], {
+    createSemiCircle() {
+        let semicircle = new fabric.Circle({
+            fill: 'transparent',
+            strokeWidth: this.canvas.freeDrawingBrush.width + 1,
             stroke: this.canvas.freeDrawingBrush.color,
-            strokeWidth: this.canvas.freeDrawingBrush.width,
-            strokeLineCap: 'round',
-        });
-        this.canvas.add(this.element.line);
-        this.setDefaultObjectOptions(this.element.line);
-        this.element.line.set({
+            originX: 'center',
+            originY: 'center',
+            startAngle: 270,
+            endAngle: 90,
             hasBorders: false,
+            hasControls: false,
             selectable: false,
-        })
-        this.element.line.setControlsVisibility({
-            mtr: false,
+            angle: 90,
         });
+        this.canvas.add(semicircle);
+        this.element.semicircle = semicircle;
     }
 
     setStartControl(object, callback) {
         object.controls.startControl = new fabric.Control({
-            x: 0,
-            y: -0,
+            x: -0,
+            y: 0,
             offsetY: -40,
             offsetX: -40,
             cursorStyle: 'pointer',
@@ -60,5 +65,47 @@ export class CircleCut extends RuleCircle {
             },
             cornerSize: 24
         });
+    }
+
+    startCut() {
+        this.canvas.remove(this.element.circle);
+        this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
+        this.simulator.setBackgroundOptions(this.element.circle);
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
+        let p1 = this.getPointCoord(this.element.line, 1);
+        let p2 = this.getPointCoord(this.element.line, 0);
+        this.freeCutTool.element.pointer.set({
+            left: p1.x,
+            top: p1.y,
+        });
+        this.freeCutTool.element.miniPointer.set({
+            left: p1.x,
+            top: p1.y,
+        });
+        this.freeCutTool.startCut(p2.x - this.element.circle.radius, p1.y);
+        this.canvas.remove(this.element.line);
+        delete this.element.line;
+        Object.assign(this.freeCutTool.element, this.element);
+        this.canvas.requestRenderAll();
+    }
+
+    callbackOnFinishedCut(imgCut) {
+        let group = new fabric.Group([this.element.circle, imgCut], {
+            left: this.element.circle.left,
+            top: this.element.circle.top,
+            originX: 'center',
+            originY: 'center',
+        });
+        this.setDefaultObjectOptions(group);
+        group.set({
+            lockMovementX: true,
+            lockMovementY: true,
+            lockUniScaling: true,
+        });
+        this.canvas.add(group);
+        this.canvas.remove(this.element.circle);
+        this.canvas.remove(this.element.semicircle);
+        this.canvas.remove(this.element.text);
+        this.canvas.remove(imgCut);
     }
 }
