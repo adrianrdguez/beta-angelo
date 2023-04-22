@@ -27,7 +27,7 @@ export class CircleCut extends RuleCircle {
         let semicircle = new fabric.Circle({
             fill: 'transparent',
             strokeWidth: this.canvas.freeDrawingBrush.width + 1,
-            stroke: this.canvas.freeDrawingBrush.color,
+            stroke: 'blue',
             originX: 'center',
             originY: 'center',
             startAngle: 270,
