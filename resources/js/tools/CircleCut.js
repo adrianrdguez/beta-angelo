@@ -14,6 +14,12 @@ export class CircleCut extends RuleCircle {
         this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
+    updateSemiCircleAngles(angle) {
+        this.element.semicircle?.set({
+            angle: angle + 90
+        });
+    }
+
     adjustCircleRadiusAndPosition() {
         let coords = super.adjustCircleRadiusAndPosition();
         this.element.semicircle?.set({
@@ -21,6 +27,11 @@ export class CircleCut extends RuleCircle {
             left: coords.p0.x,
             top: coords.p0.y,
         });
+        let dx = coords.p1.x - coords.p0.x;
+        let dy = coords.p1.y - coords.p0.y;
+        let angleRadians = Math.atan2(dy, dx);
+        let angle = angleRadians * (180 / Math.PI)
+        this.updateSemiCircleAngles(angle);
     }
 
     createSemiCircle() {
