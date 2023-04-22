@@ -320,7 +320,7 @@ class Simulator {
                 tool.element.line.points[0].x = 0;
                 tool.element.line.points[1].y = 0;
                 tool.element.line.points[1].x = (tool.element.line.points[1].x < 0 ? -1 : 1) * ((radioRanges[input.value]) * this.firstLineMeasurePx) / this.firstLineMeasureMm;
-                tool.movingControlPointsCallback();
+                tool.movingControlPointsCallback(true);
             } else {
                 tool.element.semicircle.endAngle = (input.value / 2);
                 tool.element.semicircle.startAngle = -input.value / 2;

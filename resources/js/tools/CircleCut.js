@@ -10,17 +10,24 @@ export class CircleCut extends RuleCircle {
         this.element.line.on('selected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', true));
         this.element.line.on('deselected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', false));
         this.createSemiCircle();
-        this.movingControlPointsCallback();
+        this.movingControlPointsCallback(true);
+        this.canvas.setActiveObject(this.element.line);
+        this.simulator.setCircleCutOptions('radius-input');
         this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    adjustCircleRadiusAndPosition() {
-        let coords = super.adjustCircleRadiusAndPosition();
+    adjustCircleRadiusAndPosition(calculateRadius = false) {
+        let coords = super.adjustCircleRadiusAndPosition(calculateRadius);
         this.element.semicircle?.set({
-            radius: this.calculate(coords.p0.x, coords.p0.y, coords.p1.x, coords.p1.y),
             left: coords.p0.x,
             top: coords.p0.y,
+            stroke: 'blue',
         });
+        if (calculateRadius) {
+            this.element.semicircle?.set({
+                radius: this.calculate(coords.p0.x, coords.p0.y, coords.p1.x, coords.p1.y),
+            });
+        }
     }
 
     createSemiCircle() {
