@@ -58,24 +58,11 @@ export class TriangleCut extends RuleTriangle {
     }
 
     callbackOnFinishedCut(imgCut) {
-        let brPoints = imgCut.oCoords.br;
-        let tlPoints = imgCut.oCoords.tl;
-        let trianglePoint = this.element.triangle.oCoords.p2;
-
-        let xFirstDiff = brPoints.x - tlPoints.x;
-        let yFirstDiff = brPoints.y - tlPoints.y;
-
-        let xSecondDiff = trianglePoint.x - tlPoints.x;
-        let ySecondDiff = trianglePoint.y - tlPoints.y;
-
-        let newOriginX = xSecondDiff / xFirstDiff;
-        let newOriginY = ySecondDiff / yFirstDiff;
-
-
+        let origin = this.getOriginOfRotation(imgCut, this.element.triangle.oCoords.p2.x, this.element.triangle.oCoords.p2.y);
         imgCut.set({
             centeredRotation: false,
-            originY: newOriginY,
-            originX: newOriginX,
+            originY: origin.y,
+            originX: origin.x,
             left: trianglePoint.x,
             top: trianglePoint.y,
             angle: this.element.angle2.rawAngle
