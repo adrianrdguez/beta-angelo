@@ -92,6 +92,22 @@ export class CircleCut extends RuleCircle {
         this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
         let p1 = this.getPointCoord(this.element.line, 1);
         let p2 = this.getPointCoord(this.element.line, 0);
+        let newAngle = 180 - this.element.semicircle.endAngle * 2;
+
+        const angleInRadians = newAngle * Math.PI / 180;
+
+        const endX = p1.x + this.element.circle.radius * Math.cos(angleInRadians);
+        const endY = p1.y + this.element.circle.radius * Math.sin(angleInRadians);
+
+        this.createLine(p1.x, p1.y, endX, endY);
+
+        new fabric.Circle({
+            left: endX,
+            top: endY,
+            originX: 'center',
+            originY: 'center'
+        });
+
         this.freeCutTool.element.pointer.set({
             left: p1.x,
             top: p1.y,
