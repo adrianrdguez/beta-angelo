@@ -170,7 +170,9 @@ export class FreeCut extends Tool {
         });
         let cutPath = new fabric.Polygon(this.cutPath);
         if (this.pathToAddToCut) {
-            
+            this.pathToAddToCut.fill = 'black';
+            this.pathToAddToCut.strokeWidth = 0;
+            cutPath = new fabric.Group([this.pathToAddToCut, cutPath]);
         }
         this.cutFreePath(cutPath);
         this.cutPath = [];

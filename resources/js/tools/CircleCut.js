@@ -89,7 +89,7 @@ export class CircleCut extends RuleCircle {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
         this.simulator.setBackgroundOptions(this.element.circle);
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, fabric.util.object.clone(this.element.semicircle));
         let p1 = this.getPointCoord(this.element.line, 1);
         let p2 = this.getPointCoord(this.element.line, 0);
         this.freeCutTool.element.pointer.set({
