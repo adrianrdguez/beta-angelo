@@ -10,7 +10,9 @@ export class CircleCut extends RuleCircle {
         this.element.line.on('selected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', true));
         this.element.line.on('deselected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', false));
         this.createSemiCircle();
-        this.movingControlPointsCallback();
+        this.movingControlPointsCallback(true);
+        this.canvas.setActiveObject(this.element.line);
+        this.simulator.setCircleCutOptions('radius-input');
         this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
@@ -20,18 +22,23 @@ export class CircleCut extends RuleCircle {
         });
     }
 
-    adjustCircleRadiusAndPosition() {
-        let coords = super.adjustCircleRadiusAndPosition();
+    adjustCircleRadiusAndPosition(calculateRadius = false) {
+        let coords = super.adjustCircleRadiusAndPosition(calculateRadius);
         this.element.semicircle?.set({
-            radius: this.calculate(coords.p0.x, coords.p0.y, coords.p1.x, coords.p1.y),
             left: coords.p0.x,
             top: coords.p0.y,
+            stroke: 'blue',
         });
         let dx = coords.p1.x - coords.p0.x;
         let dy = coords.p1.y - coords.p0.y;
         let angleRadians = Math.atan2(dy, dx);
         let angle = angleRadians * (180 / Math.PI)
         this.updateSemiCircleAngles(angle);
+        if (calculateRadius) {
+            this.element.semicircle?.set({
+                radius: this.calculate(coords.p0.x, coords.p0.y, coords.p1.x, coords.p1.y),
+            });
+        }
     }
 
     createSemiCircle() {

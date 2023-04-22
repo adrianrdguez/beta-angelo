@@ -6,7 +6,7 @@ export class RuleCircle extends Rule {
         super(canvas);
         this.element.line.controls.p0.positionHandler = () => [0, 0, 0, 0, 0, 0];
         this.createCircle();
-        this.movingControlPointsCallback();
+        this.movingControlPointsCallback(true);
         this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
@@ -25,26 +25,30 @@ export class RuleCircle extends Rule {
         this.element.circle = circle;
     }
 
-    adjustCircleRadiusAndPosition() {
+    adjustCircleRadiusAndPosition(calculateRadius = true) {
         let p0 = this.getPointCoord(this.element.line, 0);
         let p1 = this.getPointCoord(this.element.line, 1);
         this.element.circle?.set({
-            radius: this.calculate(p0.x, p0.y, p1.x, p1.y),
             left: p0.x,
             top: p0.y,
         });
+        if (calculateRadius) {
+            this.element.circle?.set({
+                radius: this.calculate(p0.x, p0.y, p1.x, p1.y),
+            });
+        }
         return {
             p0: p0,
             p1: p1
         }
     }
 
-    movingControlPointsCallback() {
+    movingControlPointsCallback(calculateRadius) {
         super.movingControlPointsCallback();
         if (!this.element.line) {
             return;
         }
-        this.adjustCircleRadiusAndPosition();
+        this.adjustCircleRadiusAndPosition(calculateRadius);
     }
 
 
