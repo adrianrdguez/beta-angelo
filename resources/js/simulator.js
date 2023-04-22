@@ -1,4 +1,4 @@
-import './fabric.js';
+import { fabric } from 'fabric';
 import { Drag } from './tools/Drag.js';
 import { FreeCut } from './tools/FreeCut.js';
 import { FreeDraw } from './tools/FreeDraw.js';
@@ -7,6 +7,7 @@ import { RuleCircle } from './tools/RuleCircle.js';
 import { RuleTriangle } from './tools/RuleTriangle.js';
 import { InitialRule } from './tools/InitialRule.js';
 import { TriangleCut } from './tools/TriangleCut.js';
+import { CircleCut } from './tools/CircleCut.js';
 
 class Simulator {
     canvas;
@@ -16,6 +17,7 @@ class Simulator {
     initialLine;
     firstLineMeasurePx;
     firstLineMeasureMm;
+    lineAngles = {};
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }
@@ -52,16 +54,16 @@ class Simulator {
         this.canvas.simulator = this;
         if (!this.firstLineMeasureMm && !this.firstLineMeasurePx) {
             document.getElementById('botones-flotantes').classList.add('invisible');
-            this.setCurrentTool(new InitialRule(this.canvas, true));
+            this.setCurrentTool(new InitialRule(this.canvas));
         } else {
             this.closeAllCanvas();
+            this.setCurrentTool(new Drag(this.canvas));
         }
-        this.setCurrentTool(new Drag(this.canvas));
     }
 
     init() {
         window.onresize = () => this.setCanvasSize(this.canvas);
-        document.getElementById('measure-input').addEventListener('keyup', (e) => {e.key === 'Enter' ? this.setUpMeasure() : null});
+        document.getElementById('measure-input').addEventListener('keyup', (e) => { e.key === 'Enter' ? this.setUpMeasure() : null });
         document.getElementById('measure-input-button').addEventListener('click', () => this.setUpMeasure());
         document.querySelectorAll('.offcanvas .offcanvas-header button.btn-close').forEach((e) => e.addEventListener('click', () => this.closeAllCanvas()));
         document.getElementById('button-offcanvas-opciones').addEventListener('click', () => this.offcanvasToggler('offcanvas-opciones'));
@@ -76,10 +78,13 @@ class Simulator {
         document.getElementById('drag').addEventListener('click', () => this.setCurrentTool(new Drag(this.canvas)));
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
+        document.getElementById('circle-cut').addEventListener('click', () => this.setCurrentTool(new CircleCut(this.canvas)));
         document.getElementById('rotate-implant').addEventListener('click', () => this.rotateAndFlipImplant());
-        document.getElementById('opacity').addEventListener('change', (e) => this.applyFiltersToImplant());
-        document.getElementById('frontalImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, document.getElementById('implant-sub-type-selector').value, true));
-        document.getElementById('lateralImplants').addEventListener('click', () => this.updateImplants(document.getElementById('implant-type-selector').value, document.getElementById('implant-sub-type-selector').value, false));
+        document.getElementById('opacity').addEventListener('input', (e) => this.applyFiltersToImplant());
+        document.getElementById('angle-input').addEventListener('input', () => this.setCircleCutOptions('angle-input'));
+        document.getElementById('radius-input').addEventListener('input', () => this.setCircleCutOptions('radius-input'));
+        this.setCircleCutOptions('angle-input')
+        this.setCircleCutOptions('radius-input')
     }
 
     setCanvasSize(canvas) {
@@ -90,11 +95,19 @@ class Simulator {
         this.canvas.currentTool = tool;
     }
 
+    getCenterOfView(object = null) {
+        let zoom = this.canvas.getZoom();
+        return {
+            left: (fabric.util.invertTransform(this.canvas.viewportTransform)[4] + (this.canvas.width / zoom) / 2) - (object ? (object.width / 2) : 0),
+            top: (fabric.util.invertTransform(this.canvas.viewportTransform)[5] + (this.canvas.height / zoom) / 2) - (object ? (object.height / 2) : 0)
+        };
+    }
+
     async addImplantObject(element) {
-        let img = await this.loadImageFromUrl(element.querySelector('img').src);
+        let img = await this.loadImageFromUrl(element.src);
         this.canvas.add(img);
-        img.scaleToWidth((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm);
-        img.center();
+        img.scale(((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm) / img.width);
+        img.set(this.getCenterOfView());
         img.on("selected", () => this.offcanvasToggler('offcanvas-implants-settings', true));
         img.on("deselected", () => this.offcanvasToggler('offcanvas-implants-settings', false));
         img.on('selected', () => {
@@ -102,7 +115,17 @@ class Simulator {
         });
         this.canvas.currentTool.setDefaultObjectOptions(img);
         this.canvas.requestRenderAll();
+        this.canvas.setViewportTransform(this.canvas.viewportTransform);
         this.offcanvasToggler('offcanvas-implants', false);
+    }
+
+    async swapSrcImg(element) {
+        let img = element.parentElement.parentElement.parentElement.querySelector('img');
+        if (img.dataset.selected === img.dataset.above) {
+            img.src = img.dataset.selected = img.dataset.lateral;
+        } else if (img.dataset.selected === img.dataset.lateral) {
+            img.src = img.dataset.selected = img.dataset.above;
+        }
     }
 
     async rotateAndFlipImplant() {
@@ -165,7 +188,7 @@ class Simulator {
         // object.clipPath = this.limitClipPathField;
     }
 
-    updateImplants(implant_type_id, implant_sub_type_id, view = true) {
+    updateImplants(implant_type_id, implant_sub_type_id) {
         fetch(`/api/implants?implant_type_id=${implant_type_id}&implant_sub_type_id=${implant_sub_type_id}`)
             .then(response => response.json())
             .then(result => {
@@ -173,15 +196,30 @@ class Simulator {
                     document.getElementById('implants').innerHTML = '';
                     result.data.forEach(implant => {
                         document.getElementById('implants').innerHTML += `
-                        <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center card" data-measure="${implant.measureWidth}">
+                        <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center card">
                             <div class="py-3 px-6 border-b border-gray-300">
                                 <h5 style="color: black;">${implant.id} - ${implant.name}</h5>
                             </div>
                             <div class="p-6 h-40">
-                                <img data-above=${implant.aboveViewUrl} data-lateral=${implant.aboveViewUrl} src="${view ? implant.aboveViewUrl : implant.lateralViewUrl}" class="h-full w-full">
+                                <img
+                                    data-measure="${implant.measureWidth}"
+                                    data-selected="${implant?.aboveViewUrl}"
+                                    data-above="${implant?.aboveViewUrl}"
+                                    data-lateral="${implant?.lateralViewUrl}"
+                                    src="${implant?.aboveViewUrl ?? implant?.lateralViewUrl}"
+                                    class="h-full w-full"
+                                >
                             </div>
                             <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
                                 ${implant.model} - ${implant.measureWidth}mm
+                            </div>
+                            <div class="flex items-center justify-center mb-4 ${implant?.aboveViewUrl && implant?.lateralViewUrl ? '' : 'hidden'}">
+                                <div class="inline-flex">
+                                    <button type="button"
+                                        class="rounded px-6 py-2 border border-gray-600 text-gray-600 font-medium text-xs leading-tight uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                                        <i class="fa-solid fa-camera-rotate"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         `;
@@ -190,7 +228,8 @@ class Simulator {
                     document.getElementById('implants').innerHTML = '<p class="text-white">Ha habido un error.</p>';
                 }
             }).then(result => {
-                document.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
+                document.querySelectorAll('.card img').forEach(el => el.addEventListener('click', () => this.addImplantObject(el)));
+                document.querySelectorAll('.card button').forEach(el => el.addEventListener('click', () => this.swapSrcImg(el)));
             })
             .catch(error => console.log('error', error));
     }
@@ -212,7 +251,7 @@ class Simulator {
     }
 
     setUpMeasure() {
-        let px = this.initialLine.calculate(this.initialLine.element.pointer1.left, this.initialLine.element.pointer1.top, this.initialLine.element.pointer2.left, this.initialLine.element.pointer2.top).toFixed(2);
+        let px = this.initialLine.calculate(this.initialLine.element.line.points[0].x, this.initialLine.element.line.points[0].y, this.initialLine.element.line.points[1].x, this.initialLine.element.line.points[1].y).toFixed(2);
         this.firstLineMeasurePx = px;
         this.firstLineMeasureMm = document.getElementById('measure-input').value;
         let body = JSON.stringify({
@@ -233,8 +272,6 @@ class Simulator {
         this.offcanvasToggler('offcanvas-initial-settings', false);
         document.getElementById('botones-flotantes').classList.remove('invisible');
         this.canvas.remove(this.initialLine.element.line);
-        delete this.initialLine.element.line;
-        this.initialLine.removePointers();
     }
 
     offcanvasToggler(id, open = null) {
@@ -272,6 +309,31 @@ class Simulator {
             this.offcanvasToggler(offcanvas.id, false);
         }
     }
+
+    setCircleCutOptions(id) {
+        let radioRanges = [10, 12, 15, 18, 21, 24, 27, 30];
+        let input = document.querySelector('#' + id);
+        let bubble = document.querySelector('#' + id + '-value');
+        let tool = this.canvas.getActiveObject()?.tool;
+        if (tool) {
+            if (input.max !== '359') {
+                tool.element.line.points[0].x = 0;
+                tool.element.line.points[1].y = 0;
+                tool.element.line.points[1].x = (tool.element.line.points[1].x < 0 ? -1 : 1) * ((radioRanges[input.value]) * this.firstLineMeasurePx) / this.firstLineMeasureMm;
+                tool.movingControlPointsCallback();
+            } else {
+                tool.element.semicircle.endAngle = (input.value / 2);
+                tool.element.semicircle.startAngle = -input.value / 2;
+            }
+            this.canvas.requestRenderAll();
+        }
+        bubble.textContent = input.id === 'radius-input' ? radioRanges[input.value] + 'mm' : input.value + 'º';
+        const percent = (input.value - input.min) / (input.max - input.min);
+        const x = percent * input.offsetWidth - bubble.offsetWidth / 2;
+        bubble.style.left = `${x}px`;
+        bubble.style.top = `-4px`;
+    };
+
 }
 
 function applyFiltersToBackgroundImg(contrast = null, brightness = null, grayscale = null) {
@@ -331,6 +393,6 @@ let interval = setInterval(() => {
             }
             applyFiltersToBackgroundImg(0, 0, false);
         }
-        clearInterval(interval)
+        clearInterval(interval);
     }
 }, 0.5);

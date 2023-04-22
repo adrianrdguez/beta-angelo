@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'node_modules/tw-elements/dist/js/index.min.js', 'resources/js/fontAwesome.2accd57d6d.js', 'resources/js/simulator.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'node_modules/tw-elements/dist/js/index.min.js', 'resources/js/simulator.js'])
 </head>
 
 <body data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body" class="bg-neutral-800">
@@ -59,15 +59,16 @@
                 </button>
             </div>
             <div class="mb-4 w-full">
-                <button id="rule"
-                    class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
-                    <i class="fa-solid fa-ruler"></i> Medir</button>
-            </div>
-            <div class="mb-4 w-full">
                 <button id="free-draw"
                     class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
                     <i class="fa-solid fa-paintbrush"></i>
                     Dibujar</button>
+            </div>
+            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+            <div class="mb-4 w-full">
+                <button id="rule"
+                    class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
+                    <i class="fa-solid fa-ruler"></i> Medir</button>
             </div>
             <div class="mb-4 w-full">
                 <button id="rule-circle"
@@ -82,18 +83,26 @@
                     <i class="fa-solid fa-ruler-vertical"> </i>
                     <i class="fa-solid fa-circle-nodes"></i> Nuevo triángulo</button>
             </div>
+            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+            <div class="mb-4 w-full">
+                <button id="free-cut"
+                    class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
+                    <i class="fa-solid fa-scissors"></i>
+                    Cortar</button>
+            </div>
+            <div class="mb-4 w-full">
+                <button id="circle-cut"
+                    class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
+                    <i class="fa-solid fa-scissors"></i>
+                    <i class="fa-regular fa-circle"></i>
+                    Nuevo corte circular</button>
+            </div>
             <div class="mb-4 w-full">
                 <button id="triangle-cut"
                     class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
                     <i class="fa-solid fa-scissors"></i>
                     <i class="fa-solid fa-circle-nodes"></i>
                     Nuevo corte triangular</button>
-            </div>
-            <div class="mb-4 w-full">
-                <button id="free-cut"
-                    class="w-full select-none text-left cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold hover:bg-yellow-500 hover:text-black">
-                    <i class="fa-solid fa-scissors"></i>
-                    Cortar</button>
             </div>
         </div>
     </div>
@@ -147,30 +156,17 @@
         tabindex="-1" aria-labelledby="offcanvas-implantsLabel">
         <div class="offcanvas-header flex items-center justify-between p-4">
             <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-implantsLabel">IMPLANTES</h5>
-            <div class="flex">
-                <div>
-                    <input type="radio" id="frontalImplants" name="size" class="peer hidden" value="1"
-                        checked="checked">
-                    <label for="frontalImplants"
-                        class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Frontal</label>
-                </div>
-                <div>
-                    <input type="radio" id="lateralImplants" name="size" class="peer hidden" value="2">
-                    <label for="lateralImplants"
-                        class="m-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold peer-checked:bg-yellow-500 peer-checked:text-black">Lateral</label>
-                </div>
-            </div>
             <button type="button"
                 class="btn-close btn-close-white box-content w-4 h-4 p-2 -my-5 -mr-2 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"aria-label="Close"></button>
         </div>
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto small">
-            <select class="mb-4 w-full text-black" id="implant-type-selector">
+            <select class="mb-4 w-full text-black" id="implant-type-selector" autocomplete="off">
                 <option selected disabled hidden>Selecciona un tipo</option>
                 @foreach ($implantTypes as $implantType)
                     <option value="{{ $implantType->id }}">{{ $implantType->name }}</option>
                 @endforeach
             </select>
-            <select class="mb-4 w-full text-black" id="implant-sub-type-selector">
+            <select class="mb-4 w-full text-black" id="implant-sub-type-selector" autocomplete="off">
             </select>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
                 id="implants">
@@ -204,6 +200,43 @@
             <div class="w-full mb-4">
                 <button id="rotate-implant"
                     class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Rotar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="offcanvas-tool-settings"
+        class="offcanvas offcanvas-bottom fixed bottom-0 flex flex-col w-full sm:w-8/12 md:w-6/12 lg:w-4/12 mx-auto my-0 bg-slate-800 invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-white left-0 right-0 border-none h-3/12 max-h-full overflow-hidden"
+        tabindex="-1" aria-labelledby="offcanvas-tool-settingsLabel">
+        <div class="offcanvas-header flex items-center justify-between p-4">
+            <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-tool-settingsLabel">
+                OPCIONES DE LA HERRAMIENTA</h5>
+        </div>
+        <div class="offcanvas-body flex-grow p-4 overflow-hidden small">
+            <div class="w-full mb-4">
+                <label for="radius-input">Radio</label>
+                <div class="relative w-11/12 mx-auto my-0">
+                    <input id="radius-input" type="range" class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none" value="5"
+                        min="0" max="7" step="1" />
+                    <div
+                        class="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
+                        <div id="radius-input-value"
+                            class="bg-yellow-500 text-sm text-black rounded-full w-12 h-8 flex items-center justify-center shadow-md absolute border border-black">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full mb-4">
+                <label for="angle-input">Angulo</label>
+                <div class="relative w-11/12 mx-auto my-0">
+                    <input id="angle-input" type="range" class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none" value="180"
+                        min="1" max="359" step="1" />
+                    <div
+                        class="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
+                        <div id="angle-input-value"
+                            class="bg-yellow-500 text-sm text-black rounded-full w-10 h-8 flex items-center justify-center shadow-md absolute border border-black">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

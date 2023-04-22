@@ -1,142 +1,91 @@
 import { RuleTriangle } from "./RuleTriangle";
+import { FreeCut } from "./FreeCut";
+import { Drag } from './Drag.js';
 
 export class TriangleCut extends RuleTriangle {
-  cutPath = [];
-  cutLinePaths = [];
-  constructor(canvas) {
-    super(canvas);
-  }
-
-  createTriangle() {
-    super.createTriangle();
-  }
-
-  addingControlPoints() {
-    if (!this.element.pointer4) {
-      super.addingControlPoints();
-      this.element.pointer1?.set({
-        stroke: 'blue',
-        fill: 'blue',
-      });
-      this.element.pointer1?.on('mousedblclick', () => this.createCutterPointer())
+    freeCutTool;
+    constructor(canvas) {
+        super(canvas);
+        this.setStartControl(this.element.triangle, () => this.startCut());
+        this.element['circle' + 2].set({
+            stroke: 'rgb(144, 238, 144)'
+        });
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
-  }
 
-  createCutterPointer() {
-    let pointerCoords = this.getNewLineCoordinates();
-    if (!this.element.pointer4) {
-      this.setBrushOptions(0.3);
-      this.element.line4 = this.createLine(this.element.line3.x1, this.element.line3.y1, this.element.line3.x2, this.element.line3.y2);
-      this.element.line4.set({
-        x1: this.element.line3.x1,
-        y1: this.element.line3.y1,
-        x2: this.element.line3.x2,
-        y2: this.element.line3.y2,
-      });
-      this.element.pointer4 = this.createPointer(pointerCoords.pointer1Coords.top, pointerCoords.pointer1Coords.left);
-      this.element.pointer4.set({
-        radius: this.element.pointer4.radius + 20,
-        stroke: 'lightblue',
-        fill: 'lightblue',
-      });
-      this.element.pointer4.off('moving');
-      this.element.pointer4.on('moving', () => this.pointer4Movement());
-      this.element.pointer4.on('mousedblclick', () => this.finishCutPath());
-      this.element.triangleShadow = new fabric.Polygon([
-        { x: this.element.line1.x1, y: this.element.line1.y1 },
-        { x: this.element.line1.x2, y: this.element.line1.y2 },
-        { x: this.element.line3.x2, y: this.element.line3.y2 },
-      ]);
-      this.canvas.add(this.element.triangleShadow);
-      this.canvas.moveTo(this.element.triangleShadow, 1);
-      this.canvas.simulator.setBackgroundOptions(this.element.triangleShadow);
-      this.canvas.discardActiveObject();
-      this.canvas.requestRenderAll();
+    setStartControl(object, callback) {
+        object.controls.startControl = new fabric.Control({
+            x: -0,
+            y: 0,
+            offsetY: -40,
+            offsetX: -40,
+            cursorStyle: 'pointer',
+            mouseUpHandler: (eventData, transform) => {
+                callback();
+            },
+            render: function (ctx, left, top, styleOverride, fabricObject) {
+                let checkStartImg = document.createElement('img');
+                checkStartImg.src = '/img/circle-check-regular.svg';
+                checkStartImg.style.borderRadius = '1000px';
+                checkStartImg.style.backgroundColor = 'lightgreen';
+                let size = this.cornerSize;
+                ctx.save();
+                ctx.translate(left, top);
+                ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+                ctx.drawImage(checkStartImg, -size / 2, -size / 2, size, size);
+                ctx.restore();
+            },
+            cornerSize: 24
+        });
     }
-  }
 
-  pointer4Movement() {
-    let lineCoords = [];
-    if (!this.cutPath.length) {
-      lineCoords.push(this.element.line1.x1);
-      lineCoords.push(this.element.line1.y1);
-    } else {
-      let lastPosition = this.cutPath[this.cutPath.length - 1];
-      lineCoords.push(lastPosition.x);
-      lineCoords.push(lastPosition.y);
+    startCut() {
+        this.simulator.setBackgroundOptions(this.element.triangle);
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut);
+        let p1 = this.getPointCoord(this.element.triangle, 1);
+        let p2 = this.getPointCoord(this.element.triangle, 2);
+        this.freeCutTool.element.pointer.set({
+            left: p1.x,
+            top: p1.y,
+        });
+        this.freeCutTool.element.miniPointer.set({
+            left: p1.x,
+            top: p1.y,
+        });
+        this.freeCutTool.startCut(p2.x, p2.y);
+        Object.assign(this.freeCutTool.element, this.element);
+        this.canvas.requestRenderAll();
     }
-    lineCoords.push(this.element.pointer4.left);
-    lineCoords.push(this.element.pointer4.top);
-    let line = new fabric.Line(lineCoords, {
-      stroke: this.canvas.freeDrawingBrush.color,
-      strokeWidth: this.canvas.freeDrawingBrush.width,
-    });
-    this.element[Math.random() * 100000000] = line;
-    this.cutLinePaths.push(line);
-    this.canvas.add(line);
-    this.canvas.requestRenderAll();
-    this.cutPath.push({
-      x: this.element.pointer4.left,
-      y: this.element.pointer4.top,
-    });
-    this.element.line4.set({
-      x1: this.element.pointer4.left,
-      y1: this.element.pointer4.top,
-    });
-    this.element.line4.setCoords();
-  }
 
-  async cutTrianglePath(linePath) {
-    linePath.strokeWidth = 0;
-    linePath.fill = 'black';
-    let imgShadow = await this.canvas.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
-    imgShadow.left = linePath.left;
-    imgShadow.top = linePath.top;
-    imgShadow.width = linePath.width;
-    imgShadow.height = linePath.height;
-    this.canvas.add(imgShadow);
-    this.canvas.simulator.setBackgroundOptions(imgShadow);
-    this.canvas.moveTo(imgShadow, 1);
-    let tmpRadiographyImg = await this.canvas.simulator.loadImageFromUrl(this.canvas.simulator.radiographyUrl)
-    let tmpCanvas = new fabric.Canvas();
-    this.canvas.simulator.setCanvasSize(tmpCanvas);
-    tmpCanvas.add(tmpRadiographyImg);
-    tmpRadiographyImg.center();
-    imgShadow.absolutePositioned = true;
-    tmpRadiographyImg.clipPath = imgShadow;
-    let imgCut = await this.canvas.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
-    imgCut.left = imgShadow.left;
-    imgCut.top = imgShadow.top;
-    imgCut.width = imgShadow.width;
-    imgCut.height = imgShadow.height;
-    this.canvas.add(imgCut);
-    this.setDefaultObjectOptions(imgCut);
-    this.element.imgCut = imgCut;
-    this.element.imgCut.rotate(this.getAngleBetweenLines(this.element.line2, this.element.line3, true));
-    this.element.imgShadow = imgShadow;
-    this.canvas.requestRenderAll();
-  }
+    callbackOnFinishedCut(imgCut) {
+        let brPoints = imgCut.oCoords.br;
+        let tlPoints = imgCut.oCoords.tl;
+        let trianglePoint = this.element.triangle.oCoords.p2;
 
-  finishCutPath() {
-    this.cutPath.push({
-      x: this.element.line3.x2,
-      y: this.element.line3.y2,
-    })
-    this.cutPath.push({
-      x: this.element.line3.x1,
-      y: this.element.line3.y1,
-    })
-    let cutPath = new fabric.Polygon(this.cutPath);
-    this.cutTrianglePath(cutPath);
-    this.canvas.simulator.setBackgroundOptions(this.element.line1);
-    this.canvas.simulator.setBackgroundOptions(this.element.line2);
-    this.canvas.simulator.setBackgroundOptions(this.element.line3);
-    this.cutPath = [];
-    this.canvas.remove(this.element.line4);
-    this.canvas.remove(this.element.pointer4);
-    this.cutLinePaths.forEach(element => {
-      this.canvas.remove(element);
-    });
-    this.cutLinePaths = [];
-  }
+        let xFirstDiff = brPoints.x - tlPoints.x;
+        let yFirstDiff = brPoints.y - tlPoints.y;
+
+        let xSecondDiff = trianglePoint.x - tlPoints.x;
+        let ySecondDiff = trianglePoint.y - tlPoints.y;
+
+        let newOriginX = xSecondDiff / xFirstDiff;
+        let newOriginY = ySecondDiff / yFirstDiff;
+
+
+        imgCut.set({
+            centeredRotation: false,
+            originY: newOriginY,
+            originX: newOriginX,
+            left: trianglePoint.x,
+            top: trianglePoint.y,
+            angle: this.element.angle2.rawAngle
+        })
+
+        imgCut.set({
+            centeredRotation: true
+        })
+
+        this.canvas.setActiveObject(imgCut);
+    }
 }
+

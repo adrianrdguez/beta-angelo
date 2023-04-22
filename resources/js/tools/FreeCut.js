@@ -2,14 +2,17 @@ import { Tool } from './Tool.js';
 import { Drag } from './Drag.js';
 
 export class FreeCut extends Tool {
-    element = {};
     cutPath = [];
     cutLinePaths = [];
-    constructor(canvas) {
+    callbackOnFinishedCut = null;
+    pathToAddToCut = null;
+    constructor(canvas, callbackOnFinishedCut = null, pathToAddToCut = null) {
         super(canvas, 'free-cut');
+        this.callbackOnFinishedCut = callbackOnFinishedCut;
+        this.pathToAddToCut = pathToAddToCut;
         this.resetEvents();
         this.createPointer();
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
     createPointer() {
@@ -41,8 +44,8 @@ export class FreeCut extends Tool {
         this.setStartControl(this.element.pointer, () => this.startCut());
         this.canvas.add(this.element.pointer);
         this.canvas.add(this.element.miniPointer);
-        this.element.pointer.center();
-        this.element.miniPointer.center();
+        this.element.pointer.set(this.simulator.getCenterOfView(this.element.pointer));
+        this.miniPointerFollowPointer();
         this.canvas.bringForward(this.element.pointer);
     }
 
@@ -56,14 +59,14 @@ export class FreeCut extends Tool {
         }
     }
 
-    createLine() {
-        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, this.element.pointer.left, this.element.pointer.top], {
+    createLine(x2 = null, y2 = null) {
+        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, x2 ?? this.element.pointer.left, y2 ?? this.element.pointer.top], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
             strokeLineCap: 'round',
         });
         this.canvas.add(this.element.line);
-        this.setDefaultObjectOptions(this.element.line);
+        this.simulator.setBackgroundOptions(this.element.line);
         this.element.line.set({
             hasBorders: false,
             selectable: false,
@@ -73,15 +76,15 @@ export class FreeCut extends Tool {
         });
     }
 
-    startCut() {
+    startCut(x2 = null, y2 = null) {
         this.setBrushOptions(0.3);
-        this.createLine();
+        this.createLine(x2, y2);
         this.element.pointer.set({
             radius: this.element.pointer.radius + 20,
             stroke: 'lightblue',
             fill: 'lightblue',
         });
-        this.setStartControl(this.element.pointer, () => this.finishCutPath());
+        this.setStartControl(this.element.pointer, () => this.finishCutPath(x2, y2));
         this.canvas.requestRenderAll();
     }
 
@@ -102,6 +105,7 @@ export class FreeCut extends Tool {
             strokeWidth: this.canvas.freeDrawingBrush.width,
             strokeLineCap: 'round',
         });
+        this.simulator.setBackgroundOptions(line);
         this.element[Math.random() * 100000000] = line;
         this.cutLinePaths.push(line);
         this.canvas.add(line);
@@ -120,22 +124,22 @@ export class FreeCut extends Tool {
     async cutFreePath(linePath) {
         linePath.strokeWidth = 0;
         linePath.fill = 'black';
-        let imgShadow = await this.canvas.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
+        let imgShadow = await this.simulator.loadImageFromUrl(linePath.toDataURL({ width: linePath.width + 20, height: linePath.height + 20 }));
         imgShadow.left = linePath.left;
         imgShadow.top = linePath.top;
         imgShadow.width = linePath.width;
         imgShadow.height = linePath.height;
         this.canvas.add(imgShadow);
-        this.canvas.simulator.setBackgroundOptions(imgShadow);
+        this.simulator.setBackgroundOptions(imgShadow);
         this.canvas.moveTo(imgShadow, 1);
-        let tmpRadiographyImg = await this.canvas.simulator.loadImageFromUrl(this.canvas.simulator.radiographyUrl);
+        let tmpRadiographyImg = await this.simulator.loadImageFromUrl(this.simulator.radiographyUrl);
         let tmpCanvas = new fabric.Canvas();
-        this.canvas.simulator.setCanvasSize(tmpCanvas);
+        this.simulator.setCanvasSize(tmpCanvas);
         tmpCanvas.add(tmpRadiographyImg);
         tmpRadiographyImg.center();
         imgShadow.absolutePositioned = true;
         tmpRadiographyImg.clipPath = imgShadow;
-        let imgCut = await this.canvas.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
+        let imgCut = await this.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
         imgCut.left = imgShadow.left;
         imgCut.top = imgShadow.top;
         imgCut.width = imgShadow.width;
@@ -147,16 +151,27 @@ export class FreeCut extends Tool {
         this.element.imgShadow = imgShadow;
         this.canvas.remove(linePath);
         this.canvas.remove(this.element.line);
-        this.canvas.requestRenderAll();
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
+        this.simulator.setCurrentTool(new Drag(this.canvas));
+        if (this.callbackOnFinishedCut) {
+            this.callbackOnFinishedCut(this.element.imgCut);
+        }
     }
 
-    finishCutPath() {
+    finishCutPath(x2 = null, y2 = null) {
+        if (x2 && y2) {
+            this.cutPath.push({
+                x: x2,
+                y: y2,
+            });
+        }
         this.cutPath.push({
             x: this.cutPath[0].x,
             y: this.cutPath[0].y,
         });
         let cutPath = new fabric.Polygon(this.cutPath);
+        if (this.pathToAddToCut) {
+            
+        }
         this.cutFreePath(cutPath);
         this.cutPath = [];
         this.canvas.remove(this.element.line);
@@ -166,6 +181,7 @@ export class FreeCut extends Tool {
             this.canvas.remove(element);
         });
         this.cutLinePaths = [];
+        this.canvas.requestRenderAll();
     }
 
     setStartControl(object, callback) {
