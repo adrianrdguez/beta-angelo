@@ -79,15 +79,15 @@ export class RuleTriangle extends Tool {
         let angle3 = this.getAngleBetweenLines(line2, line3, true);
 
         return {
-            '0': Math.abs(180 - angle1).toFixed(2),
-            '1': Math.abs(180 - angle2).toFixed(2),
-            '2': Math.abs(angle3).toFixed(2),
+            '0': Math.abs(180 - angle1),
+            '1': Math.abs(180 - angle2),
+            '2': Math.abs(angle3),
         };
     };
 
     setAnglesInCanvas(angles) {
         Object.keys(angles).forEach(point => {
-            let text = angles[point] + 'º';
+            let text = angles[point].toFixed(2) + 'º';
             if (!this.element['circle' + point]) {
                 this.element['circle' + point] = new fabric.Circle({
                     fill: 'transparent',
@@ -122,6 +122,7 @@ export class RuleTriangle extends Tool {
                 text: text,
                 left: p.x,
                 top: p.y,
+                rawAngle: angles[point],
             });
             this.element['circle' + point].clipPath = this.element.triangle;
         });
