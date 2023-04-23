@@ -133,7 +133,11 @@ export class FreeCut extends Tool {
         this.simulator.setBackgroundOptions(imgShadow);
         this.canvas.moveTo(imgShadow, 1);
         let tmpRadiographyImg = await this.simulator.loadImageFromUrl(this.simulator.radiographyUrl);
-        let tmpCanvas = new fabric.Canvas();
+        let tmpCanvas = new fabric.Canvas(null, {
+            perPixelTargetFind: true,
+            imageSmoothingEnabled: false,
+            imageSmoothingQuality: 'high',
+        });
         this.simulator.setCanvasSize(tmpCanvas);
         tmpCanvas.add(tmpRadiographyImg);
         tmpRadiographyImg.center();

@@ -152,6 +152,8 @@ export class CircleCut extends RuleCircle {
             this.element.semicircle2.set({
                 angle: (group.angle + 90) < 270 ? 90 : 270,
             });
+            this.canvas.bringToFront(this.element.circle);
+            this.canvas.bringToFront(this.element.semicircle);
         });
         this.canvas.remove(this.element.text);
         this.canvas.remove(imgCut);
