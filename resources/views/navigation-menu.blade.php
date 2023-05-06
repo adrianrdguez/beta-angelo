@@ -16,21 +16,23 @@
                         {{ __('Proyectos') }}
                     </x-jet-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('implant.index') }}" :active="request()->routeIs('implant.index')">
-                        {{ __('Implantes') }}
-                    </x-jet-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('implantType.index') }}" :active="request()->routeIs('implantType.index')">
-                        {{ __('Tipos de Implante') }}
-                    </x-jet-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('implantSubType.index') }}" :active="request()->routeIs('implantSubType.index')">
-                        {{ __('Subtipos de Implantes') }}
-                    </x-jet-nav-link>
-                </div>
+                @if (Auth::user()->hasRole('admin'))
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-jet-nav-link href="{{ route('implant.index') }}" :active="request()->routeIs('implant.index')">
+                            {{ __('Implantes') }}
+                        </x-jet-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-jet-nav-link href="{{ route('implantType.index') }}" :active="request()->routeIs('implantType.index')">
+                            {{ __('Tipos de Implante') }}
+                        </x-jet-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-jet-nav-link href="{{ route('implantSubType.index') }}" :active="request()->routeIs('implantSubType.index')">
+                            {{ __('Subtipos de Implantes') }}
+                        </x-jet-nav-link>
+                    </div>
+                @endif
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
