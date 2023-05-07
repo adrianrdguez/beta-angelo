@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddProjectImageRequest;
+use App\Http\Requests\AddProjectImageRequestApi;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
@@ -10,8 +11,6 @@ use App\Models\ImplantType;
 use App\Models\Project;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProjectController extends Controller
@@ -111,6 +110,22 @@ class ProjectController extends Controller
                 ->toMediaCollection('radiographies');
         }
         return redirect()->route('project.show', $project->id);
+    }
+
+    public function addImageApi(AddProjectImageRequestApi $request, Project $project)
+    {
+        if ($request->hasFile('radiographyImg') && $request->file('radiographyImg')->isValid()) {
+            $images = $project->getMedia('radiographies')->where('name', $request->name);
+            $project->addMedia($this->getRotatedImg($request->radiographyImg, $request->rotation))
+                ->usingName($request->name . ' - V' . $images->count() + 1)
+                ->withCustomProperties([
+                    'rotation' => $request->rotation,
+                    'firstLineMeasurePx' => $images->first()->getCustomProperty('firstLineMeasurePx'),
+                    'firstLineMeasureMm' => $images->first()->getCustomProperty('firstLineMeasureMm'),
+                ])
+                ->toMediaCollection('radiographies');
+        }
+        return response()->json([], 201);
     }
 
     public function updateImageApi(UpdateProjectImageRequest $request, Project $project, Media $media)
