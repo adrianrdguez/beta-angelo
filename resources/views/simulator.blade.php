@@ -149,6 +149,11 @@
                     filtros</button>
             </div>
         </div>
+        <div class="w-full mb-4">
+            <button id="save-exit"
+                class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Guardar
+                Y Salir</button>
+        </div>
     </div>
 
     <div id="offcanvas-implants"
@@ -215,8 +220,9 @@
             <div class="w-full mb-4">
                 <label for="radius-input">Radio</label>
                 <div class="relative w-11/12 mx-auto my-0">
-                    <input id="radius-input" type="range" class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none" value="5"
-                        min="0" max="7" step="1" />
+                    <input id="radius-input" type="range"
+                        class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none"
+                        value="5" min="0" max="7" step="1" />
                     <div
                         class="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
                         <div id="radius-input-value"
@@ -228,8 +234,9 @@
             <div class="w-full mb-4">
                 <label for="angle-input">Angulo</label>
                 <div class="relative w-11/12 mx-auto my-0">
-                    <input id="angle-input" type="range" class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none" value="180"
-                        min="1" max="359" step="1" />
+                    <input id="angle-input" type="range"
+                        class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none"
+                        value="180" min="1" max="359" step="1" />
                     <div
                         class="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
                         <div id="angle-input-value"

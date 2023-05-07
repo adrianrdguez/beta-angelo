@@ -324,6 +324,7 @@ class Simulator {
             } else {
                 tool.element.semicircle.endAngle = (input.value / 2);
                 tool.element.semicircle.startAngle = -input.value / 2;
+                tool.element.semicircle.input = input.value;
             }
             this.canvas.requestRenderAll();
         }
@@ -392,6 +393,11 @@ let interval = setInterval(() => {
                 }
             }
             applyFiltersToBackgroundImg(0, 0, false);
+        }
+        document.getElementById('save-exit').onclick = function () {
+            var canvasData = JSON.stringify(simulator.canvas.toJSON());
+            console.log(canvasData)
+            //add functionallity
         }
         clearInterval(interval);
     }
