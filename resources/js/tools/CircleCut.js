@@ -9,7 +9,7 @@ export class CircleCut extends RuleCircle {
         this.setStartControl(this.element.line, () => this.startCut());
         this.element.line.on('selected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', true));
         this.element.line.on('deselected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', false));
-        this.createSemiCircle();
+        this.element.semicircle = this.createSemiCircle();
         this.movingControlPointsCallback(true);
         this.canvas.setActiveObject(this.element.line);
         this.simulator.setCircleCutOptions('radius-input');
@@ -56,7 +56,7 @@ export class CircleCut extends RuleCircle {
             angle: 90,
         });
         this.canvas.add(semicircle);
-        this.element.semicircle = semicircle;
+        return semicircle;
     }
 
     setStartControl(object, callback) {
@@ -89,7 +89,7 @@ export class CircleCut extends RuleCircle {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
         this.simulator.setBackgroundOptions(this.element.circle);
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
+        /* this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
         let p1 = this.getPointCoord(this.element.line, 1); // center
         let p2 = this.getPointCoord(this.element.line, 0); // circumferencia point
         let newAngle = (180 - this.element.semicircle.input) / 2;
@@ -99,8 +99,11 @@ export class CircleCut extends RuleCircle {
         const endX = p1.x + (this.element.circle.radius) * 2 * Math.cos(angleInRadians);
         const endY = p1.y + (this.element.circle.radius) * 2 * Math.sin(angleInRadians);
 
-        let newLine = this.createLine(p1.x, p1.y, endX, endY);
+        let newLine = this.createLine(p1.x, p1.y, endX, endY); */
 
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, fabric.util.object.clone(this.element.semicircle));
+        let p1 = this.getPointCoord(this.element.line, 1);
+        let p2 = this.getPointCoord(this.element.line, 0);
         this.freeCutTool.element.pointer.set({
             left: p1.x,
             top: p1.y,
@@ -131,7 +134,39 @@ export class CircleCut extends RuleCircle {
         });
         this.canvas.add(group);
         this.canvas.remove(this.element.circle);
-        this.canvas.remove(this.element.semicircle);
+        this.element.semicircle.set({
+            fill: this.canvas.freeDrawingBrush.color + '40',
+            strokeWidth: 0,
+            startAngle: 270,
+            endAngle: 90,
+            angle: 90,
+        });
+        this.element.semicircle2 = fabric.util.object.clone(this.element.semicircle);
+        this.canvas.add(this.element.semicircle2);
+        this.element.semicircle2.set({
+            fill: 'transparent',
+            stroke: 'transparent',
+            strokeWidth: 0,
+            startAngle: 270,
+            endAngle: 90,
+            angle: 270,
+            absolutePositioned: true
+        });
+        this.element.semicircle.set({
+            angle: group.angle + 90,
+            clipPath: this.element.semicircle2,
+        });
+        group.on('rotating', (event) => {
+            this.element.semicircle.set({
+                flipX: (group.angle + 90) < 270,
+                angle: group.angle + 90,
+            });
+            this.element.semicircle2.set({
+                angle: (group.angle + 90) < 270 ? 90 : 270,
+            });
+            this.canvas.bringToFront(this.element.circle);
+            this.canvas.bringToFront(this.element.semicircle);
+        });
         this.canvas.remove(this.element.text);
         this.canvas.remove(imgCut);
     }

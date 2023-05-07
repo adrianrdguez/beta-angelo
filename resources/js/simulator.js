@@ -32,7 +32,9 @@ class Simulator {
             fireMiddleClick: true,
             stopContextMenu: true,
             perPixelTargetFind: true,
-            imageSmoothingEnabled: false
+            imageSmoothingEnabled: false,
+            imageSmoothingQuality: 'high',
+            preserveObjectStacking: true
         });
         this.radiographyUrl = radiographyUrl;
         this.setCanvasSize(this.canvas);

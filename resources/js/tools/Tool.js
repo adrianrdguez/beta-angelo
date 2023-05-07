@@ -139,6 +139,24 @@ export class Tool {
         event.e.stopPropagation();
     }
 
+    getOriginOfRotation(object, x, y) {
+        let brPoints = object.oCoords.br;
+        let tlPoints = object.oCoords.tl;
+
+        let xFirstDiff = brPoints.x - tlPoints.x;
+        let yFirstDiff = brPoints.y - tlPoints.y;
+
+        let xSecondDiff = x - tlPoints.x;
+        let ySecondDiff = y - tlPoints.y;
+
+        let newOriginX = xSecondDiff / xFirstDiff;
+        let newOriginY = ySecondDiff / yFirstDiff;
+        return {
+            x: newOriginX,
+            y: newOriginY
+        }
+    }
+
     calculate(x1, y1, x2, y2) {
         return Math.sqrt(Math.pow(x2 * 1 - x1 * 1, 2) + Math.pow(y2 * 1 - y1 * 1, 2));
     }
