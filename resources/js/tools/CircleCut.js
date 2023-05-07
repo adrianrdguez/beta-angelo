@@ -167,6 +167,12 @@ export class CircleCut extends RuleCircle {
             this.canvas.bringToFront(this.element.circle);
             this.canvas.bringToFront(this.element.semicircle);
         });
+        group.on('selected', (event) => {
+            setTimeout(() => {
+                this.canvas.bringToFront(this.element.circle);
+                this.canvas.bringToFront(this.element.semicircle);
+            }, 10);
+        });
         this.canvas.remove(this.element.text);
         this.canvas.remove(imgCut);
     }
