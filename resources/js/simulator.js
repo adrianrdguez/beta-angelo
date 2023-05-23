@@ -36,6 +36,10 @@ class Simulator {
             imageSmoothingQuality: 'high',
             preserveObjectStacking: true
         });
+        /* if (document.getElementById('simulator').dataset.json) {
+            let json = JSON.parse(document.getElementById('simulator').dataset.json);
+            this.canvas.loadFromJSON(json, () => this.canvas.renderAll.bind(this.canvas));
+        } */
         this.radiographyUrl = radiographyUrl;
         this.setCanvasSize(this.canvas);
         let img = await this.loadImageFromUrl(this.radiographyUrl);
@@ -396,10 +400,21 @@ let interval = setInterval(() => {
             }
             applyFiltersToBackgroundImg(0, 0, false);
         }
-        document.getElementById('save-exit').onclick = function () {
-            var canvasData = JSON.stringify(simulator.canvas.toJSON());
-            console.log(canvasData)
-            //add functionallity
+        document.getElementById('save-exit').onclick = async function () {
+            // Todo: Save canvas to json in database
+            let projectId = document.getElementById('body').dataset.projectid;
+            let blob = await (await fetch(simulator.canvas.toDataURL())).blob();
+            let formData = new FormData();
+            formData.append("radiographyImg", blob, document.getElementById('simulator').dataset.name);
+            formData.append("name", document.getElementById('simulator').dataset.name);
+            formData.append("rotation", 0);
+            let requestOptions = {
+                method: 'POST',
+                body: formData,
+            };
+            fetch(`/api/project/${projectId}/image`, requestOptions)
+                .catch(error => console.log('error', error));
+            window.location.href = `/project/${projectId}`;
         }
         clearInterval(interval);
     }
