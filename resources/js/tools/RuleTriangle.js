@@ -91,6 +91,7 @@ export class RuleTriangle extends Tool {
             if (!this.element['circle' + point]) {
                 this.element['circle' + point] = new fabric.Circle({
                     fill: 'transparent',
+                    isAngle: true,
                     strokeWidth: this.canvas.freeDrawingBrush.width,
                     stroke: this.canvas.freeDrawingBrush.color,
                     originX: 'center',

@@ -134,10 +134,38 @@ export class Tool {
         zoom *= 0.999 ** delta;
         if (zoom > 20) zoom = 20;
         if (zoom < 0.01) zoom = 0.01;
+        let textObjects = this.canvas.getObjects('text')
+        textObjects?.forEach((text) => {
+            this.setTextZoomInCanvas(text, zoom);
+        });
+        let circleObjects = this.canvas.getObjects('circle')
+        circleObjects?.forEach((circle) => {
+            if (circle?.isAngle) {
+                this.setCircleZoomInCanvas(circle, zoom);
+            }
+        });
         this.canvas.zoomToPoint({ x: event.e.offsetX, y: event.e.offsetY }, zoom);
         event.e.preventDefault();
         event.e.stopPropagation();
     }
+
+    setCircleZoomInCanvas(circle, zoom) {
+        let newZoom = 2 / zoom;
+        if (newZoom > 2) {
+            return
+        }
+        circle.scaleX = newZoom;
+        circle.scaleY = newZoom;
+    };
+
+    setTextZoomInCanvas(text, zoom) {
+        let newZoom = 2 / zoom;
+        if (newZoom > 2) {
+            return
+        }
+        text.scaleX = newZoom;
+        text.scaleY = newZoom;
+    };
 
     getOriginOfRotation(object, x, y) {
         let brPoints = object.oCoords.br;
