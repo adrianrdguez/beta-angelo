@@ -37,13 +37,13 @@
                         </x-jet-nav-link>
                     </div>
                 @endcan
-                @can('Ver seccion usuarios y roles')
+                @canany(['Ver seccion usuarios','Ver seccion roles'])
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-jet-nav-link href="{{ route('userRole.index') }}" :active="request()->routeIs('userRole.index')">
                             {{ __('Usuarios y Roles') }}
                         </x-jet-nav-link>
                     </div>
-                @endcan
+                @endcanany
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
