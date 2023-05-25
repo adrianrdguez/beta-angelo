@@ -16,23 +16,34 @@
                         {{ __('Proyectos') }}
                     </x-jet-nav-link>
                 </div>
-                @if (Auth::user()->hasRole('admin'))
+                @can('show-implants')
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-jet-nav-link href="{{ route('implant.index') }}" :active="request()->routeIs('implant.index')">
                             {{ __('Implantes') }}
                         </x-jet-nav-link>
                     </div>
+                @endcan
+                @can('show-implant-types')
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-jet-nav-link href="{{ route('implantType.index') }}" :active="request()->routeIs('implantType.index')">
                             {{ __('Tipos de Implante') }}
                         </x-jet-nav-link>
                     </div>
+                @endcan
+                @can('show-implant-subtypes')
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-jet-nav-link href="{{ route('implantSubType.index') }}" :active="request()->routeIs('implantSubType.index')">
                             {{ __('Subtipos de Implantes') }}
                         </x-jet-nav-link>
                     </div>
-                @endif
+                @endcan
+                @can('show-users-roles')
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-jet-nav-link href="{{ route('userRole.index') }}" :active="request()->routeIs('userRole.index')">
+                            {{ __('Usuarios y Roles') }}
+                        </x-jet-nav-link>
+                    </div>
+                @endcan
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
