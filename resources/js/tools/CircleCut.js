@@ -6,6 +6,8 @@ export class CircleCut extends RuleCircle {
     constructor(canvas) {
         super(canvas);
         this.element.line.tool = this;
+        this.element.line.startAngle = 0;
+        console.log(this.element.line)
         this.setStartControl(this.element.line, () => this.startCut());
         this.element.line.on('selected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', true));
         this.element.line.on('deselected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', false));
@@ -85,34 +87,68 @@ export class CircleCut extends RuleCircle {
         });
     }
 
+    degreesToRadians(degrees) {
+        return degrees * (Math.PI / 180);
+    }
+
     startCut() {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
         this.simulator.setBackgroundOptions(this.element.circle);
-        /* this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
-        let p1 = this.getPointCoord(this.element.line, 1); // center
-        let p2 = this.getPointCoord(this.element.line, 0); // circumferencia point
-        let newAngle = (180 - this.element.semicircle.input) / 2;
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
 
-        const angleInRadians = newAngle * Math.PI / 180;
+        // NEED A REFACTOR
 
-        const endX = p1.x + (this.element.circle.radius) * 2 * Math.cos(angleInRadians);
-        const endY = p1.y + (this.element.circle.radius) * 2 * Math.sin(angleInRadians);
+        let p4 = this.getPointCoord(this.element.line, 0);
+        let newAngle;
+        if (this.element.semicircle.input === 180) {
+            newAngle = 0;
+        } else {
+            newAngle = (180 - this.element.semicircle.input) / 2;
+        }
+        let angleInRadians = this.degreesToRadians(newAngle);
 
-        let newLine = this.createLine(p1.x, p1.y, endX, endY); */
+        const lineLength = (this.element.circle.radius) * 2;
+        const halfLength = (lineLength / 2) + 2;
 
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, fabric.util.object.clone(this.element.semicircle));
-        let p1 = this.getPointCoord(this.element.line, 1);
-        let p2 = this.getPointCoord(this.element.line, 0);
+        const centerX = p4.x - (halfLength * Math.cos(angleInRadians));
+        const centerY = p4.y - (halfLength * Math.sin(angleInRadians));
+
+        const endX = centerX + (lineLength * Math.cos(angleInRadians));
+        const endY = centerY + (lineLength * Math.sin(angleInRadians));
+
+        let newLine = new fabric.Line([centerX, centerY, endX, endY], {
+            stroke: 'blue',
+            strokeWidth: 3,
+            strokeLineCap: 'round',
+            originX: 'center',
+            originY: 'center',
+            angle: this.element.semicircle.angle - 90
+        });
+
+        let mirroredLine = new fabric.Line([centerX, endY, endX, centerY], {
+            stroke: 'red',
+            strokeWidth: 3,
+            strokeLineCap: 'round',
+            originX: 'center',
+            originY: 'center',
+            angle: this.element.semicircle.angle - 90
+        });
+
+
+        const endPoint = newLine.getPointByOrigin('left', 'bottom');
+        const startPoint = newLine.getPointByOrigin('right', 'bottom');
+
+
         this.freeCutTool.element.pointer.set({
-            left: p1.x,
-            top: p1.y,
+            left: startPoint.x,
+            top: startPoint.y,
         });
         this.freeCutTool.element.miniPointer.set({
-            left: p1.x,
-            top: p1.y,
+            left: startPoint.x,
+            top: startPoint.y,
         });
-        this.freeCutTool.startCut(p2.x - this.element.circle.radius, p1.y);
+        this.freeCutTool.startCut(endPoint.x, endPoint.y);
         this.canvas.remove(this.element.line);
         delete this.element.line;
         Object.assign(this.freeCutTool.element, this.element);
@@ -164,6 +200,11 @@ export class CircleCut extends RuleCircle {
             this.element.semicircle2.set({
                 angle: (group.angle + 90) < 270 ? 90 : 270,
             });
+            if (this.element.semicircle.angle > 270) {
+                console.log(Math.round(450 - this.element.semicircle.angle))
+            } else {
+                console.log(-Math.round(this.element.semicircle.angle - 90))
+            }
             this.canvas.bringToFront(this.element.circle);
             this.canvas.bringToFront(this.element.semicircle);
         });
