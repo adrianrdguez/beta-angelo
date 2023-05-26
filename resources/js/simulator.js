@@ -403,11 +403,16 @@ let interval = setInterval(() => {
         document.getElementById('save-exit').onclick = async function () {
             // Todo: Save canvas to json in database
             let projectId = document.getElementById('body').dataset.projectid;
-            let blob = await (await fetch(simulator.canvas.toDataURL())).blob();
+            let canvas = document.getElementById('simulator');
+            let zoom = getZoomLevel(canvas); // Get the current zoom level
+
+            let blob = await (await fetch(canvas.toDataURL())).blob();
             let formData = new FormData();
-            formData.append("radiographyImg", blob, document.getElementById('simulator').dataset.name);
-            formData.append("name", document.getElementById('simulator').dataset.name);
+            formData.append("radiographyImg", blob, canvas.dataset.name);
+            formData.append("name", canvas.dataset.name);
             formData.append("rotation", 0);
+            formData.append("zoom", zoom); // Append the zoom level to the form data
+
             let requestOptions = {
                 method: 'POST',
                 body: formData,
@@ -415,6 +420,19 @@ let interval = setInterval(() => {
             fetch(`/api/project/${projectId}/image`, requestOptions)
                 .catch(error => console.log('error', error));
             window.location.href = `/project/${projectId}`;
+        }
+
+        function getZoomLevel(element) {
+            let zoom = 1;
+            let transformStyle = window.getComputedStyle(element).getPropertyValue('transform');
+            if (transformStyle && transformStyle !== 'none') {
+                let matrix = transformStyle.match(/^matrix\(([^\(]*)\)$/);
+                if (matrix && matrix[1]) {
+                    let values = matrix[1].split(',');
+                    zoom = parseFloat(values[0]);
+                }
+            }
+            return zoom;
         }
         clearInterval(interval);
     }
