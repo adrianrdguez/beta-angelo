@@ -3,26 +3,15 @@
         <div class="flex space-x-2 justify-between items-center">
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    {{ __('Tipos de implante') }}
+                    {{ __('Usuarios') }}
                 </h2>
             </div>
-            @can('Crear tipo de implante')
-            <div>
-                <a class="inline-block px-2 py-2 bg-transparent text-gray-600 font-medium text-xs leading-tight uppercase rounded hover:text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out"
-                    href="{{ route('implantType.create') }}">
-                    <span class="mr-2">
-                        <i class="fa-solid fa-plus"></i>
-                    </span>
-                    {{ __('Crear tipo de implante') }}
-                </a>
-            </div>
-            @endcan
         </div>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if ($implantTypes->count() === 0)
+            @if ($users->count() === 0)
                 <span>No hay registros.</span>
             @else
                 <div class="flex flex-col">
@@ -36,7 +25,16 @@
                                                 Id
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                                                {{ __('Avatar') }}
+                                            </th>
+                                            <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
                                                 {{ __('Name') }}
+                                            </th>
+                                            <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                                                {{ __('Email') }}
+                                            </th>
+                                            <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+                                                {{ __('Rol') }}
                                             </th>
                                             <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
                                                 {{ __('Actions') }}
@@ -44,31 +42,47 @@
                                         </tr>
                                     </thead class="border-b">
                                     <tbody>
-                                        @foreach ($implantTypes as $implantType)
+                                        @foreach ($users as $user)
                                             <tr class="bg-white border-b">
                                                 <td
                                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ $implantType->id }}</td>
+                                                    {{ $user->id }}</td>
                                                 <td
-                                                    class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                    {{ $implantType->name }}
+                                                    class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap flex justify-center">
+                                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="rounded-full h-10 w-10 object-cover">
                                                 </td>
                                                 <td
                                                     class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                    {{ $user->name . ' ' . $user->surname }}
+                                                </td>
+                                                <td
+                                                    class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                    {{ $user->email }}
+                                                </td>
+                                                <td
+                                                    class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                    {{ $user->getRoleNames()->first() }}
+                                                </td>
+                                                <td
+                                                    class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                @if (!$user->hasRole('admin'))
                                                     <div class="inline-flex shadow-md hover:shadow-lg focus:shadow-lg"
                                                         role="group">
-                                                        @can('Editar tipo de implante')
-                                                        <a href="{{ route('implantType.edit', $implantType->id) }}"
+                                                        @can('Editar usuario')
+                                                        <a href="{{ route('user.edit', $user->id) }}"
                                                             class="rounded-l inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-0 active:bg-blue-800 transition duration-150 ease-in-out">Editar</a>
                                                         @endcan
-                                                        @can('Borrar tipo de implante')
+                                                        @can('Borrar usuario')
                                                         <button type="button" data-bs-toggle="modal"
                                                             data-bs-target="#confirmation"
-                                                            data-eid="{{ $implantType->id }}"
-                                                            onclick="document.getElementById('delete').action = '/implantType/' + this.dataset.eid"
+                                                            data-eid="{{ $user->id }}"
+                                                            onclick="document.getElementById('delete').action = '/user/' + this.dataset.eid"
                                                             class="delete-confirmation-button rounded-r inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none focus:ring-0 active:bg-red-800 transition duration-150 ease-in-out">Borrar</button>
                                                         @endcan
                                                     </div>
+                                                @else
+                                                    <i class="fa-solid fa-ban fa-2xl"></i>
+                                                @endif
                                                 </td>
                                             </tr>
                                         @endforeach

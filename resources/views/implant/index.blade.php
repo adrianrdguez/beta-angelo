@@ -6,6 +6,7 @@
                     {{ __('Implantes') }}
                 </h2>
             </div>
+            @can('Crear implante')
             <div>
                 <a class="inline-block px-2 py-2 bg-transparent text-gray-600 font-medium text-xs leading-tight uppercase rounded hover:text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out"
                     href="{{ route('implant.create') }}">
@@ -15,6 +16,7 @@
                     {{ __('Crear implante') }}
                 </a>
             </div>
+            @endcan
         </div>
     </x-slot>
 
@@ -101,13 +103,17 @@
                                                     class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                                                     <div class="inline-flex shadow-md hover:shadow-lg focus:shadow-lg"
                                                         role="group">
+                                                        @can('Editar implante')
                                                         <a href="{{ route('implant.edit', $implant->id) }}"
                                                             class="rounded-l inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-0 active:bg-blue-800 transition duration-150 ease-in-out">Editar</a>
+                                                        @endcan
+                                                        @can('Borrar implante')
                                                         <button type="button" data-bs-toggle="modal"
                                                             data-bs-target="#confirmation"
                                                             data-eid="{{ $implant->id }}"
                                                             onclick="document.getElementById('delete').action = '/implant/' + this.dataset.eid"
                                                             class="delete-confirmation-button rounded-r inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none focus:ring-0 active:bg-red-800 transition duration-150 ease-in-out">Borrar</button>
+                                                        @endcan
                                                     </div>
                                                 </td>
                                             </tr>
