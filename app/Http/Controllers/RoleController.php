@@ -17,7 +17,7 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::where('name', '!=', 'admin')->paginate(10);
-        return view('role.index', ['roles' => $roles]);
+        return view('settings.role.index', ['roles' => $roles]);
     }
 
 
@@ -28,7 +28,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('role.create', ['permissions' => Permission::all()]);
+        return view('settings.role.create', ['permissions' => Permission::all()]);
     }
 
     /**
@@ -55,7 +55,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view('role.edit', ['role' => $role, 'permissions' => Permission::all()]);
+        return view('settings.role.edit', ['role' => $role, 'permissions' => Permission::all()]);
     }
 
     /**

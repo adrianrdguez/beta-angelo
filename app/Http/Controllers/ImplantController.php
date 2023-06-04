@@ -21,7 +21,7 @@ class ImplantController extends Controller
      */
     public function index()
     {
-        return view('implant.index', ['implants' => Implant::paginate(20)]);
+        return view('settings.implant.index', ['implants' => Implant::paginate(20)]);
     }
 
     /**
@@ -48,7 +48,7 @@ class ImplantController extends Controller
      */
     public function create()
     {
-        return view('implant.create', ['implantTypes' => ImplantType::all()]);
+        return view('settings.implant.create', ['implantTypes' => ImplantType::all()]);
     }
 
     /**
@@ -79,7 +79,7 @@ class ImplantController extends Controller
      */
     public function show(Implant $implant)
     {
-        return view('implant.show', ['implant' => $implant]);
+        return view('settings.implant.show', ['implant' => $implant]);
     }
 
     /**
@@ -90,7 +90,7 @@ class ImplantController extends Controller
      */
     public function edit(Implant $implant)
     {
-        return view('implant.edit', ['implant' => $implant, 'implantTypes' => ImplantType::all()]);
+        return view('settings.implant.edit', ['implant' => $implant, 'implantTypes' => ImplantType::all()]);
     }
 
     /**

@@ -25,26 +25,31 @@ class UpdateProjectRequest extends FormRequest
     {
         return [
             'name' => [
+                'required',
                 'string',
                 'min:3',
-                'max:100'
+                'max:100',
             ],
             'race' => [
                 'string',
                 'min:3',
-                'max:100'
+                'max:100',
+                'nullable'
             ],
             'weight' => [
                 'numeric',
                 'min:0.01',
+                'nullable'
             ],
             'age' => [
                 'numeric',
                 'min:1',
+                'nullable'
             ],
             'description' => [
                 'string',
                 'min:3',
+                'nullable'
             ],
         ];
     }

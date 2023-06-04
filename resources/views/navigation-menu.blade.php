@@ -16,37 +16,17 @@
                         {{ __('Proyectos') }}
                     </x-jet-nav-link>
                 </div>
-                @can('Ver seccion implantes')
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-jet-nav-link href="{{ route('implant.index') }}" :active="request()->routeIs('implant.index')">
-                            {{ __('Implantes') }}
-                        </x-jet-nav-link>
-                    </div>
-                @endcan
-                @can('Ver seccion tipos de implantes')
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-jet-nav-link href="{{ route('implantType.index') }}" :active="request()->routeIs('implantType.index')">
-                            {{ __('Tipos de Implante') }}
-                        </x-jet-nav-link>
-                    </div>
-                @endcan
-                @can('Ver seccion subtipos de implantes')
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-jet-nav-link href="{{ route('implantSubType.index') }}" :active="request()->routeIs('implantSubType.index')">
-                            {{ __('Subtipos de Implantes') }}
-                        </x-jet-nav-link>
-                    </div>
-                @endcan
-                @canany(['Ver seccion usuarios','Ver seccion roles'])
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-jet-nav-link href="{{ route('userRole.index') }}" :active="request()->routeIs('userRole.index')">
-                            {{ __('Usuarios y Roles') }}
-                        </x-jet-nav-link>
-                    </div>
-                @endcanany
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+                @canany([
+                    'Ver seccion usuarios', 'Ver seccion roles', 'Ver seccion implantes', 'Ver seccion tipos de implantes', 'Ver seccion subtipos de implantes'
+                ])
+                    <div class="border-t border-gray-200"></div>
+                    <a href="{{ route('settings.index') }}">
+                        <i class="fa-solid fa-gears fa-lg"></i>
+                    </a>
+                @endcanany
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
@@ -183,34 +163,14 @@
                 {{ __('Proyectos') }}
             </x-jet-responsive-nav-link>
         </div>
-        @can('Ver seccion implantes')
-        <div class="pt-2 pb-3 space-y-1">
-            <x-jet-responsive-nav-link href="{{ route('implant.index') }}" :active="request()->routeIs('implant.index')">
-                {{ __('Implantes') }}
+        @canany([
+            'Ver seccion usuarios', 'Ver seccion roles', 'Ver seccion implantes', 'Ver seccion tipos de implantes', 'Ver seccion subtipos de implantes'
+        ])
+            <div class="border-t border-gray-200"></div>
+            <x-jet-responsive-nav-link href="{{ route('settings.index') }}">
+                <i class="fa-solid fa-gears fa-lg"></i> {{ __('Configuración') }}
             </x-jet-responsive-nav-link>
-        </div>
-        @endcan
-        @can('Ver seccion tipos de implantes')
-        <div class="pt-2 pb-3 space-y-1">
-            <x-jet-responsive-nav-link href="{{ route('implantType.index') }}" :active="request()->routeIs('implantType.index')">
-                {{ __('Tipos de Implante') }}
-            </x-jet-responsive-nav-link>
-        </div>
-        @endcan
-        @can('Ver seccion subtipos de implantes')
-        <div class="pt-2 pb-3 space-y-1">
-            <x-jet-responsive-nav-link href="{{ route('implantSubType.index') }}" :active="request()->routeIs('implantSubType.index')">
-                {{ __('Subtipos de Implante') }}
-            </x-jet-responsive-nav-link>
-        </div>
-        @endcan
-        @can('Ver seccion usuarios y roles')
-            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <x-jet-nav-link href="{{ route('userRole.index') }}" :active="request()->routeIs('userRole.index')">
-                    {{ __('Usuarios y Roles') }}
-                </x-jet-nav-link>
-            </div>
-        @endcan
+        @endcanany
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">

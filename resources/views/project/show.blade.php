@@ -21,11 +21,19 @@
 
     <section class="overflow-hidden text-gray-700 ">
         <div class="container px-5 py-2 mx-auto lg:pt-12 lg:px-32">
-            <div class="flex flex-wrap -m-1 md:-m-2">
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                 @foreach ($project->getMedia('radiographies') as $image)
-                    <a class="block flex flex-wrap w-2/12"
-                        href="{{ route('simulator', ['project' => $project, 'media' => $image]) }}">
-                        <div class="w-full p-1 md:p-2 relative">
+                    <div class="relative">
+                        <button type="button" data-bs-toggle="modal"
+                            class="absolute right-2 mt-2"
+                            data-bs-target="#confirmation"
+                            data-eid="{{ $project->id }}"
+                            data-iid="{{ $image->id }}"
+                            onclick="document.getElementById('delete').action = '/project/' + this.dataset.eid + '/image/' + this.dataset.iid">
+                            <i class="fa-solid fa-xmark fa-2xl text-red-600"></i>
+                        </button>
+                        <a class="block flex flex-wrap w-full h-full"
+                            href="{{ route('simulator', ['project' => $project, 'media' => $image]) }}">
                             <div class="rounded-lg z-50 absolute inset-x-0 -bottom-2 pt-30 text-white flex items-end">
                                 <div>
                                     <div class="rounded-lg p-4 space-y-3 text-xl translate-y-0 translate-y-4 pb-10">
@@ -35,8 +43,8 @@
                             </div>
                             <img class="block object-cover object-center w-full h-full rounded-lg"
                                 src="{{ $image->getUrl('thumbnail') }}" alt="content">
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                 @endforeach
             </div>
             <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"

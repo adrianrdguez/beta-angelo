@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::paginate(10);
-        return view('user.index', ['users' => $users]);
+        return view('settings.user.index', ['users' => $users]);
     }
 
     /**
@@ -27,7 +27,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('user.edit', ['user' => $user, 'roles' => Role::where('name', '!=', 'admin')->get()]);
+        return view('settings.user.edit', ['user' => $user, 'roles' => Role::where('name', '!=', 'admin')->get()]);
     }
 
     /**
