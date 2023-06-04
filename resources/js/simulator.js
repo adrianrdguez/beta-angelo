@@ -111,7 +111,7 @@ class Simulator {
 
     async addImplantObject(element) {
         let img = await this.loadImageFromUrl(element.src);
-        img.allowRotation = element.dataset.allowRotation;
+        img.allowRotation = parseInt(element.dataset.allow_rotation);
         this.canvas.add(img);
         img.scale(((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm) / img.width);
         img.set(this.getCenterOfView());
@@ -218,7 +218,7 @@ class Simulator {
                                     data-selected="${implant?.aboveViewUrl}"
                                     data-above="${implant?.aboveViewUrl}"
                                     data-lateral="${implant?.lateralViewUrl}"
-                                    data-allowRotation="${implant?.allowRotation}"
+                                    data-allow_rotation="${implant?.allowRotation}"
                                     src="${implant?.aboveViewUrl ?? implant?.lateralViewUrl}"
                                     class="h-full w-full"
                                 >

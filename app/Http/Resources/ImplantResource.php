@@ -23,6 +23,7 @@ class ImplantResource extends JsonResource
             'measureWidth' => $this->measureWidth,
             'lateralViewUrl' => !empty($lateralViewUrl) ? $lateralViewUrl : null,
             'aboveViewUrl' => !empty($aboveViewUrl) ? $aboveViewUrl : null,
+            'allowRotation' => $this->allowRotation,
         ];
     }
 }
