@@ -16,9 +16,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $users = Role::where('name', '!=', 'admin')->get();
-        return view('role.index', ['roles' => $users]);
+        $roles = Role::where('name', '!=', 'admin')->paginate(10);
+        return view('role.index', ['roles' => $roles]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -83,5 +84,4 @@ class RoleController extends Controller
         $role->delete();
         return redirect()->route('role.index');
     }
-
 }
