@@ -205,10 +205,10 @@
         </div>
         @endcan
         @canany(['Ver seccion usuarios', 'Ver seccion roles'])
-            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                <x-jet-nav-link href="{{ route('userRole.index') }}" :active="request()->routeIs('userRole.index')">
+        <div class="pt-2 pb-3 space-y-1">
+            <x-jet-responsive-nav-link href="{{ route('userRole.index') }}" :active="request()->routeIs('userRole.index')">
                     {{ __('Usuarios y Roles') }}
-                </x-jet-nav-link>
+            </x-jet-responsive-nav-link>
             </div>
         @endcanany
 
