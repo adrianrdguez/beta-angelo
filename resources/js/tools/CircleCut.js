@@ -135,20 +135,39 @@ export class CircleCut extends RuleCircle {
             angle: this.element.semicircle.angle - 90
         });
 
+        this.canvas.add(newLine)
+        this.canvas.add(mirroredLine)
+
 
         const endPoint = newLine.getPointByOrigin('left', 'bottom');
         const startPoint = newLine.getPointByOrigin('right', 'bottom');
 
+        const endPoint2 = newLine.getPointByOrigin('left', 'top');
+        const startPoint2 = newLine.getPointByOrigin('right', 'top');
 
-        this.freeCutTool.element.pointer.set({
-            left: startPoint.x,
-            top: startPoint.y,
-        });
-        this.freeCutTool.element.miniPointer.set({
-            left: startPoint.x,
-            top: startPoint.y,
-        });
-        this.freeCutTool.startCut(endPoint.x, endPoint.y);
+        if (this.element.semicircle.input <= 180) {
+            this.freeCutTool.element.pointer.set({
+                left: startPoint.x,
+                top: startPoint.y,
+            });
+            this.freeCutTool.element.miniPointer.set({
+                left: startPoint.x,
+                top: startPoint.y,
+            });
+            this.freeCutTool.startCut(endPoint.x, endPoint.y);
+        } else {
+            this.freeCutTool.element.pointer.set({
+                left: startPoint2.x,
+                top: startPoint2.y,
+            });
+            this.freeCutTool.element.miniPointer.set({
+                left: startPoint2.x,
+                top: startPoint2.y,
+            });
+            this.freeCutTool.startCut(endPoint2.x, endPoint2.y);
+        }
+
+
         this.canvas.remove(this.element.line);
         delete this.element.line;
         Object.assign(this.freeCutTool.element, this.element);
