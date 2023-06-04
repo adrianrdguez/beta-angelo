@@ -193,7 +193,7 @@ export class CircleCut extends RuleCircle {
             clipPath: this.element.semicircle2,
         });
 
-        let text = new fabric.Text("0", {
+        this.element.angleText = new fabric.Text("0", {
             left: this.element.semicircle.left + 870,
             top: this.element.semicircle.top + 650,
             originX: 'center',
@@ -202,7 +202,7 @@ export class CircleCut extends RuleCircle {
             fontSize: 12,
             angle: group.angle,
         });
-        this.canvas.add(text);
+        this.canvas.add(this.element.angleText);
 
         group.on('rotating', (event) => {
             this.element.semicircle.set({
@@ -218,7 +218,7 @@ export class CircleCut extends RuleCircle {
             } else {
                 newAngle = -Math.round(this.element.semicircle.angle - 90);
             }
-            text.set('text', newAngle + 'º');
+            this.element.angleText.set('text', newAngle + 'º');
             this.canvas.renderAll();
             this.canvas.bringToFront(this.element.circle);
             this.canvas.bringToFront(this.element.semicircle);
