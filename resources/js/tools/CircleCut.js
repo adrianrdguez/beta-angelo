@@ -101,12 +101,13 @@ export class CircleCut extends RuleCircle {
 
         let p4 = this.getPointCoord(this.element.line, 0);
         let newAngle;
-        if (this.element.semicircle.input === 180) {
+        if (this.element.semicircle.input === undefined) {
             newAngle = 0;
         } else {
             newAngle = (180 - this.element.semicircle.input) / 2;
         }
         let angleInRadians = this.degreesToRadians(newAngle);
+        console.log(this.element.semicircle.input)
 
         const lineLength = (this.element.circle.radius) * 2;
         const halfLength = (lineLength / 2) + 2;
@@ -126,18 +127,14 @@ export class CircleCut extends RuleCircle {
             angle: this.element.semicircle.angle - 90
         });
 
-        let mirroredLine = new fabric.Line([centerX, endY, endX, centerY], {
+        /* let mirroredLine = new fabric.Line([centerX, endY, endX, centerY], {
             stroke: 'red',
             strokeWidth: 3,
             strokeLineCap: 'round',
             originX: 'center',
             originY: 'center',
             angle: this.element.semicircle.angle - 90
-        });
-
-        this.canvas.add(newLine)
-        this.canvas.add(mirroredLine)
-
+        }); */
 
         const endPoint = newLine.getPointByOrigin('left', 'bottom');
         const startPoint = newLine.getPointByOrigin('right', 'bottom');
@@ -166,7 +163,6 @@ export class CircleCut extends RuleCircle {
             });
             this.freeCutTool.startCut(endPoint2.x, endPoint2.y);
         }
-
 
         this.canvas.remove(this.element.line);
         delete this.element.line;
