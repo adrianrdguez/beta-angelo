@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\ImplantSubType;
 use App\Models\ImplantType;
 use App\Models\User;
+use App\Observers\ImplantSubTypeObserver;
 use App\Observers\ImplantTypeObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Registered;
@@ -27,6 +29,7 @@ class EventServiceProvider extends ServiceProvider
     protected $observers = [
         User::class => [UserObserver::class],
         ImplantType::class => [ImplantTypeObserver::class],
+        ImplantSubType::class => [ImplantSubTypeObserver::class],
     ];
 
     /**

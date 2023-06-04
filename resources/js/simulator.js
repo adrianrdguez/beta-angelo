@@ -111,6 +111,7 @@ class Simulator {
 
     async addImplantObject(element) {
         let img = await this.loadImageFromUrl(element.src);
+        img.allowRotation = parseInt(element.dataset.allow_rotation);
         this.canvas.add(img);
         img.scale(((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm) / img.width);
         img.set(this.getCenterOfView());
@@ -118,6 +119,11 @@ class Simulator {
         img.on("deselected", () => this.offcanvasToggler('offcanvas-implants-settings', false));
         img.on('selected', () => {
             document.getElementById('opacity').value = img.opacity;
+            if (img.allowRotation) {
+                document.getElementById('rotate-implant').classList.remove('invisible');
+            } else {
+                document.getElementById('rotate-implant').classList.add('invisible');
+            }
         });
         this.canvas.currentTool.setDefaultObjectOptions(img);
         this.canvas.requestRenderAll();
@@ -195,7 +201,7 @@ class Simulator {
     }
 
     updateImplants(implant_type_id, implant_sub_type_id) {
-        fetch(`/api/implants?implant_type_id=${implant_type_id}&implant_sub_type_id=${implant_sub_type_id}`)
+        fetch(`/api/implants?implant_type_id=${implant_type_id}&implant_sub_type_id=${implant_sub_type_id}&user_id=${document.getElementById('body').dataset.userid}`)
             .then(response => response.json())
             .then(result => {
                 if (Array.isArray(result.data) && result?.success !== false) {
@@ -212,6 +218,7 @@ class Simulator {
                                     data-selected="${implant?.aboveViewUrl}"
                                     data-above="${implant?.aboveViewUrl}"
                                     data-lateral="${implant?.lateralViewUrl}"
+                                    data-allow_rotation="${implant?.allowRotation}"
                                     src="${implant?.aboveViewUrl ?? implant?.lateralViewUrl}"
                                     class="h-full w-full"
                                 >

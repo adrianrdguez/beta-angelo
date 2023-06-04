@@ -145,7 +145,7 @@ class ProjectController extends Controller
 
     public function simulator(Project $project, Media $media)
     {
-        return view('simulator', ['project' => $project, 'media' => $media, 'implantTypes' => ImplantType::all()]);
+        return view('simulator', ['user' => Auth::user(), 'project' => $project, 'media' => $media, 'implantTypes' => ImplantType::all()]);
     }
 
     private function getRotatedImg(UploadedFile $file, int $rotation): UploadedFile

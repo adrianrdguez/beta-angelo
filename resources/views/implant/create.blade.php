@@ -59,6 +59,28 @@
                         <x-jet-input id="aboveViewImg" type="file" class="mt-1 block w-full" autocomplete="aboveViewImg" name="aboveViewImg" value="{{old('aboveViewImg')}}" />
                         <x-jet-input-error for="aboveViewImg" class="mt-2" />
                     </div>
+                    <div class="col-span-6 sm:col-span-4 mt-4">
+                        <label for="allowRotation" class="flex items-center cursor-pointer">
+                            <div class="relative">
+                                <input id="allowRotation" name="allowRotation" type="checkbox" value="1" class="sr-only"/>
+                                <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                                <div class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                            </div>
+                            <div class="ml-3 text-gray-700 font-medium">{{ __('Permitir rotación') }}</div>
+                        </label>
+                        <x-jet-input-error for="allowRotation" class="mt-2" />
+                    </div>
+                    <div class="col-span-6 sm:col-span-4 mt-4">
+                        <label for="allowDisplay" class="flex items-center cursor-pointer">
+                            <div class="relative">
+                                <input id="allowDisplay" name="allowDisplay" type="checkbox" value="1" class="sr-only"/>
+                                <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                                <div class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                            </div>
+                            <div class="ml-3 text-gray-700 font-medium">{{ __('Mostrar para todos los usuarios') }}</div>
+                        </label>
+                        <x-jet-input-error for="allowDisplay" class="mt-2" />
+                    </div>
                     <div
                         class="flex flex-shrink-0 items-center justify-end px-4 pt-4 rounded-b-md">
                         <x-jet-button>
@@ -87,4 +109,5 @@
         }
         document.getElementById('implant_type_id').addEventListener('change', (e) => listImplantSubTypes('implant_sub_type_id', e.target.value));
     </script>
+
 </x-app-layout>
