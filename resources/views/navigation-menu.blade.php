@@ -207,9 +207,9 @@
         @canany(['Ver seccion usuarios', 'Ver seccion roles'])
         <div class="pt-2 pb-3 space-y-1">
             <x-jet-responsive-nav-link href="{{ route('userRole.index') }}" :active="request()->routeIs('userRole.index')">
-                    {{ __('Usuarios y Roles') }}
+                {{ __('Usuarios y Roles') }}
             </x-jet-responsive-nav-link>
-            </div>
+        </div>
         @endcanany
 
         <!-- Responsive Settings Options -->
