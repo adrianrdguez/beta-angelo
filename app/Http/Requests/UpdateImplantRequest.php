@@ -28,24 +28,29 @@ class UpdateImplantRequest extends FormRequest
     {
         return [
             'name' => [
+                'required',
                 'string',
                 'min:3',
                 'max:100'
             ],
             'model' => [
+                'required',
                 'string',
                 'min:3',
                 'max:100'
             ],
             'measureWidth' => [
+                'required',
                 'numeric',
                 'min:1',
             ],
             'implant_type_id' => [
+                'required',
                 'numeric',
                 Rule::exists(ImplantType::class, 'id')->withoutTrashed(),
             ],
             'implant_sub_type_id' => [
+                'required',
                 'numeric',
                 Rule::exists(ImplantSubType::class, 'id')->withoutTrashed(),
             ],

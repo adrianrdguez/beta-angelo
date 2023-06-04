@@ -18,7 +18,8 @@ class ImplantSubTypeController extends Controller
      */
     public function index()
     {
-        return view('implantSubType.index', ['implantSubTypes' => ImplantSubType::paginate(20)]);
+        $implantSubTypes = ImplantSubType::select()->where('name', '!=', 'Sin Subtipo');
+        return view('implantSubType.index', ['implantSubTypes' => $implantSubTypes->paginate(20)]);
     }
 
     public function indexApi(GetImplantSubTypeApiRequest $request)

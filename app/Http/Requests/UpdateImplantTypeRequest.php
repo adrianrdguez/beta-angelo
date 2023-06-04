@@ -25,15 +25,18 @@ class UpdateImplantTypeRequest extends FormRequest
     {
         return [
             'name' => [
+                'required',
                 'string',
                 'min:3',
                 'max:100'
             ],
             'implant_subtypes' => [
+                'required',
                 'array',
                 'min:1'
             ],
             'implant_subtypes.*' => [
+                'required',
                 'integer',
             ],
         ];

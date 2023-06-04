@@ -16,7 +16,8 @@ class ImplantTypeController extends Controller
      */
     public function index()
     {
-        return view('implantType.index', ['implantTypes' => ImplantType::paginate(20)]);
+        $implantTypes = ImplantType::select()->where('name', '!=', 'Sin Tipo');
+        return view('implantType.index', ['implantTypes' => $implantTypes->paginate(20)]);
     }
 
     /**
@@ -26,7 +27,7 @@ class ImplantTypeController extends Controller
      */
     public function create()
     {
-        return view('implantType.create', ['implantSubTypes' => ImplantSubType::all()]);
+        return view('implantType.create', ['implantSubTypes' => ImplantSubType::where('name', '!=', 'Sin Subtipo')->get()]);
     }
 
     /**
@@ -63,7 +64,7 @@ class ImplantTypeController extends Controller
      */
     public function edit(ImplantType $implantType)
     {
-        return view('implantType.edit', ['implantType' => $implantType, 'implantSubTypes' => ImplantSubType::all()]);
+        return view('implantType.edit', ['implantType' => $implantType, 'implantSubTypes' => ImplantSubType::where('name', '!=', 'Sin Subtipo')->get()]);
     }
 
     /**
