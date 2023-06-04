@@ -96,6 +96,7 @@ export class CircleCut extends RuleCircle {
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
         this.simulator.setBackgroundOptions(this.element.circle);
         this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
+        this.canvas.remove(this.element.text);
 
         // NEED A REFACTOR
 
@@ -155,6 +156,10 @@ export class CircleCut extends RuleCircle {
         this.canvas.requestRenderAll();
     }
 
+    setAnglesInCanvas(angle) {
+        console.log(angle)
+    }
+
     callbackOnFinishedCut(imgCut) {
         let group = new fabric.Group([this.element.circle, imgCut], {
             left: this.element.circle.left,
@@ -192,6 +197,18 @@ export class CircleCut extends RuleCircle {
             angle: group.angle + 90,
             clipPath: this.element.semicircle2,
         });
+
+        let text = new fabric.Text("0", {
+            left: this.element.semicircle.left + 870,
+            top: this.element.semicircle.top + 650,
+            originX: 'center',
+            originY: 'center',
+            stroke: 'red',
+            fontSize: 12,
+            angle: group.angle,
+        });
+        this.canvas.add(text);
+
         group.on('rotating', (event) => {
             this.element.semicircle.set({
                 flipX: (group.angle + 90) < 270,
@@ -200,11 +217,14 @@ export class CircleCut extends RuleCircle {
             this.element.semicircle2.set({
                 angle: (group.angle + 90) < 270 ? 90 : 270,
             });
+            let newAngle = 0;
             if (this.element.semicircle.angle > 270) {
-                console.log(Math.round(450 - this.element.semicircle.angle))
+                newAngle = Math.round(450 - this.element.semicircle.angle);
             } else {
-                console.log(-Math.round(this.element.semicircle.angle - 90))
+                newAngle = -Math.round(this.element.semicircle.angle - 90);
             }
+            text.set('text', newAngle + 'º');
+            this.canvas.renderAll();
             this.canvas.bringToFront(this.element.circle);
             this.canvas.bringToFront(this.element.semicircle);
         });
@@ -214,8 +234,6 @@ export class CircleCut extends RuleCircle {
                 this.canvas.bringToFront(this.element.semicircle);
             }, 10);
         });
-        this.canvas.remove(this.element.text);
         this.canvas.remove(imgCut);
     }
 }
-
