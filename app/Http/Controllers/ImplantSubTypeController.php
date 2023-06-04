@@ -18,7 +18,7 @@ class ImplantSubTypeController extends Controller
      */
     public function index()
     {
-        return view('implantSubType.index', ['implantSubTypes' => ImplantSubType::paginate(25)]);
+        return view('implantSubType.index', ['implantSubTypes' => ImplantSubType::paginate(20)]);
     }
 
     public function indexApi(GetImplantSubTypeApiRequest $request)

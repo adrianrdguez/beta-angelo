@@ -16,7 +16,7 @@ class ImplantTypeController extends Controller
      */
     public function index()
     {
-        return view('implantType.index', ['implantTypes' => ImplantType::paginate(25)]);
+        return view('implantType.index', ['implantTypes' => ImplantType::paginate(20)]);
     }
 
     /**

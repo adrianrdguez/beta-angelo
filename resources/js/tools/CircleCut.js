@@ -218,3 +218,4 @@ export class CircleCut extends RuleCircle {
         this.canvas.remove(imgCut);
     }
 }
+

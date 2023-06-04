@@ -7,15 +7,15 @@
                 </h2>
             </div>
             @can('Crear Subtipo de Implante')
-            <div>
-                <a class="inline-block px-2 py-2 bg-transparent text-gray-600 font-medium text-xs leading-tight uppercase rounded hover:text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out"
-                    href="{{ route('implantSubType.create') }}">
-                    <span class="mr-2">
-                        <i class="fa-solid fa-plus"></i>
-                    </span>
-                    {{ __('Crear Subtipo de Implante') }}
-                </a>
-            </div>
+                <div>
+                    <a class="inline-block px-2 py-2 bg-transparent text-gray-600 font-medium text-xs leading-tight uppercase rounded hover:text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-0 active:bg-gray-200 transition duration-150 ease-in-out"
+                        href="{{ route('implantSubType.create') }}">
+                        <span class="mr-2">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                        {{ __('Crear Subtipo de Implante') }}
+                    </a>
+                </div>
             @endcan
         </div>
     </x-slot>
@@ -58,15 +58,15 @@
                                                     <div class="inline-flex shadow-md hover:shadow-lg focus:shadow-lg"
                                                         role="group">
                                                         @can('Editar Subtipo de Implante')
-                                                        <a href="{{ route('implantSubType.edit', $implantSubType->id) }}"
-                                                            class="rounded-l inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-0 active:bg-blue-800 transition duration-150 ease-in-out">Editar</a>
+                                                            <a href="{{ route('implantSubType.edit', $implantSubType->id) }}"
+                                                                class="rounded-l inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-0 active:bg-blue-800 transition duration-150 ease-in-out">Editar</a>
                                                         @endcan
                                                         @can('Borrar Subtipo de Implante')
-                                                        <button type="button" data-bs-toggle="modal"
-                                                            data-bs-target="#confirmation"
-                                                            data-eid="{{ $implantSubType->id }}"
-                                                            onclick="document.getElementById('delete').action = '/implantSubType/' + this.dataset.eid"
-                                                            class="delete-confirmation-button rounded-r inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none focus:ring-0 active:bg-red-800 transition duration-150 ease-in-out">Borrar</button>
+                                                            <button type="button" data-bs-toggle="modal"
+                                                                data-bs-target="#confirmation"
+                                                                data-eid="{{ $implantSubType->id }}"
+                                                                onclick="document.getElementById('delete').action = '/implantSubType/' + this.dataset.eid"
+                                                                class="delete-confirmation-button rounded-r inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none focus:ring-0 active:bg-red-800 transition duration-150 ease-in-out">Borrar</button>
                                                         @endcan
                                                     </div>
                                                 </td>
@@ -74,6 +74,9 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                <div class="mt-4">
+                                    {{ $implantSubTypes->links('pagination::tailwind') }}
+                                </div>
                             </div>
                         </div>
                     </div>
