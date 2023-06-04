@@ -9,6 +9,7 @@ use App\Http\Resources\ImplantResource;
 use App\Models\Implant;
 use App\Models\ImplantType;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Image\Image;
 
 class ImplantController extends Controller
@@ -30,11 +31,14 @@ class ImplantController extends Controller
      */
     public function indexApi(GetImplantsApiRequest $request)
     {
+        Auth::loginUsingId($request->user_id);
         $implants = Implant::select()
             ->where('implant_type_id', $request->implant_type_id)
-            ->where('implant_sub_type_id', $request->implant_sub_type_id)
-            ->get();
-        return ImplantResource::collection($implants);
+            ->where('implant_sub_type_id', $request->implant_sub_type_id);
+        if (!Auth::user()?->hasRole('admin')) {
+            $implants->where('allowDisplay');
+        }
+        return ImplantResource::collection($implants->get());
     }
 
     /**

@@ -15,7 +15,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js', 'node_modules/tw-elements/dist/js/index.min.js', 'resources/js/simulator.js'])
 </head>
 
-<body data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body" class="bg-neutral-800">
+<body data-userid="{{ $user->id }}" data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body" class="bg-neutral-800">
     <!-- Canvas -->
     <canvas id="simulator" data-img="{{ $media->getUrl() }}"
         {{-- data-json="{{ $media->getCustomProperty('canvasJson') }}" --}}

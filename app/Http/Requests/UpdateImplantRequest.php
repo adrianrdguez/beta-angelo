@@ -55,6 +55,24 @@ class UpdateImplantRequest extends FormRequest
             'aboveViewImg' => [
                 'mimetypes:image/png'
             ],
+            'allowRotation' => [
+                'nullable',
+                'required',
+                'boolean'
+            ],
+            'allowDisplay' => [
+                'nullable',
+                'required',
+                'boolean'
+            ],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'allowRotation' => $this->allowRotation ?? false,
+            'allowDisplay' => $this->allowDisplay ?? false,
+        ]);
     }
 }

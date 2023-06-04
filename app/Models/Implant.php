@@ -21,6 +21,8 @@ class Implant extends Model implements HasMedia
         'measureWidth',
         'implant_type_id',
         'implant_sub_type_id',
+        'allowRotation',
+        'allowDisplay',
     ];
 
     public function registerMediaCollections(): void
