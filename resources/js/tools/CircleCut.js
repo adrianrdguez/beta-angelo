@@ -7,7 +7,6 @@ export class CircleCut extends RuleCircle {
         super(canvas);
         this.element.line.tool = this;
         this.element.line.startAngle = 0;
-        console.log(this.element.line)
         this.setStartControl(this.element.line, () => this.startCut());
         this.element.line.on('selected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', true));
         this.element.line.on('deselected', () => this.simulator.offcanvasToggler('offcanvas-tool-settings', false));
@@ -154,10 +153,6 @@ export class CircleCut extends RuleCircle {
         delete this.element.line;
         Object.assign(this.freeCutTool.element, this.element);
         this.canvas.requestRenderAll();
-    }
-
-    setAnglesInCanvas(angle) {
-        console.log(angle)
     }
 
     callbackOnFinishedCut(imgCut) {
