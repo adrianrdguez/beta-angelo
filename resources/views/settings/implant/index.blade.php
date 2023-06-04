@@ -111,7 +111,7 @@
                                                             <button type="button" data-bs-toggle="modal"
                                                                 data-bs-target="#confirmation"
                                                                 data-eid="{{ $implant->id }}"
-                                                                onclick="document.getElementById('delete').action = '/implant/' + this.dataset.eid"
+                                                                onclick="document.getElementById('delete').action = '/settings/implant/' + this.dataset.eid"
                                                                 class="delete-confirmation-button rounded-r inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none focus:ring-0 active:bg-red-800 transition duration-150 ease-in-out">Borrar</button>
                                                         @endcan
                                                     </div>

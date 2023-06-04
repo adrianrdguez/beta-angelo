@@ -6,7 +6,7 @@ use App\Http\Controllers\ImplantTypeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,17 +28,14 @@ Route::middleware([
     Route::get('/', function () {
         return redirect(route('project.index'));
     });
-    Route::get('/project', function () {
-        return view('project');
-    })->name('project');
     Route::resource('/project', ProjectController::class);
-    Route::resource('/implant', ImplantController::class);
-    Route::resource('/implantType', ImplantTypeController::class);
-    Route::resource('/implantSubType', ImplantSubTypeController::class);
-    Route::resource('/user', UserController::class);
-    Route::resource('/role', RoleController::class);
     Route::post('/project/{project}/image', [ProjectController::class, 'addImage'])->name('addProjectImage');
-    Route::delete('/project/{project}/image/{media}', [ProjectController::class, 'removeImage'])->name('removeProjectImage');
     Route::get('/project/{project}/image/{media}', [ProjectController::class, 'simulator'])->name('simulator');
-    Route::get('/user-role', [UserRoleController::class, 'index'])->name('userRole.index');
+    Route::delete('/project/{project}/image/{media}', [ProjectController::class, 'removeImage'])->name('removeProjectImage');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::resource('/settings/user', UserController::class);
+    Route::resource('/settings/role', RoleController::class);
+    Route::resource('/settings/implant', ImplantController::class);
+    Route::resource('/settings/implantType', ImplantTypeController::class);
+    Route::resource('/settings/implantSubType', ImplantSubTypeController::class);
 });

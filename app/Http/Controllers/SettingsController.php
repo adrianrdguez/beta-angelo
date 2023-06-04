@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class UserRoleController extends Controller
+class SettingsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -11,7 +11,7 @@ class UserRoleController extends Controller
      */
     public function index()
     {
-        return view('userRole.index');
+        return view('settings.index');
     }
 
 }
