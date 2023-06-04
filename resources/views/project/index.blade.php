@@ -25,8 +25,8 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     @foreach ($projects as $project)
-                        <a href="{{ route('project.show', $project->id) }}">
-                            <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center hover:bg-gray-50">
+                        <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center hover:bg-gray-50">
+                            <a href="{{ route('project.show', $project->id) }}">
                                 <div class="py-3 px-6 border-b border-gray-300 font-bold rounded-t-lg capitalize">
                                     {{ $project->id }} - {{ $project->name }}
                                 </div>
@@ -88,8 +88,19 @@
                                         </span>
                                     </li>
                                 </ul>
+                            </a>
+                            <div class="flex space-x-2 justify-evenly items-center border-t border-gray-300 p-2">
+                                <a href="{{ route('project.edit', $project->id) }}">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+                                <button type="button" data-bs-toggle="modal"
+                                    data-bs-target="#confirmation"
+                                    data-eid="{{ $project->id }}"
+                                    onclick="document.getElementById('delete').action = '/project/' + this.dataset.eid">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </div>
-                        </a>
+                        </div>
                     @endforeach
                 </div>
             @endif
