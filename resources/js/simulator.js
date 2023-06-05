@@ -220,7 +220,7 @@ class Simulator {
                                     data-lateral="${implant?.lateralViewUrl}"
                                     data-allow_rotation="${implant?.allowRotation}"
                                     src="${implant?.aboveViewUrl ?? implant?.lateralViewUrl}"
-                                    class="h-full w-full"
+                                    class="w-full"
                                 >
                             </div>
                             <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
