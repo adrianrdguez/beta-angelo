@@ -40,6 +40,7 @@ export class TriangleCut extends RuleTriangle {
     }
 
     startCut() {
+        this.element.triangle.fill = 'black';
         this.simulator.setBackgroundOptions(this.element.triangle);
         this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut);
         let p1 = this.getPointCoord(this.element.triangle, 1);
