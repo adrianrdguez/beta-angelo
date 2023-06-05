@@ -24,6 +24,7 @@
             <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                 @foreach ($project->getMedia('radiographies') as $image)
                     <div class="relative">
+                        <a href="{{ $image->getUrl() }}" class="absolute left-2 mt-2" download><i class="fa-solid fa-download fa-xl text-green-600"></i></a>
                         <button type="button" data-bs-toggle="modal"
                             class="absolute right-2 mt-2"
                             data-bs-target="#confirmation"
