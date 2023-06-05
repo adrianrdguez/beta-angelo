@@ -35,9 +35,11 @@ class ImplantController extends Controller
         $implants = Implant::select()
             ->where('implant_type_id', $request->implant_type_id)
             ->where('implant_sub_type_id', $request->implant_sub_type_id);
-        if (!Auth::user()?->hasRole('admin')) {
-            $implants->where('allowDisplay');
+        $allowDisplay = [1];
+        if (Auth::user()?->hasRole('admin')) {
+            $allowDisplay[] = 0;
         }
+        $implants->whereIn('allowDisplay', $allowDisplay);
         return ImplantResource::collection($implants->get());
     }
 
