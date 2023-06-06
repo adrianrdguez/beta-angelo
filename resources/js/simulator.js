@@ -89,6 +89,8 @@ class Simulator {
         document.getElementById('opacity').addEventListener('input', (e) => this.applyFiltersToImplant());
         document.getElementById('angle-input').addEventListener('input', () => this.setCircleCutOptions('angle-input'));
         document.getElementById('radius-input').addEventListener('input', () => this.setCircleCutOptions('radius-input'));
+        document.getElementById('undo-drawing').addEventListener('click', () => this.undoLastDraw());
+        document.getElementById('clear-drawing').addEventListener('click', () => this.clearDraws());
         this.setCircleCutOptions('angle-input')
         this.setCircleCutOptions('radius-input')
     }
@@ -347,6 +349,19 @@ class Simulator {
         bubble.style.left = `${x}px`;
         bubble.style.top = `-4px`;
     };
+
+    undoLastDraw() {
+        let path = this.canvas.getObjects('path').pop();
+        if (path) {
+            this.canvas.remove(path);
+        }
+    }
+
+    clearDraws() {
+        for (let path of this.canvas.getObjects('path')) {
+            this.canvas.remove(path);
+        }
+    }
 
 }
 
