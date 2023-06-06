@@ -74,16 +74,12 @@ export class TriangleCut extends RuleTriangle {
 
 
         imgCut.set({
-            centeredRotation: false,
+            centeredRotation: true,
             originY: newOriginY,
             originX: newOriginX,
             left: trianglePoint.x,
             top: trianglePoint.y,
             angle: this.element.angle2.rawAngle
-        })
-
-        imgCut.set({
-            centeredRotation: true
         })
 
         this.canvas.setActiveObject(imgCut);

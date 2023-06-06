@@ -94,8 +94,33 @@ export class CircleCut extends RuleCircle {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
         this.simulator.setBackgroundOptions(this.element.circle);
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, this.element.semicircle);
+        let semicirclePrueba = fabric.util.object.clone(this.element.semicircle);
+        semicirclePrueba.set({
+            stroke: 'transparent',
+        })
+        semicirclePrueba.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
+        semicirclePrueba.startAngle = -(parseInt(this.element.semicircle.input) + 1) / 2;
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, semicirclePrueba);
         this.canvas.remove(this.element.text);
+
+        this.element.miniPointer = new fabric.Circle({
+            radius: this.canvas.freeDrawingBrush.width,
+            fill: this.canvas.freeDrawingBrush.color,
+            originX: 'center',
+            originY: 'center',
+            hasBorders: false,
+            hasControls: false,
+            selectable: false,
+        });
+        this.canvas.add(this.element.miniPointer);
+        this.element.circle.set({
+            originX: 'center',
+            originY: 'center',
+        })
+        this.element.miniPointer.set({
+            left: this.element.circle.left,
+            top: this.element.circle.top,
+        });
 
         // NEED A REFACTOR
 
@@ -107,7 +132,6 @@ export class CircleCut extends RuleCircle {
             newAngle = (180 - this.element.semicircle.input) / 2;
         }
         let angleInRadians = this.degreesToRadians(newAngle);
-        console.log(this.element.semicircle.input)
 
         const lineLength = (this.element.circle.radius) * 2;
         const halfLength = (lineLength / 2) + 2;
@@ -120,21 +144,24 @@ export class CircleCut extends RuleCircle {
 
         let newLine = new fabric.Line([centerX, centerY, endX, endY], {
             stroke: 'blue',
-            strokeWidth: 3,
+            strokeWidth: 0.5,
             strokeLineCap: 'round',
             originX: 'center',
             originY: 'center',
             angle: this.element.semicircle.angle - 90
         });
 
-        /* let mirroredLine = new fabric.Line([centerX, endY, endX, centerY], {
+        let mirroredLine = new fabric.Line([centerX, endY, endX, centerY], {
             stroke: 'red',
-            strokeWidth: 3,
+            strokeWidth: 0.5,
             strokeLineCap: 'round',
             originX: 'center',
             originY: 'center',
             angle: this.element.semicircle.angle - 90
-        }); */
+        });
+
+        this.canvas.add(newLine)
+        this.canvas.add(mirroredLine)
 
         const endPoint = newLine.getPointByOrigin('left', 'bottom');
         const startPoint = newLine.getPointByOrigin('right', 'bottom');
