@@ -120,12 +120,6 @@
                 aria-label="Close"></button>
         </div>
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto">
-            <div class="flex w-full mb-4">
-                <input type="checkbox" id="blackandwhite" autocomplete="off" class="peer hidden">
-                <label for="blackandwhite"
-                    class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold transition-colors duration-200 ease-in-out peer-checked:bg-yellow-500 peer-checked:text-black text-center">Blanco
-                    y negro</label>
-            </div>
             <div class="w-full mb-4">
                 <label for="pincelsize">Tamaño del pincel</label>
                 <input type="range" id="pincelsize" value="1" min="0" max="10" step="0.1"
@@ -134,6 +128,23 @@
             <div class="w-full mb-4">
                 <label for="pincelcolor">Color</label>
                 <input type="color" value="#FF0000" id="pincelcolor" class="w-full h-6 p-0 focus:shadow-none" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="w-full">
+                    <button id="undo-drawing"
+                        class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Deshacer dibujo</button>
+                </div>
+                <div class="w-full">
+                    <button id="clear-drawing"
+                        class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Borrar dibujo</button>
+                </div>
+            </div>
+            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+            <div class="flex w-full mb-4">
+                <input type="checkbox" id="blackandwhite" autocomplete="off" class="peer hidden">
+                <label for="blackandwhite"
+                    class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold transition-colors duration-200 ease-in-out peer-checked:bg-yellow-500 peer-checked:text-black text-center">Blanco
+                    y negro</label>
             </div>
             <div class="w-full mb-4">
                 <label for="brightness">Iluminación</label>

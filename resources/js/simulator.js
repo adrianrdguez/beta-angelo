@@ -89,6 +89,8 @@ class Simulator {
         document.getElementById('opacity').addEventListener('input', (e) => this.applyFiltersToImplant());
         document.getElementById('angle-input').addEventListener('input', () => this.setCircleCutOptions('angle-input'));
         document.getElementById('radius-input').addEventListener('input', () => this.setCircleCutOptions('radius-input'));
+        document.getElementById('undo-drawing').addEventListener('click', () => this.undoLastDraw());
+        document.getElementById('clear-drawing').addEventListener('click', () => this.clearDraws());
         this.setCircleCutOptions('angle-input')
         this.setCircleCutOptions('radius-input')
     }
@@ -348,18 +350,33 @@ class Simulator {
         bubble.style.top = `-4px`;
     };
 
+    undoLastDraw() {
+        let path = this.canvas.getObjects('path').pop();
+        if (path) {
+            this.canvas.remove(path);
+        }
+    }
+
+    clearDraws() {
+        for (let path of this.canvas.getObjects('path')) {
+            this.canvas.remove(path);
+        }
+    }
+
 }
 
-function applyFiltersToBackgroundImg(contrast = null, brightness = null, grayscale = null) {
-    let backgroundImg = simulator.canvas.getObjects()[0];
-    backgroundImg.filters[0].contrast = contrast ?? backgroundImg.filters[0].contrast;
-    backgroundImg.filters[1].brightness = brightness ?? backgroundImg.filters[1].brightness;
-    if (grayscale === true) {
-        backgroundImg.filters.push(new fabric.Image.filters.Grayscale());
-    } else if (grayscale === false && backgroundImg.filters.length > 2) {
-        backgroundImg.filters.pop();
+function applyFiltersToBackgroundImgs(contrast = null, brightness = null, grayscale = null) {
+    let imgs = simulator.canvas.getObjects('image').filter(img => img.filters.length !== 0);
+    for (const img of imgs) {
+        img.filters[0].contrast = contrast ?? img.filters[0].contrast;
+        img.filters[1].brightness = brightness ?? img.filters[1].brightness;
+        if (grayscale === true) {
+            img.filters.push(new fabric.Image.filters.Grayscale());
+        } else if (grayscale === false && img.filters.length > 2) {
+            img.filters.pop();
+        }
+        img.applyFilters();
     }
-    backgroundImg.applyFilters();
     simulator.canvas.requestRenderAll();
 }
 
@@ -378,14 +395,14 @@ let interval = setInterval(() => {
         backgroundImg.applyFilters();
         document.getElementById('contrast').onchange = document.getElementById('contrast').oninput =
             function () {
-                applyFiltersToBackgroundImg(this.value);
+                applyFiltersToBackgroundImgs(this.value);
             }
         document.getElementById('brightness').onchange = document.getElementById('brightness')
             .oninput = function () {
-                applyFiltersToBackgroundImg(null, this.value);
+                applyFiltersToBackgroundImgs(null, this.value);
             }
         document.getElementById('blackandwhite').onchange = function () {
-            applyFiltersToBackgroundImg(null, null, this.checked);
+            applyFiltersToBackgroundImgs(null, null, this.checked);
         }
         document.getElementById('pincelcolor').onchange = function () {
             simulator.canvas.currentTool.setBrushOptions();
@@ -405,7 +422,7 @@ let interval = setInterval(() => {
                     element.value = '#FF0000';
                 }
             }
-            applyFiltersToBackgroundImg(0, 0, false);
+            applyFiltersToBackgroundImgs(0, 0, false);
         }
         document.getElementById('save-exit').onclick = async function () {
             // Todo: Save canvas to json in database

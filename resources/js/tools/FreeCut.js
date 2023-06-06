@@ -144,6 +144,8 @@ export class FreeCut extends Tool {
         imgShadow.absolutePositioned = true;
         tmpRadiographyImg.clipPath = imgShadow;
         let imgCut = await this.simulator.loadImageFromUrl(tmpCanvas.toDataURL({ left: imgShadow.left, top: imgShadow.top, width: imgShadow.width, height: imgShadow.height }));
+        imgCut.filters = this.canvas.getObjects()[0].filters;
+        imgCut.applyFilters();
         imgCut.left = imgShadow.left;
         imgCut.top = imgShadow.top;
         imgCut.width = imgShadow.width;

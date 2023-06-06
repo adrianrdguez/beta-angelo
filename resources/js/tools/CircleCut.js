@@ -198,20 +198,13 @@ export class CircleCut extends RuleCircle {
     }
 
     callbackOnFinishedCut(imgCut) {
-        let group = new fabric.Group([this.element.circle, imgCut], {
-            left: this.element.circle.left,
-            top: this.element.circle.top,
-            originX: 'center',
-            originY: 'center',
-        });
-        this.setDefaultObjectOptions(group);
-        group.set({
+        this.simulator.setBackgroundOptions(this.element.circle);
+        imgCut.set({
             lockMovementX: true,
             lockMovementY: true,
             lockUniScaling: true,
         });
-        this.canvas.add(group);
-        this.canvas.remove(this.element.circle);
+        this.setDefaultObjectOptions(imgCut);
         this.element.semicircle.set({
             fill: this.canvas.freeDrawingBrush.color + '40',
             strokeWidth: 0,
@@ -231,7 +224,7 @@ export class CircleCut extends RuleCircle {
             absolutePositioned: true
         });
         this.element.semicircle.set({
-            angle: group.angle + 90,
+            angle: imgCut.angle + 90,
             clipPath: this.element.semicircle2,
         });
 
@@ -242,17 +235,17 @@ export class CircleCut extends RuleCircle {
             originY: 'center',
             stroke: 'red',
             fontSize: 12,
-            angle: group.angle,
+            angle: imgCut.angle,
         });
         this.canvas.add(this.element.angleText);
 
-        group.on('rotating', (event) => {
+        imgCut.on('rotating', (event) => {
             this.element.semicircle.set({
-                flipX: (group.angle + 90) < 270,
-                angle: group.angle + 90,
+                flipX: (imgCut.angle + 90) < 270,
+                angle: imgCut.angle + 90,
             });
             this.element.semicircle2.set({
-                angle: (group.angle + 90) < 270 ? 90 : 270,
+                angle: (imgCut.angle + 90) < 270 ? 90 : 270,
             });
             let newAngle = 0;
             if (this.element.semicircle.angle > 270) {
@@ -265,12 +258,11 @@ export class CircleCut extends RuleCircle {
             this.canvas.bringToFront(this.element.circle);
             this.canvas.bringToFront(this.element.semicircle);
         });
-        group.on('selected', (event) => {
+        imgCut.on('selected', (event) => {
             setTimeout(() => {
                 this.canvas.bringToFront(this.element.circle);
                 this.canvas.bringToFront(this.element.semicircle);
             }, 10);
         });
-        this.canvas.remove(imgCut);
     }
 }
