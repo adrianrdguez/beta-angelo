@@ -25,17 +25,17 @@
 
     <!-- Posicionamiento de los botones -->
     <div class="fixed absolute left-1/2 top-10 -translate-x-1/2 -translate-y-1/2" id="botones-flotantes">
-        <button id="button-offcanvas-opciones" type="button"
+        <button id="button-offcanvas-opciones" type="button" title="Opciones del simulador"
             class="inline-block rounded-full bg-yellow-500 text-black leading-normal uppercase shadow-md hover:bg-yellow-700 hover:shadow-lg focus:bg-yellow-700 focus:shadow-lg focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-10 h-10">
-            <i class="fa-solid fa-gear"></i>
+            <i class="fa-solid fa-gear" title="Opciones del simulador"></i>
         </button>
-        <button id="button-offcanvas-implants" type="button"
+        <button id="button-offcanvas-implants" type="button" title="Implantes"
             class="inline-block rounded-full bg-yellow-500 text-black leading-normal uppercase shadow-md hover:bg-yellow-700 hover:shadow-lg focus:bg-yellow-700 focus:shadow-lg focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-10 h-10">
-            <i class="fa-solid fa-bone"></i>
+            <i class="fa-solid fa-bone" title="Implantes"></i>
         </button>
-        <button id="button-offcanvas-herramientas" type="button"
+        <button id="button-offcanvas-herramientas" type="button" title="Herramientas"
             class="inline-block rounded-full bg-yellow-500 text-black leading-normal uppercase shadow-md hover:bg-yellow-700 hover:shadow-lg focus:bg-yellow-700 focus:shadow-lg focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-10 h-10">
-            <i class="fa-solid fa-toolbox"></i>
+            <i class="fa-solid fa-toolbox" title="Herramientas"></i>
         </button>
     </div>
 
