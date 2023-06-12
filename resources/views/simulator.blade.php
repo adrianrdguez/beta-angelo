@@ -15,11 +15,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js', 'node_modules/tw-elements/dist/js/index.min.js', 'resources/js/simulator.js'])
 </head>
 
-<body data-userid="{{ $user->id }}" data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}" id="body" class="bg-neutral-800">
+<body data-userid="{{ $user->id }}" data-projectid="{{ $project->id }}" data-mediaid="{{ $media->id }}"
+    id="body" class="bg-neutral-800">
     <!-- Canvas -->
-    <canvas id="simulator" data-img="{{ $media->getUrl() }}"
-        {{-- data-json="{{ $media->getCustomProperty('canvasJson') }}" --}}
-        data-name="{{ $media->name }}"
+    <canvas id="simulator" data-img="{{ $media->getUrl() }}" {{-- data-json="{{ $media->getCustomProperty('canvasJson') }}" --}} data-name="{{ $media->name }}"
         data-firstlinemeasurepx="{{ $media->getCustomProperty('firstLineMeasurePx') }}"
         data-firstlinemeasuremm="{{ $media->getCustomProperty('firstLineMeasureMm') }}">
     </canvas>
@@ -132,11 +131,13 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="w-full">
                     <button id="undo-drawing"
-                        class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Deshacer dibujo</button>
+                        class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Deshacer
+                        dibujo</button>
                 </div>
                 <div class="w-full">
                     <button id="clear-drawing"
-                        class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Borrar dibujo</button>
+                        class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Borrar
+                        dibujo</button>
                 </div>
             </div>
             <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
@@ -165,13 +166,14 @@
         <div class="p-4">
             <div class="w-full">
                 <button id="save-exit"
-                    class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Guardar Y Salir</button>
+                    class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Guardar
+                    Y Salir</button>
             </div>
         </div>
     </div>
 
     <div id="offcanvas-implants"
-        class="offcanvas offcanvas-bottom fixed bottom-0 flex flex-col bg-slate-800 invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-white left-0 right-0 border-none w-full h-full"
+        class="offcanvas offcanvas-end fixed bottom-0 flex flex-col max-w-full bg-slate-800 invisible bg-clip-padding shadow-sm outline-none transition duration-300 ease-in-out text-white top-0 right-0 border-none w-96"
         tabindex="-1" aria-labelledby="offcanvas-implantsLabel">
         <div class="offcanvas-header flex items-center justify-between p-4">
             <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-implantsLabel">IMPLANTES</h5>
@@ -187,7 +189,7 @@
             </select>
             <select class="mb-4 w-full text-black" id="implant-sub-type-selector" autocomplete="off">
             </select>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-6 gap-4"
                 id="implants">
                 <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center invisible">
                     <div class="py-3 px-6 border-b border-gray-300">
