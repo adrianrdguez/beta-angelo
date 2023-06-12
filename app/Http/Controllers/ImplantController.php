@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateImplantRequest;
 use App\Http\Resources\ImplantResource;
 use App\Models\Implant;
 use App\Models\ImplantType;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Image\Image;
@@ -19,9 +20,14 @@ class ImplantController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('settings.implant.index', ['implants' => Implant::paginate(20)]);
+        $implants = Implant::when($request->search, function ($query, $search) {
+                return $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->paginate()
+            ->withQueryString();
+        return view('settings.implant.index', ['implants' => $implants, 'search' => $request->search]);
     }
 
     /**

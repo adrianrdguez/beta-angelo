@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateImplantSubTypeRequest;
 use App\Http\Resources\ImplantSubTypeResource;
 use App\Models\ImplantSubType;
 use App\Models\ImplantType;
+use Illuminate\Http\Request;
 
 class ImplantSubTypeController extends Controller
 {
@@ -16,10 +17,15 @@ class ImplantSubTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $implantSubTypes = ImplantSubType::select()->where('name', '!=', 'Sin Subtipo');
-        return view('settings.implantSubType.index', ['implantSubTypes' => $implantSubTypes->paginate(20)]);
+        $implantSubTypes = ImplantSubType::when($request->search, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%');
+        })
+            ->where('name', '!=', 'Sin Subtipo')
+            ->paginate()
+            ->withQueryString();
+        return view('settings.implantSubType.index', ['implantSubTypes' => $implantSubTypes, 'search' => $request->search]);
     }
 
     public function indexApi(GetImplantSubTypeApiRequest $request)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -13,10 +14,16 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate(10);
-        return view('settings.user.index', ['users' => $users]);
+        $users = User::when($request->search, function ($query, $search) {
+            $query->where('name', 'like', '%' . $search . '%');
+            $query->orWhere('email', 'like', '%' . $search . '%');
+            return $query;
+        })
+            ->paginate()
+            ->withQueryString();
+        return view('settings.user.index', ['users' => $users, 'search' => $request->search]);
     }
 
     /**

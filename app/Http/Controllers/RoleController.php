@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -14,10 +15,15 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::where('name', '!=', 'admin')->paginate(10);
-        return view('settings.role.index', ['roles' => $roles]);
+        $roles = Role::when($request->search, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%');
+        })
+            ->where('name', '!=', 'Sin admin')
+            ->paginate()
+            ->withQueryString();
+        return view('settings.role.index', ['roles' => $roles, 'search' => $request->search]);
     }
 
 

@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\ImplantType;
 use App\Models\Project;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -20,10 +21,16 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Auth::user()->projects()->paginate();
-        return view('project.index', ['projects' => $projects]);
+        $projects = Auth::user()
+            ->projects()
+            ->when($request->search, function ($query, $search) {
+                return $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->paginate()
+            ->withQueryString();
+        return view('project.index', ['projects' => $projects, 'search' => $request->search]);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreImplantTypeRequest;
 use App\Http\Requests\UpdateImplantTypeRequest;
 use App\Models\ImplantSubType;
 use App\Models\ImplantType;
+use Illuminate\Http\Request;
 
 class ImplantTypeController extends Controller
 {
@@ -14,10 +15,15 @@ class ImplantTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $implantTypes = ImplantType::select()->where('name', '!=', 'Sin Tipo');
-        return view('settings.implantType.index', ['implantTypes' => $implantTypes->paginate(20)]);
+        $implantTypes = ImplantType::when($request->search, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%');
+        })
+            ->where('name', '!=', 'Sin Tipo')
+            ->paginate()
+            ->withQueryString();
+        return view('settings.implantType.index', ['implantTypes' => $implantTypes, 'search' => $request->search]);
     }
 
     /**

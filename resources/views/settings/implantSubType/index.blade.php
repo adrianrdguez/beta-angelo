@@ -19,8 +19,24 @@
             @endcan
         </div>
     </x-slot>
-
-    <div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div>
+            <form action="{{ route('implantSubType.index') }}" method="get">
+                <div class="max-w-md mx-auto rounded-lg overflow-hidden md:max-w-xl">
+                    <div class="md:flex">
+                        <div class="w-full p-3">
+                            <div class="relative">
+                                <i class="absolute fa fa-search text-gray-400 top-5 left-4"></i>
+                                <input type="text" class="bg-white h-14 w-full px-12 rounded-lg focus:outline-none hover:cursor-pointer" name="search" autofocus value="{{ $search }}" placeholder="Buscar..." autocomplete="off">
+                                <button type="submit" class="absolute top-4 right-5 border-l pl-4"><i class="fa-solid fa-paper-plane text-gray-500 hover:cursor-pointer"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if ($implantSubTypes->count() === 0)
                 <span>No hay registros.</span>
