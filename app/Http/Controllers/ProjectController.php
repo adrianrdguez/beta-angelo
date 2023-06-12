@@ -150,7 +150,7 @@ class ProjectController extends Controller
 
     private function getRotatedImg(UploadedFile $file, int $rotation): UploadedFile
     {
-        $image = match($file->getMimeType()) {
+        $image = match ($file->getMimeType()) {
             'image/jpg', 'image/jpeg' => imagecreatefromjpeg($file->getPathname()),
             'image/png' => imagecreatefrompng($file->getPathname()),
             default => $file,
@@ -159,7 +159,7 @@ class ProjectController extends Controller
             return $file;
         }
         $img = imagerotate($image, $rotation, imageColorAllocateAlpha($image, 0, 0, 0, 127));
-        match($file->getMimeType()) {
+        match ($file->getMimeType()) {
             'image/jpg', 'image/jpeg' => imagejpeg($img, $file->getPathname()),
             'image/png' => imagepng($img, $file->getPathname()),
             default => $file,

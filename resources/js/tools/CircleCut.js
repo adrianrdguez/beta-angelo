@@ -142,6 +142,22 @@ export class CircleCut extends RuleCircle {
         const endX = centerX + (lineLength * Math.cos(angleInRadians));
         const endY = centerY + (lineLength * Math.sin(angleInRadians));
 
+        this.element.miniPointer = new fabric.Circle({
+            radius: this.canvas.freeDrawingBrush.width,
+            fill: this.canvas.freeDrawingBrush.color,
+            originX: 'center',
+            originY: 'center',
+            hasBorders: false,
+            hasControls: false,
+            selectable: false,
+        });
+        this.canvas.add(this.element.miniPointer);
+
+        this.element.miniPointer.set({
+            left: endX,
+            top: endY,
+        });
+
         let newLine = new fabric.Line([centerX, centerY, endX, endY], {
             stroke: 'blue',
             strokeWidth: 0.5,
@@ -160,8 +176,8 @@ export class CircleCut extends RuleCircle {
             angle: this.element.semicircle.angle - 90
         });
 
-        this.canvas.add(newLine)
-        this.canvas.add(mirroredLine)
+        /* this.canvas.add(newLine)
+        this.canvas.add(mirroredLine) */
 
         const endPoint = newLine.getPointByOrigin('left', 'bottom');
         const startPoint = newLine.getPointByOrigin('right', 'bottom');
@@ -238,6 +254,7 @@ export class CircleCut extends RuleCircle {
             angle: imgCut.angle,
         });
         this.canvas.add(this.element.angleText);
+        this.canvas.bringToFront(this.element.circle);
 
         imgCut.on('rotating', (event) => {
             this.element.semicircle.set({
