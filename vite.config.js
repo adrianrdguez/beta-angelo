@@ -5,11 +5,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/js/bootstrap.bundle.min.js',
-                'resources/js/fontAwesome.2accd57d6d.js',
                 'resources/js/simulator.js',
                 'resources/js/app.js',
-                'resources/css/bootstrap.min.css',
                 'resources/css/app.css',
                 'node_modules/tw-elements/dist/js/index.min.js'
             ],

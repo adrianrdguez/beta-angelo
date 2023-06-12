@@ -27,11 +27,11 @@ class Project extends Model implements HasMedia
     {
         $this->addMediaCollection('radiographies')
             ->acceptsMimeTypes([
-            'image/jpeg',
-            'image/jpg',
-            'image/svg',
-            'image/png',
-        ]);
+                'image/jpeg',
+                'image/jpg',
+                'image/svg',
+                'image/png',
+            ]);
     }
 
     public function registerMediaConversions(Media $media = null): void

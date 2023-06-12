@@ -20,4 +20,8 @@ class ImplantType extends Model
         return $this->hasMany(Implant::class);
     }
 
+    public function implantSubTypes()
+    {
+        return $this->belongsToMany(ImplantSubType::class);
+    }
 }

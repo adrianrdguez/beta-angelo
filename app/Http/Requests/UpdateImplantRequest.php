@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ImplantSubType;
 use App\Models\ImplantType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -27,22 +28,31 @@ class UpdateImplantRequest extends FormRequest
     {
         return [
             'name' => [
+                'required',
                 'string',
                 'min:3',
                 'max:100'
             ],
             'model' => [
+                'required',
                 'string',
                 'min:3',
                 'max:100'
             ],
             'measureWidth' => [
+                'required',
                 'numeric',
                 'min:1',
             ],
             'implant_type_id' => [
+                'required',
                 'numeric',
-                Rule::exists(ImplantType::class, 'id'),
+                Rule::exists(ImplantType::class, 'id')->withoutTrashed(),
+            ],
+            'implant_sub_type_id' => [
+                'required',
+                'numeric',
+                Rule::exists(ImplantSubType::class, 'id')->withoutTrashed(),
             ],
             'lateralViewImg' => [
                 'mimetypes:image/png'
@@ -50,6 +60,24 @@ class UpdateImplantRequest extends FormRequest
             'aboveViewImg' => [
                 'mimetypes:image/png'
             ],
+            'allowRotation' => [
+                'nullable',
+                'required',
+                'boolean'
+            ],
+            'allowDisplay' => [
+                'nullable',
+                'required',
+                'boolean'
+            ],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'allowRotation' => $this->allowRotation ?? false,
+            'allowDisplay' => $this->allowDisplay ?? false,
+        ]);
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ImplantSubType;
 use App\Models\ImplantType;
+use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -28,10 +30,20 @@ class GetImplantsApiRequest extends FormRequest
     public function rules()
     {
         return [
+            'user_id' => [
+                'required',
+                'numeric',
+                Rule::exists(User::class, 'id')->withoutTrashed(),
+            ],
             'implant_type_id' => [
                 'required',
                 'numeric',
-                Rule::exists(ImplantType::class, 'id'),
+                Rule::exists(ImplantType::class, 'id')->withoutTrashed(),
+            ],
+            'implant_sub_type_id' => [
+                'required',
+                'numeric',
+                Rule::exists(ImplantSubType::class, 'id')->withoutTrashed(),
             ],
         ];
     }

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetImplantSubTypeApiRequest;
 use App\Http\Requests\StoreImplantSubTypeRequest;
 use App\Http\Requests\UpdateImplantSubTypeRequest;
+use App\Http\Resources\ImplantSubTypeResource;
 use App\Models\ImplantSubType;
+use App\Models\ImplantType;
 
 class ImplantSubTypeController extends Controller
 {
@@ -15,8 +18,16 @@ class ImplantSubTypeController extends Controller
      */
     public function index()
     {
-        return view('implantSubType.index', ['implantSubTypes' => ImplantSubType::paginate(25)]);
+        $implantSubTypes = ImplantSubType::select()->where('name', '!=', 'Sin Subtipo');
+        return view('settings.implantSubType.index', ['implantSubTypes' => $implantSubTypes->paginate(20)]);
     }
+
+    public function indexApi(GetImplantSubTypeApiRequest $request)
+    {
+        $implantType = ImplantType::find($request->implant_type_id);
+        return ImplantSubTypeResource::collection($implantType->implantSubTypes);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -25,7 +36,7 @@ class ImplantSubTypeController extends Controller
      */
     public function create()
     {
-        return view('implantSubType.create');
+        return view('settings.implantSubType.create');
     }
 
     /**
@@ -50,7 +61,7 @@ class ImplantSubTypeController extends Controller
      */
     public function edit(ImplantSubType $implantSubType)
     {
-        return view('implantSubType.edit', ['implantSubType' => $implantSubType]);
+        return view('settings.implantSubType.edit', ['implantSubType' => $implantSubType]);
     }
 
     /**

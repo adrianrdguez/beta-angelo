@@ -2,176 +2,253 @@ import { Tool } from './Tool.js';
 import { Drag } from './Drag.js';
 
 export class Rule extends Tool {
-    element = {};
-    constructor(canvas, first) {
+    constructor(canvas) {
         super(canvas, 'rule');
         this.resetEvents();
-        this.canvas.on('mouse:down', event => this.startAddingLine(event));
-        this.canvas.on('mouse:move', event => this.startDrawingLine(event));
-        this.canvas.on('mouse:up', event => this.stopDrawingLine(event, first));
+        this.element.line = this.createLine(-100, 0, 100, 0);
+        this.movingControlPointsCallback();
+        this.element.line.element = this.element;
+        this.setDeleteControl(this.element.line, 40, 0);
+        this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    startAddingLine(event) {
-        let pointer = this.canvas.getPointer(event.e);
-        this.element.line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
-            stroke: this.canvas.freeDrawingBrush.color,
-            strokeWidth: this.canvas.freeDrawingBrush.width,
-            strokeLineCap: 'round',
-            startx: new Array(),
-            starty: new Array(),
-            endx: new Array(),
-            endy: new Array(),
-            temp: 0
-        });
-
-        this.setDefaultObjectOptions(this.element.line);
-        this.element.line.set({
-            hasBorders: false,
-        });
-        this.element.line.setControlsVisibility({
-            mtr: false,
-        });
-        this.element.line.startx[this.element.line.temp] = pointer.x;
-        this.element.line.starty[this.element.line.temp] = pointer.y;
-        this.canvas.add(this.element.line);
-        this.canvas.requestRenderAll();
+    createLine(x1, y1, x2, y2) {
+        let line = this.createPolygon([{
+            x: x1, y: y1
+        }, {
+            x: x2, y: y2
+        }]);
+        this.canvas.add(line);
+        line.id = Date.now();
+        return line;
     }
 
-    startDrawingLine(event) {
-        if (this.element.line) {
-            let pointer = this.canvas.getPointer(event.e);
-            //Adding text to the rule while creating
-            let startX = this.element.line.startx[this.element.line.temp];
-            let startY = this.element.line.starty[this.element.line.temp];
-            let endX = this.element.line.endx[this.element.line.temp];
-            let endY = this.element.line.endy[this.element.line.temp];
-            this.setTextInTheMiddleOfLine(startX, startY, endX, endY);
-            this.element.line.set({
-                x2: pointer.x,
-                y2: pointer.y
+    movingControlPointsCallback() {
+        if (!this.element.line) {
+            return;
+        }
+
+        let mm = this.calculateTextMeasure();
+        this.setTextInCanvas(mm + 'mm');
+
+        let lines = this.canvas.getObjects().filter((line) => line?.id);
+        for (const line of lines) {
+            let keyAngle = this.element.line.id + line.id;
+            if (this.checkIfLinesCollide(this.element.line, line)) {
+                this.createOrUpdateAngle(this.element.line, line, keyAngle);
+            } else if (this.simulator.lineAngles[keyAngle]) {
+                this.removeAngle(keyAngle);
+            }
+        }
+    }
+
+    createOrUpdateAngle(line1, line2, keyAngle) {
+        let coords = this.getCoordsOfCollidingLines(line1, line2);
+        let angle = this.getAngleBetweenRules(line1, line2);
+        let p1 = coords.p1;
+        let p3 = coords.p3;
+        if (angle > 90) {
+            angle = 180 - angle;
+            p1 = coords.p0;
+        }
+        if (this.checkDistanceToCollidePoint(coords.pc.x, coords.pc.y, p1.x, p1.y, coords.p3.x, coords.p3.y)) {
+            p1 = (angle > 90) ? coords.p1 : coords.p0;
+            p3 = (angle > 90) ? coords.p3 : coords.p2;
+        }
+        let text = (angle >= 89.95 || angle >= 90.05 ? '90' : (angle).toFixed(2)) + 'º';
+        if (!this.simulator.lineAngles[keyAngle]) {
+            this.simulator.lineAngles[keyAngle] = {};
+            this.simulator.lineAngles[keyAngle].triangle = this.createTriangle(coords.pc.x, coords.pc.y, p1.x, p1.y, p3.x, p3.y);
+            this.simulator.lineAngles[keyAngle].circle = this.createAngleCircle(this.simulator.lineAngles[keyAngle].triangle);
+            this.simulator.lineAngles[keyAngle].text = this.createAngleText(text);
+            this.element[keyAngle] = {
+                triangle: this.simulator.lineAngles[keyAngle].triangle,
+                circle: this.simulator.lineAngles[keyAngle].circle,
+                text: this.simulator.lineAngles[keyAngle].text
+            };
+        }
+        this.simulator.lineAngles[keyAngle].triangle.set({
+            points: [
+                { x: coords.pc.x, y: coords.pc.y },
+                { x: p1.x, y: p1.y },
+                { x: p3.x, y: p3.y },
+            ],
+        });
+        this.simulator.lineAngles[keyAngle].triangle._setPositionDimensions({});
+        this.simulator.lineAngles[keyAngle].circle.set({
+            left: coords.pc.x,
+            top: coords.pc.y,
+        });
+        this.simulator.lineAngles[keyAngle].text.set({
+            text: text,
+            left: coords.pc.x,
+            top: coords.pc.y,
+        });
+    }
+
+    checkDistanceToCollidePoint(x1, y1, x2, y2, x3, y3) {
+        let x2diff = x1 - x2;
+        let y2diff = y1 - y2;
+        let distance1 = Math.sqrt(x2diff ** 2 + y2diff ** 2);
+
+        let x3diff = x1 - x3;
+        let y3diff = y1 - y3;
+        let distance2 = Math.sqrt(x3diff ** 2 + y3diff ** 2);
+
+        return !!(distance1 < 15 || distance2 < 15);
+    }
+
+    removeAngle(keyAngle) {
+        this.canvas.remove(this.simulator.lineAngles[keyAngle].triangle);
+        this.canvas.remove(this.simulator.lineAngles[keyAngle].circle);
+        this.canvas.remove(this.simulator.lineAngles[keyAngle].text);
+        delete this.simulator.lineAngles[keyAngle];
+    }
+
+    calculateTextMeasure() {
+        let realMeasure = this.simulator.firstLineMeasureMm;
+        let firstLineMeasurePx = this.simulator.firstLineMeasurePx;
+        let px = this.calculate(
+            this.element.line.points[0].x,
+            this.element.line.points[0].y,
+            this.element.line.points[1].x,
+            this.element.line.points[1].y
+        ).toFixed(2);
+        return ((px * realMeasure) / firstLineMeasurePx).toFixed(2);
+    }
+
+    setTextInCanvas(text) {
+        if (!this.element.text) {
+            this.element.text = new fabric.Text(text, {
+                fontSize: 12,
+                stroke: 'black',
+                strokeWidth: 0.05,
+                fill: this.canvas.freeDrawingBrush.color
             });
-            this.element.line.endx[this.element.line.temp] = pointer.x;
-            this.element.line.endy[this.element.line.temp] = pointer.y;
-            this.canvas.requestRenderAll();
+            this.simulator.setBackgroundOptions(this.element.text);
+            this.canvas.add(this.element.text);
         }
+        let p0 = this.getPointCoord(this.element.line, 0);
+        let p1 = this.getPointCoord(this.element.line, 1);
+
+        let angle = Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI;
+        let centerX = (p0.x + p1.x) / 2;
+        let centerY = (p0.y + p1.y) / 2;
+        let distance = -10;
+        let dx = distance * Math.sin(angle * Math.PI / 180);
+        let dy = distance * Math.cos(angle * Math.PI / 180);
+
+        this.element.text.set({
+            text: text,
+            left: centerX + dx,
+            top: centerY - dy,
+            angle: angle,
+            originX: 'center',
+            originY: 'center',
+            flipY: (angle >= 90 && angle <= 270),
+            flipX: (angle >= 90 && angle <= 270)
+        });
     }
 
-    calculate(x1, y1, x2, y2) {
-        return Math.sqrt(Math.pow(x2 * 1 - x1 * 1, 2) + Math.pow(y2 * 1 - y1 * 1, 2));
-    }
-
-    stopDrawingLine(event, first) {
-        this.element.line.setCoords();
-        //console.log('angle', Math.atan((this.canvas.line.endy[this.canvas.line.temp] - this.canvas.line.starty[this.canvas.line.temp]) / (this.canvas.line.endx[this.canvas.line.temp] - this.canvas.line.startx[this.canvas.line.temp])) * 180 / Math.PI)
-        this.element.line.on('mousedblclick', () => this.addingControlPoints());
-        this.element.line.on('moving', () => this.pointersFollowLine());
-        console.log("canvas", this.canvas);
-        this.canvas.simulator.setCurrentTool(new Drag(this.canvas));
-    }
-
-    getNewLineCoordinates() {
-        let centerX = this.element.line.getCenterPoint().x;
-        let centerY = this.element.line.getCenterPoint().y;
-
-        let x1offset = this.element.line.calcLinePoints().x1;
-        let y1offset = this.element.line.calcLinePoints().y1;
-        let x2offset = this.element.line.calcLinePoints().x2;
-        let y2offset = this.element.line.calcLinePoints().y2;
-
-        return {
-            x1: centerX + x1offset,
-            y1: centerY + y1offset,
-            x2: centerX + x2offset,
-            y2: centerY + y2offset
+    checkIfLinesCollide(line1, line2) {
+        if (line1 === line2) {
+            return false;
         }
+        let coords = this.getCoordsOfCollidingLines(line1, line2);
+        //Check if the point of intersection is within the range of both lines coord
+        return !!(
+            coords.pc.x >= Math.min(coords.p0.x, coords.p1.x) && coords.pc.x <= Math.max(coords.p0.x, coords.p1.x) &&
+            coords.pc.x >= Math.min(coords.p2.x, coords.p3.x) && coords.pc.x <= Math.max(coords.p2.x, coords.p3.x) &&
+            coords.pc.y >= Math.min(coords.p0.y, coords.p1.y) && coords.pc.y <= Math.max(coords.p0.y, coords.p1.y) &&
+            coords.pc.y >= Math.min(coords.p2.y, coords.p3.y) && coords.pc.y <= Math.max(coords.p2.y, coords.p3.y)
+        );
+    };
+
+    getCoordsOfCollidingLines(line1, line2) {
+        //Get coord of the endpoints of each lines
+        let p0 = this.getPointCoord(line1, 0);
+        let p1 = this.getPointCoord(line1, 1);
+        let p2 = this.getPointCoord(line2, 0);
+        let p3 = this.getPointCoord(line2, 1);
+
+        //Calculate the slopes and y-inter of each line
+        let m1 = (p1.y - p0.y) / (p1.x - p0.x);
+        let b1 = p0.y - m1 * p0.x;
+
+        let m2 = (p3.y - p2.y) / (p3.x - p2.x);
+        let b2 = p2.y - m2 * p2.x;
+
+        //Calculate the point of intersection
+        let pc = {};
+        pc.x = (b2 - b1) / (m1 - m2);
+        pc.y = m1 * pc.x + b1;
+        return { pc: pc, p0: p0, p1: p1, p2: p2, p3: p3 };
+    };
+
+    getAngleBetweenRules(line1, line2) {
+        let p0 = this.getPointCoord(line1, 0);
+        let p1 = this.getPointCoord(line1, 1);
+        let q0 = this.getPointCoord(line2, 0);
+        let q1 = this.getPointCoord(line2, 1);
+
+        let d1 = { x: p1.x - p0.x, y: p1.y - p0.y };
+        let d2 = { x: q1.x - q0.x, y: q1.y - q0.y };
+
+        let dot = d1.x * d2.x + d1.y * d2.y;
+        let mag1 = Math.sqrt(d1.x * d1.x + d1.y * d1.y);
+        let mag2 = Math.sqrt(d2.x * d2.x + d2.y * d2.y);
+
+        let angle = Math.acos(dot / (mag1 * mag2));
+        let angle_degrees = angle * 180 / Math.PI;
+
+        return angle_degrees;
+    };
+
+    createTriangle(x1, y1, x2, y2, x3, y3) {
+        let triangle = new fabric.Polygon([{
+            x: x1, y: y1
+        }, {
+            x: x2, y: y2
+        }, {
+            x: x3, y: y3
+        },], {
+            objectCaching: false,
+            fill: 'transparent',
+            absolutePositioned: true,
+        });
+        this.simulator.setBackgroundOptions(triangle);
+        this.canvas.add(triangle);
+        return triangle;
     }
 
-    addingControlPoints() {
-        if (!this.element.pointer1 && !this.element.pointer2) {
-            let newLineCoords = this.getNewLineCoordinates();
-            this.element.pointer1 = this.createPointer(newLineCoords.y1, newLineCoords.x1);
-            this.element.pointer2 = this.createPointer(newLineCoords.y2, newLineCoords.x2);
-            this.canvas.discardActiveObject();
-            this.canvas.requestRenderAll();
-            this.canvas.on('selection:cleared', event => this.removePointers(event));
-        }
-    }
-
-    createPointer(top, left) {
+    createAngleCircle(triangle) {
         let circle = new fabric.Circle({
-            radius: this.canvas.freeDrawingBrush.width * 20,
-            fill: this.canvas.freeDrawingBrush.color,
-            opacity: 0.15,
-            top: top,
-            left: left,
+            fill: 'transparent',
+            strokeWidth: this.canvas.freeDrawingBrush.width,
+            stroke: this.canvas.freeDrawingBrush.color,
             originX: 'center',
             originY: 'center',
             hasBorders: false,
-            hasControls: false
+            hasControls: false,
+            selectable: false,
+            radius: 10,
+            clipPath: triangle
         });
-        circle.on('moving', () => this.lineFollowPointers());
+        this.simulator.setBackgroundOptions(circle);
         this.canvas.add(circle);
-        this.canvas.bringForward(circle);
         return circle;
     }
 
-    pointersFollowLine() {
-        let newLineCoords = this.getNewLineCoordinates();
-        this.element.pointer1?.set({
-            top: newLineCoords.y1,
-            left: newLineCoords.x1
+    createAngleText(text) {
+        let circle = new fabric.Text(text, {
+            fontSize: 12,
+            stroke: 'black',
+            strokeWidth: 0.1,
+            fill: this.canvas.freeDrawingBrush.color
         });
-        this.element.pointer2?.set({
-            top: newLineCoords.y2,
-            left: newLineCoords.x2
-        });
-        this.setTextInTheMiddleOfLine(newLineCoords.x1, newLineCoords.y1, newLineCoords.x2, newLineCoords.y2);
-        console.log("startx", this.element.line.startx);
-    }
-
-    lineFollowPointers() {
-        this.element.line.set({
-            x1: this.element.pointer1.left,
-            y1: this.element.pointer1.top,
-            x2: this.element.pointer2.left,
-            y2: this.element.pointer2.top
-        });
-        this.setTextInTheMiddleOfLine(this.element.line.x1, this.element.line.y1, this.element.line.x2, this.element.line.y2);
-        this.element.line.startx = this.element.pointer1.left;
-        this.element.line.starty = this.element.pointer1.top;
-        this.element.line.endx = this.element.pointer2.left;
-        this.element.line.endy = this.element.pointer2.top;
-        this.element.line.setCoords();
-    }
-
-    removePointers() {
-        this.canvas.remove(this.element.pointer1);
-        this.canvas.remove(this.element.pointer2);
-        delete this.element.pointer1;
-        delete this.element.pointer2;
-        this.canvas.requestRenderAll();
-        this.canvas.off('selection:cleared');
-    }
-
-    setTextInTheMiddleOfLine(x1, y1, x2, y2) {
-        let realMeasure = this.canvas.simulator.firstLineMeasureMm;
-        let firstLineMeasurePx = this.canvas.simulator.firstLineMeasurePx;
-        let px = this.calculate(x1, y1, x2, y2).toFixed(2);
-        let mm = ((px * realMeasure) / firstLineMeasurePx).toFixed(2);
-        if (!this.element.text) {
-            this.element.text = new fabric.Text(mm, {
-                fontSize: 12,
-                stroke: this.canvas.freeDrawingBrush.color,
-                fill: this.canvas.freeDrawingBrush.color
-            });
-            this.canvas.simulator.setBackgroundOptions(this.element.text);
-            this.canvas.add(this.element.text);
-        }
-        this.element.text.set({
-            text: mm + 'mm',
-            left: x1 + ((x2 - x1) / 2),
-            top: y1 + ((y2 - y1) / 2),
-        });
+        this.simulator.setBackgroundOptions(circle);
+        this.canvas.add(circle);
+        return circle;
     }
 
 }

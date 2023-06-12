@@ -2,33 +2,25 @@
 
 namespace App\Observers;
 
+use App\Models\ImplantSubType;
 use App\Models\ImplantType;
 
 class ImplantTypeObserver
 {
-    /**
-     * Handle the Implant "deleting" event.
-     *
-     * @param  \App\Models\ImplantType  $implantType
-     * @return void
-     */
     public function deleting(ImplantType $implantType)
     {
-        $implantType->implants()->each(function ($implant) {
-            $implant->delete();
+        $defaultImplantSubType = ImplantSubType::firstOrCreate(['name' => 'Sin Subtipo']);
+        $defaultImplantType = ImplantType::firstOrCreate(['name' => 'Sin Tipo']);
+        $defaultImplantType->implantSubTypes()->sync([$defaultImplantSubType->id]);
+        $implantType->implants()->each(function ($implant) use ($defaultImplantType, $defaultImplantSubType) {
+            $implant->implant_type_id = $defaultImplantType->id;
+            $implant->implant_sub_type_id = $defaultImplantSubType->id;
+            $implant->save();
         });
     }
 
-    /**
-     * Handle the User "forceDeleted" event.
-     *
-     * @param  \App\Models\ImplantType  $implantType
-     * @return void
-     */
     public function forceDeleted(ImplantType $implantType)
     {
-        $implantType->implants()->withTrashed()->each(function ($implant) {
-            $implant->forceDelete();
-        });
+        $this->deleting($implantType);
     }
 }

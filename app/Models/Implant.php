@@ -20,6 +20,9 @@ class Implant extends Model implements HasMedia
         'model',
         'measureWidth',
         'implant_type_id',
+        'implant_sub_type_id',
+        'allowRotation',
+        'allowDisplay',
     ];
 
     public function registerMediaCollections(): void
@@ -43,5 +46,10 @@ class Implant extends Model implements HasMedia
     public function implantType()
     {
         return $this->belongsTo(ImplantType::class);
+    }
+
+    public function implantSubType()
+    {
+        return $this->belongsTo(ImplantSubType::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreImplantTypeRequest;
 use App\Http\Requests\UpdateImplantTypeRequest;
+use App\Models\ImplantSubType;
 use App\Models\ImplantType;
 
 class ImplantTypeController extends Controller
@@ -15,7 +16,8 @@ class ImplantTypeController extends Controller
      */
     public function index()
     {
-        return view('implantType.index', ['implantTypes' => ImplantType::paginate(25)]);
+        $implantTypes = ImplantType::select()->where('name', '!=', 'Sin Tipo');
+        return view('settings.implantType.index', ['implantTypes' => $implantTypes->paginate(20)]);
     }
 
     /**
@@ -25,7 +27,7 @@ class ImplantTypeController extends Controller
      */
     public function create()
     {
-        return view('implantType.create');
+        return view('settings.implantType.create', ['implantSubTypes' => ImplantSubType::where('name', '!=', 'Sin Subtipo')->get()]);
     }
 
     /**
@@ -39,6 +41,7 @@ class ImplantTypeController extends Controller
         $implantType = new ImplantType();
         $implantType->fill($request->validated());
         $implantType->save();
+        $implantType->implantSubTypes()->sync($request->implant_subtypes);
         return redirect()->route('implantType.index');
     }
 
@@ -50,7 +53,7 @@ class ImplantTypeController extends Controller
      */
     public function show(ImplantType $implantType)
     {
-        return view('implantType.show', ['implantType' => $implantType]);
+        return view('settings.implantType.show', ['implantType' => $implantType]);
     }
 
     /**
@@ -61,7 +64,7 @@ class ImplantTypeController extends Controller
      */
     public function edit(ImplantType $implantType)
     {
-        return view('implantType.edit', ['implantType' => $implantType]);
+        return view('settings.implantType.edit', ['implantType' => $implantType, 'implantSubTypes' => ImplantSubType::where('name', '!=', 'Sin Subtipo')->get()]);
     }
 
     /**
@@ -75,6 +78,7 @@ class ImplantTypeController extends Controller
     {
         $implantType->fill($request->validated());
         $implantType->save();
+        $implantType->implantSubTypes()->sync($request->implant_subtypes);
         return redirect()->route('implantType.index');
     }
 

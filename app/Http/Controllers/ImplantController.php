@@ -9,6 +9,7 @@ use App\Http\Resources\ImplantResource;
 use App\Models\Implant;
 use App\Models\ImplantType;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Image\Image;
 
 class ImplantController extends Controller
@@ -20,7 +21,7 @@ class ImplantController extends Controller
      */
     public function index()
     {
-        return view('implant.index', ['implants' => Implant::paginate(25)]);
+        return view('settings.implant.index', ['implants' => Implant::paginate(20)]);
     }
 
     /**
@@ -30,10 +31,16 @@ class ImplantController extends Controller
      */
     public function indexApi(GetImplantsApiRequest $request)
     {
+        Auth::loginUsingId($request->user_id);
         $implants = Implant::select()
             ->where('implant_type_id', $request->implant_type_id)
-            ->get();
-        return ImplantResource::collection($implants);
+            ->where('implant_sub_type_id', $request->implant_sub_type_id);
+        $allowDisplay = [1];
+        if (Auth::user()?->hasRole('admin')) {
+            $allowDisplay[] = 0;
+        }
+        $implants->whereIn('allowDisplay', $allowDisplay);
+        return ImplantResource::collection($implants->get());
     }
 
     /**
@@ -43,7 +50,7 @@ class ImplantController extends Controller
      */
     public function create()
     {
-        return view('implant.create', ['implantTypes' => ImplantType::all()]);
+        return view('settings.implant.create', ['implantTypes' => ImplantType::all()]);
     }
 
     /**
@@ -57,8 +64,12 @@ class ImplantController extends Controller
         $implant = new Implant();
         $implant->fill($request->validated());
         $implant->save();
-        $implant->addMedia($this->getHorizontalImg($request->lateralViewImg))->toMediaCollection('lateralView');
-        $implant->addMedia($this->getHorizontalImg($request->aboveViewImg))->toMediaCollection('aboveView');
+        if ($request->hasFile('lateralViewImg') && $request->file('lateralViewImg')->isValid()) {
+            $implant->addMedia($this->getHorizontalImg($request->lateralViewImg))->toMediaCollection('lateralView');
+        }
+        if ($request->hasFile('aboveViewImg') && $request->file('aboveViewImg')->isValid()) {
+            $implant->addMedia($this->getHorizontalImg($request->aboveViewImg))->toMediaCollection('aboveView');
+        }
         return redirect()->route('implant.index');
     }
 
@@ -70,7 +81,7 @@ class ImplantController extends Controller
      */
     public function show(Implant $implant)
     {
-        return view('implant.show', ['implant' => $implant]);
+        return view('settings.implant.show', ['implant' => $implant]);
     }
 
     /**
@@ -81,7 +92,7 @@ class ImplantController extends Controller
      */
     public function edit(Implant $implant)
     {
-        return view('implant.edit', ['implant' => $implant, 'implantTypes' => ImplantType::all()]);
+        return view('settings.implant.edit', ['implant' => $implant, 'implantTypes' => ImplantType::all()]);
     }
 
     /**

@@ -35,6 +35,12 @@ class AddProjectImageRequest extends FormRequest
                 'file',
                 'mimetypes:image/png,image/jpeg,image/jpg,image/svg',
             ],
+            'rotation' => [
+                'integer',
+                'required',
+                'min:-270',
+                'max:270',
+            ],
         ];
     }
 }
