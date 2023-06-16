@@ -189,7 +189,7 @@
             </select>
             <select class="mb-4 w-full text-black" id="implant-sub-type-selector" autocomplete="off">
             </select>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-6 gap-4"
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4"
                 id="implants">
                 <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center invisible">
                     <div class="py-3 px-6 border-b border-gray-300">

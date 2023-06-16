@@ -25,8 +25,12 @@
                         <div class="w-full p-3">
                             <div class="relative">
                                 <i class="absolute fa fa-search text-gray-400 top-5 left-4"></i>
-                                <input type="text" class="bg-white h-14 w-full px-12 rounded-lg focus:outline-none hover:cursor-pointer" name="search" autofocus value="{{ $search }}" placeholder="Buscar..." autocomplete="off">
-                                <button type="submit" class="absolute top-4 right-5 border-l pl-4"><i class="fa-solid fa-paper-plane text-gray-500 hover:cursor-pointer"></i></button>
+                                <input type="text"
+                                    class="bg-white h-14 w-full px-12 rounded-lg focus:outline-none hover:cursor-pointer"
+                                    name="search" autofocus value="{{ $search }}" placeholder="Buscar..."
+                                    autocomplete="off">
+                                <button type="submit" class="absolute top-4 right-5 border-l pl-4"><i
+                                        class="fa-solid fa-paper-plane text-gray-500 hover:cursor-pointer"></i></button>
                             </div>
                         </div>
                     </div>
@@ -109,8 +113,7 @@
                                 <a href="{{ route('project.edit', $project->id) }}">
                                     <i class="fa-solid fa-pencil"></i>
                                 </a>
-                                <button type="button" data-bs-toggle="modal"
-                                    data-bs-target="#confirmation"
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#confirmation"
                                     data-eid="{{ $project->id }}"
                                     onclick="document.getElementById('delete').action = '/project/' + this.dataset.eid">
                                     <i class="fa-solid fa-trash"></i>

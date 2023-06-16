@@ -26,12 +26,20 @@ class ProjectController extends Controller
         $projects = Auth::user()
             ->projects()
             ->when($request->search, function ($query, $search) {
-                return $query->where('name', 'like', '%' . $search . '%');
+                return $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('race', 'like', '%' . $search . '%')
+                        ->orWhere('created_at', 'like', '%' . $search . '%')
+                        ->orWhere('description', 'like', '%' . $search . '%');
+                });
             })
             ->paginate()
             ->withQueryString();
+
         return view('project.index', ['projects' => $projects, 'search' => $request->search]);
     }
+
+
 
     /**
      * Show the form for creating a new resource.
