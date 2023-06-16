@@ -91,6 +91,11 @@ class Simulator {
         document.getElementById('radius-input').addEventListener('input', () => this.setCircleCutOptions('radius-input'));
         document.getElementById('undo-drawing').addEventListener('click', () => this.undoLastDraw());
         document.getElementById('clear-drawing').addEventListener('click', () => this.clearDraws());
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'l' || event.key === 'L') {
+                this.setCurrentTool(new Rule(this.canvas));
+            }
+        });
         this.setCircleCutOptions('angle-input')
         this.setCircleCutOptions('radius-input')
     }
@@ -419,7 +424,7 @@ let interval = setInterval(() => {
                     element.value = 1;
                 }
                 if (element.id === 'pincelcolor') {
-                    element.value = '#FF0000';
+                    element.value = '#00ff00';
                 }
             }
             applyFiltersToBackgroundImgs(0, 0, false);
@@ -445,6 +450,32 @@ let interval = setInterval(() => {
                 .catch(error => console.log('error', error));
             window.location.href = `/project/${projectId}`;
         }
+        document.getElementById('delete-text').onclick = async function () {
+            var objects = simulator.canvas.getObjects();
+            for (var i = 1; i < objects.length; i++) {
+                if (objects[i].text && objects[i].opacity !== 0) {
+                    objects[i].opacity = 0; // Set opacity to 0 (completely invisible)
+                }
+            }
+            simulator.canvas.requestRenderAll();
+        };
+
+        document.getElementById('add-text').onclick = async function () {
+            var objects = simulator.canvas.getObjects();
+            for (var i = 1; i < objects.length; i++) {
+                if (objects[i].text) {
+                    if (objects[i].opacity === 0) {
+                        objects[i].opacity = 1; // Set opacity to 1 (fully visible)
+                    } else {
+                        objects[i].opacity = 0; // Set opacity to 0 (completely invisible)
+                    }
+                }
+            }
+            simulator.canvas.requestRenderAll();
+        };
+
+
+
 
         function getZoomLevel(element) {
             let zoom = 1;

@@ -126,7 +126,7 @@
             </div>
             <div class="w-full mb-4">
                 <label for="pincelcolor">Color</label>
-                <input type="color" value="#FF0000" id="pincelcolor" class="w-full h-6 p-0 focus:shadow-none" />
+                <input type="color" value="#00ff00" id="pincelcolor" class="w-full h-6 p-0 focus:shadow-none" />
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="w-full">
@@ -161,6 +161,18 @@
                 <button id="reset-filters"
                     class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Reiniciar
                     filtros</button>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="w-full">
+                <button id="add-text"
+                    class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Añadir
+                    Texto</button>
+            </div>
+            <div class="w-full">
+                <button id="delete-text"
+                    class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Quitar
+                    Texto</button>
             </div>
         </div>
         <div class="p-4">
