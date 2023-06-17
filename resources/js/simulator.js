@@ -217,9 +217,9 @@ class Simulator {
                         document.getElementById('implants').innerHTML += `
                         <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center card">
                             <div class="py-3 px-6 border-b border-gray-300">
-                                <h5 style="color: black;">${implant.id} - ${implant.name}</h5>
+                                <h5 style="color: black;">${implant.name}</h5>
                             </div>
-                            <div class="p-6 h-40">
+                            <div class="p-6">
                                 <img
                                     data-measure="${implant.measureWidth}"
                                     data-selected="${implant?.aboveViewUrl}"
@@ -231,7 +231,7 @@ class Simulator {
                                 >
                             </div>
                             <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
-                                ${implant.model} - ${implant.measureWidth}mm
+                                Ref.: ${implant.model}
                             </div>
                             <div class="flex items-center justify-center mb-4 ${implant?.aboveViewUrl && implant?.lateralViewUrl ? '' : 'hidden'}">
                                 <div class="inline-flex">
