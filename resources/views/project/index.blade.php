@@ -150,13 +150,16 @@
                     <form action="#" method="post" id="share">
                         @csrf
                         <div class="modal-body relative p-4">
+                            <div class="mb-4 rounded-lg bg-red-100 px-6 py-5 text-base text-red-700" role="alert">
+                                El proyecto se comparte en su totalidad, incluyendo la posibilidad de editar y eliminar.
+                            </div>
                             @if (Auth::user()->hasRole('admin'))
                                 <div>
                                     <x-jet-label for="userEmail" value="{{ __('Escribe el email del usuario al que quieres compartir el proyecto.') }}" />
                                     <x-jet-input id="userEmail" class="block mt-1 w-full" type="email" name="userEmail" :value="old('userEmail')" required autocomplete="userEmail" />
                                 </div>
                             @else
-                                {{ __('Se va a compartir el proyecto con los administradores.') }}
+                                {{ __('Se va a compartir el proyecto con los administradores') }}
                                 <x-jet-input id="userEmail" type="hidden" name="userEmail" value="admin@admin.com" required />
                             @endif
                         </div>
