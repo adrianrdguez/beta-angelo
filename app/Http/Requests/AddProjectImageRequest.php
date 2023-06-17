@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AddProjectImageRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class AddProjectImageRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::user()?->projects()->find($this->route('project')) ?? false;
     }
 
     /**

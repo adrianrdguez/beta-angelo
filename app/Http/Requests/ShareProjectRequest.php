@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-use Spatie\Permission\Models\Role;
 
-class UpdateUserRequest extends FormRequest
+class ShareProjectRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,7 +15,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::user()?->can('Compartir proyecto') ?? false;
     }
 
     /**
@@ -27,20 +26,9 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            /* 'email' => [
+            'userEmail' => [
+                'required',
                 'email',
-                Rule::unique('users'),
-            ],
-            'password' => [
-                'string',
-                'min:8',
-                'max:100',
-            ], */
-            'roleId' => [
-                'nullable',
-                'numeric',
-                'min:1',
-                Rule::exists(Role::class, 'id'),
             ],
         ];
     }

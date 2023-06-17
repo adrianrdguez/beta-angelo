@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddProjectImageRequest;
 use App\Http\Requests\AddProjectImageRequestApi;
+use App\Http\Requests\ShareProjectRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\ImplantType;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -35,11 +37,8 @@ class ProjectController extends Controller
             })
             ->paginate()
             ->withQueryString();
-
         return view('project.index', ['projects' => $projects, 'search' => $request->search]);
     }
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -111,6 +110,23 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $project->delete();
+        return redirect()->route('project.index');
+    }
+
+    public function shareProject(ShareProjectRequest $request, Project $project)
+    {
+        if ($request->userEmail === 'admin@admin.com') {
+            $users = User::role(['admin'])->get();
+        } else {
+            $users = User::where('email', $request->userEmail)->get();
+        }
+        session()->flash('success', false);
+        if ($users->isNotEmpty()) {
+            foreach ($users as $user) {
+                $user->projects()->attach($project->id);
+            }
+            session()->flash('success', true);
+        }
         return redirect()->route('project.index');
     }
 

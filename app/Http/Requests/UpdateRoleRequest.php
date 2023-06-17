@@ -17,7 +17,7 @@ class UpdateRoleRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::user()->hasRole('admin');
+        return true;
     }
 
     /**

@@ -20,7 +20,7 @@ class RoleController extends Controller
         $roles = Role::when($request->search, function ($query, $search) {
             return $query->where('name', 'like', '%' . $search . '%');
         })
-            ->where('name', '!=', 'Sin admin')
+            ->where('name', '!=', 'admin')
             ->paginate()
             ->withQueryString();
         return view('settings.role.index', ['roles' => $roles, 'search' => $request->search]);

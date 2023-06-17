@@ -29,6 +29,7 @@ Route::middleware([
         return redirect(route('project.index'));
     });
     Route::resource('/project', ProjectController::class);
+    Route::post('/project/{project}/share', [ProjectController::class, 'shareProject'])->name('shareProject');
     Route::post('/project/{project}/image', [ProjectController::class, 'addImage'])->name('addProjectImage');
     Route::get('/project/{project}/image/{media}', [ProjectController::class, 'simulator'])->name('simulator');
     Route::delete('/project/{project}/image/{media}', [ProjectController::class, 'removeImage'])->name('removeProjectImage');

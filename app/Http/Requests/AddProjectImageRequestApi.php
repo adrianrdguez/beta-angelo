@@ -9,6 +9,11 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class AddProjectImageRequestApi extends AddProjectImageRequest
 {
 
+    public function authorize()
+    {
+        return true;
+    }
+
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([

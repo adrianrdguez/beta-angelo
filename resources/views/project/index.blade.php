@@ -48,7 +48,7 @@
                         <div class="block rounded-lg shadow-lg bg-white max-w-sm text-center hover:bg-gray-50">
                             <a href="{{ route('project.show', $project->id) }}">
                                 <div class="py-3 px-6 border-b border-gray-300 font-bold rounded-t-lg capitalize">
-                                    {{ $project->id }} - {{ $project->name }}
+                                    {{ $project->name }}
                                 </div>
                                 <div class="p-6">
                                     <p class="text-gray-600 text-base mb-4 h-12">
@@ -110,6 +110,13 @@
                                 </ul>
                             </a>
                             <div class="flex space-x-2 justify-evenly items-center border-t border-gray-300 p-2">
+                                @can('Compartir proyecto')
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                                        data-eid="{{ $project->id }}"
+                                        onclick="document.getElementById('share').action = '/project/' + this.dataset.eid + '/share';console.log(document.getElementById('share'))">
+                                        <i class="fa-solid fa-share-nodes"></i>
+                                    </button>
+                                @endcan
                                 <a href="{{ route('project.edit', $project->id) }}">
                                     <i class="fa-solid fa-pencil"></i>
                                 </a>
@@ -125,4 +132,50 @@
             @endif
         </div>
     </div>
+    @can('Compartir proyecto')
+        <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+            id="shareModal" tabindex="-1" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+                <div
+                    class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+                    <div
+                        class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+                        <h5 class="text-xl font-medium leading-normal text-gray-800">
+                            Compartir proyecto
+                        </h5>
+                        <button type="button"
+                            class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="#" method="post" id="share">
+                        @csrf
+                        <div class="modal-body relative p-4">
+                            @if (Auth::user()->hasRole('admin'))
+                                <div>
+                                    <x-jet-label for="userEmail" value="{{ __('Escribe el email del usuario al que quieres compartir el proyecto.') }}" />
+                                    <x-jet-input id="userEmail" class="block mt-1 w-full" type="email" name="userEmail" :value="old('userEmail')" required autocomplete="userEmail" />
+                                </div>
+                            @else
+                                {{ __('Se va a compartir el proyecto con los administradores.') }}
+                                <x-jet-input id="userEmail" type="hidden" name="userEmail" value="admin@admin.com" required />
+                            @endif
+                        </div>
+                        <div
+                            class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                            <button type="button"
+                                class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                                data-bs-dismiss="modal">
+                                {{ __('Cancel') }}
+                            </button>
+                            <button type="submit"
+                                class="inline-block px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
+                                Compartir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endcan
+
 </x-app-layout>
