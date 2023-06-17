@@ -124,7 +124,8 @@ export class Rule extends Tool {
                 fontSize: 12,
                 stroke: 'black',
                 strokeWidth: 0.05,
-                fill: this.canvas.freeDrawingBrush.color
+                fill: this.canvas.freeDrawingBrush.color,
+                fontFamily: 'Nunito'
             });
             this.simulator.setBackgroundOptions(this.element.text);
             this.canvas.add(this.element.text);
@@ -245,7 +246,8 @@ export class Rule extends Tool {
             fontSize: 12,
             stroke: 'black',
             strokeWidth: 0.1,
-            fill: this.canvas.freeDrawingBrush.color
+            fill: this.canvas.freeDrawingBrush.color,
+            fontFamily: 'Nunito'
         });
         this.simulator.setBackgroundOptions(circle);
         this.canvas.add(circle);

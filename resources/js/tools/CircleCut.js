@@ -252,6 +252,7 @@ export class CircleCut extends RuleCircle {
             stroke: 'red',
             fontSize: 12,
             angle: imgCut.angle,
+            fontFamily: 'Nunito'
         });
         this.canvas.add(this.element.angleText);
         this.canvas.bringToFront(this.element.circle);
