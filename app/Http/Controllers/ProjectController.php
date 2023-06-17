@@ -120,12 +120,14 @@ class ProjectController extends Controller
         } else {
             $users = User::where('email', $request->userEmail)->get();
         }
-        session()->flash('success', false);
+        session()->flash('toastMessage', 'No se ha encontrado ningún usuario con ese email');
+        session()->flash('toastColor', 'red');
         if ($users->isNotEmpty()) {
             foreach ($users as $user) {
-                $user->projects()->attach($project->id);
+                $user->projects()->syncWithoutDetaching($project->id);
             }
-            session()->flash('success', true);
+            session()->flash('toastMessage', 'Proyecto compartido correctamente');
+            session()->flash('toastColor', 'green');
         }
         return redirect()->route('project.index');
     }
