@@ -26,6 +26,7 @@ class Simulator {
         this.firstLineMeasurePx = document.getElementById('simulator').dataset.firstlinemeasurepx ?? null;
         this.firstLineMeasureMm = document.getElementById('simulator').dataset.firstlinemeasuremm ?? null;
         fabric.Object.prototype.objectCaching = false;
+        fabric.Object.prototype.fontFamily = 'Nunito';
         this.canvas = new fabric.Canvas('simulator', {
             selection: false,
             fireRightClick: true,
