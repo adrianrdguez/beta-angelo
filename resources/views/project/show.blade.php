@@ -24,12 +24,10 @@
             <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                 @foreach ($project->getMedia('radiographies') as $image)
                     <div class="relative">
-                        <a href="{{ $image->getUrl() }}" class="absolute left-2 mt-2" download><i class="fa-solid fa-download fa-xl text-green-600"></i></a>
-                        <button type="button" data-bs-toggle="modal"
-                            class="absolute right-2 mt-2"
-                            data-bs-target="#confirmation"
-                            data-eid="{{ $project->id }}"
-                            data-iid="{{ $image->id }}"
+                        <a href="{{ $image->getUrl() }}" class="absolute left-2 mt-2" download><i
+                                class="fa-solid fa-download fa-xl text-green-600"></i></a>
+                        <button type="button" data-bs-toggle="modal" class="absolute right-2 mt-2"
+                            data-bs-target="#confirmation" data-eid="{{ $project->id }}" data-iid="{{ $image->id }}"
                             onclick="document.getElementById('delete').action = '/project/' + this.dataset.eid + '/image/' + this.dataset.iid">
                             <i class="fa-solid fa-xmark fa-2xl text-red-600"></i>
                         </button>
@@ -49,8 +47,7 @@
                 @endforeach
             </div>
             <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-                id="addImageModal" tabindex="-1" data-bs-backdrop="static" aria-modal="true"
-                role="dialog">
+                id="addImageModal" tabindex="-1" data-bs-backdrop="static" aria-modal="true" role="dialog">
                 <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
                     <div
                         class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
@@ -73,14 +70,15 @@
                                 <div class="flex items-center justify-center w-full mb-4">
                                     <label
                                         class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative">
-                                        <div class="absolute flex flex-col w-full h-full items-center justify-center pt-7">
+                                        <div
+                                            class="absolute flex flex-col w-full h-full items-center justify-center pt-7">
                                             <img id="preview" class="absolute inset-0 w-full h-full invisible">
                                             <i class="fa-solid fa-image text-6xl"></i>
                                             <p
                                                 class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
                                                 Sube una radiograífia</p>
                                         </div>
-                                        <input type="hidden" name="rotation" id="rotation" value="0"/>
+                                        <input type="hidden" name="rotation" id="rotation" value="0" />
                                         <input type="file" class="absolute opacity-0" accept="image/*"
                                             name="radiographyImg" onchange="showPreview(event)" required>
                                     </label>
@@ -118,6 +116,7 @@
     <script>
         var rotation = 0;
         var preview = document.getElementById("preview");
+
         function showPreview(event) {
             if (event.target.files.length > 0) {
                 let src = URL.createObjectURL(event.target.files[0]);
@@ -133,9 +132,8 @@
             if (!preview?.src) {
                 return;
             }
-            rotation = (rotation - 90) % 360;
+            rotation = (rotation - 5) % 360;
             preview.style.transform = 'rotate(' + rotation + 'deg)';
-            [preview.style.width, preview.style.height] = [preview.style.height, preview.style.width];
             document.getElementById('rotation').value = (rotation * -1);
         }
 
@@ -143,9 +141,8 @@
             if (!preview?.src) {
                 return;
             }
-            rotation = (rotation + 90) % 360;
+            rotation = (rotation + 5) % 360;
             preview.style.transform = 'rotate(' + rotation + 'deg)';
-            [preview.style.width, preview.style.height] = [preview.style.height, preview.style.width];
             document.getElementById('rotation').value = (rotation * -1);
         }
     </script>
