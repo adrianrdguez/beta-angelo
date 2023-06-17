@@ -69,7 +69,7 @@
 
                                 <div class="flex items-center justify-center w-full mb-4">
                                     <label
-                                        class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative">
+                                        class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative overflow-hidden">
                                         <div
                                             class="absolute flex flex-col w-full h-full items-center justify-center pt-7">
                                             <img id="preview" class="absolute inset-0 w-full h-full invisible">
