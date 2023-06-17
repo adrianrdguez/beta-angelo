@@ -72,31 +72,45 @@
                     <div class="col-span-6 sm:col-span-4 mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="flex items-center justify-center w-full mb-4">
                             <div>
-                                <div class="text-center mb-2 text-gray-700 font-medium">{{ __('Imagen desde lateral') }}</div>
+                                <div class="text-center mb-2 text-gray-700 font-medium">
+                                    {{ __('Imagen desde lateral') }}
+                                    <button type="button"
+                                        onclick="clearPreview('lateralViewImg')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
                                 <label
                                     class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative">
                                     <div
                                         class="absolute flex flex-col w-full h-full items-center justify-center">
-                                        <img id="lateralViewImgPreview" class="absolute inset-0 w-full h-full invisible object-contain">
-                                        <i id="lateralViewImgIcon" class="fa-solid fa-image text-6xl"></i>
+                                        <img id="lateralViewImgPreview" alt="" @class(['absolute', 'inset-0', 'w-full', 'h-full', 'object-contain', 'invisible' => empty($implant->getFirstMedia('lateralView'))]) src="{{ $implant->getFirstMedia('lateralView') ? $implant->getFirstMedia('lateralView')->getUrl() : '' }}" >
+                                        <i id="lateralViewImgIcon" @class(["fa-solid", "fa-image", "text-6xl", "hidden" => !empty($implant->getFirstMedia('lateralView'))])></i>
                                     </div>
-                                    <input type="file" class="absolute opacity-0" accept="image/*"
+                                    <input type="file" id="lateralViewImgInput" class="absolute opacity-0" accept="image/*"
                                         name="lateralViewImg" onchange="showPreview(event, 'lateralViewImg')">
+                                    <input type="hidden" name="lateralViewImgDelete" id="lateralViewImgDelete" value="{{ $implant->getFirstMedia('lateralView') ? '0' : '1' }}">
                                 </label>
                             </div>
                         </div>
                         <div class="flex items-center justify-center w-full mb-4">
                             <div>
-                                <div class="text-center mb-2 text-gray-700 font-medium">{{ __('Imagen desde arriba') }}</div>
+                                <div class="text-center mb-2 text-gray-700 font-medium">
+                                    {{ __('Imagen desde arriba') }}
+                                    <button type="button"
+                                        onclick="clearPreview('aboveViewImg')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
                                 <label
                                     class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative">
                                     <div
                                         class="absolute flex flex-col w-full h-full items-center justify-center">
-                                        <img id="aboveViewImgPreview" class="absolute inset-0 w-full h-full invisible object-contain">
-                                        <i id="aboveViewImgIcon" class="fa-solid fa-image text-6xl"></i>
+                                        <img id="aboveViewImgPreview" alt="" @class(['absolute', 'inset-0', 'w-full', 'h-full', 'object-contain', 'invisible' => empty($implant->getFirstMedia('aboveView'))]) src="{{ $implant->getFirstMedia('aboveView') ? $implant->getFirstMedia('aboveView')->getUrl() : '' }}" >
+                                        <i id="aboveViewImgIcon" @class(["fa-solid", "fa-image", "text-6xl", "hidden" => !empty($implant->getFirstMedia('aboveView'))])></i>
                                     </div>
-                                    <input type="file" class="absolute opacity-0" accept="image/*"
+                                    <input type="file" id="aboveViewImgInput" class="absolute opacity-0" accept="image/*"
                                         name="aboveViewImg" onchange="showPreview(event, 'aboveViewImg')">
+                                    <input type="hidden" name="aboveViewImgDelete" id="aboveViewImgDelete" value="{{ $implant->getFirstMedia('aboveView') ? '0' : '1' }}">
                                 </label>
                             </div>
                         </div>
@@ -122,9 +136,19 @@
                 preview.classList.remove('absolute');
                 preview.src = src;
                 preview.style.display = "block";
-                rotation = 0;
                 document.getElementById(id + 'Icon').classList.add('hidden');
+                document.getElementById(id + 'Delete').value = 0;
             }
+        }
+        function clearPreview(id) {
+            let preview = document.getElementById(id + 'Preview');
+            preview.classList.add('invisible');
+            preview.classList.add('absolute');
+            preview.src = '';
+            preview.style.display = "none";
+            document.getElementById(id + 'Icon').classList.remove('hidden');
+            document.getElementById(id + 'Input').value = null;
+            document.getElementById(id + 'Delete').value = 1;
         }
         let implant_type_id = {{ $implant->implant_type_id }};
         let implant_sub_type_id = {{ $implant->implant_sub_type_id }};

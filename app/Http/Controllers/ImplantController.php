@@ -114,6 +114,12 @@ class ImplantController extends Controller
     {
         $implant->fill($request->validated());
         $implant->save();
+        if ($request->lateralViewImgDelete) {
+            $implant->clearMediaCollection('lateralView');
+        }
+        if ($request->aboveViewImgDelete) {
+            $implant->clearMediaCollection('aboveView');
+        }
         if ($request->hasFile('lateralViewImg') && $request->file('lateralViewImg')->isValid()) {
             $implant->addMedia($this->getHorizontalImg($request->lateralViewImg))->toMediaCollection('lateralView');
         }

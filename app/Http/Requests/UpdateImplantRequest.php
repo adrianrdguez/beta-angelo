@@ -60,6 +60,12 @@ class UpdateImplantRequest extends FormRequest
             'aboveViewImg' => [
                 'mimetypes:image/png'
             ],
+            'lateralViewImgDelete' => [
+                'boolean',
+            ],
+            'aboveViewImgDelete' => [
+                'boolean',
+            ],
             'allowRotation' => [
                 'nullable',
                 'required',
@@ -80,4 +86,16 @@ class UpdateImplantRequest extends FormRequest
             'allowDisplay' => $this->allowDisplay ?? false,
         ]);
     }
+
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if ($this->lateralViewImgDelete && $this->aboveViewImgDelete) {
+                $validator->errors()->add('lateralViewImg', 'No se puede eliminar ambas imágenes');
+                $validator->errors()->add('aboveViewImg', 'No se puede eliminar ambas imágenes');
+            }
+        });
+    }
+
 }
