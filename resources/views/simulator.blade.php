@@ -231,8 +231,13 @@
                     class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
             </div>
             <div class="w-full mb-4">
-                <button id="rotate-implant"
-                    class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Rotar</button>
+                <div class="flex">
+                    <button id="rotate-implant-left"
+                        class="flex-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Izquierda</button>
+                    <button id="rotate-implant-right"
+                        class="flex-1 select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black"
+                        disabled>Derecha</button>
+                </div>
             </div>
         </div>
     </div>

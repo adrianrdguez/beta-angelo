@@ -86,7 +86,14 @@ class Simulator {
         document.getElementById('free-cut').addEventListener('click', () => this.setCurrentTool(new FreeCut(this.canvas)));
         document.getElementById('triangle-cut').addEventListener('click', () => this.setCurrentTool(new TriangleCut(this.canvas)));
         document.getElementById('circle-cut').addEventListener('click', () => this.setCurrentTool(new CircleCut(this.canvas)));
-        document.getElementById('rotate-implant').addEventListener('click', () => this.rotateAndFlipImplant());
+        document.getElementById('rotate-implant-right').addEventListener('click', () => {
+            this.rotateAndFlipImplant('right');
+        });
+
+        document.getElementById('rotate-implant-left').addEventListener('click', () => {
+            this.rotateAndFlipImplant('left');
+        });
+
         document.getElementById('opacity').addEventListener('input', (e) => this.applyFiltersToImplant());
         document.getElementById('angle-input').addEventListener('input', () => this.setCircleCutOptions('angle-input'));
         document.getElementById('radius-input').addEventListener('input', () => this.setCircleCutOptions('radius-input'));
@@ -148,19 +155,26 @@ class Simulator {
         }
     }
 
-    async rotateAndFlipImplant() {
+    async rotateAndFlipImplant(direction) {
         let activeObject = this.canvas.getActiveObject();
         if (activeObject) {
-            if (activeObject.flipY) {
-                activeObject.set({
-                    flipY: false
-                });
-            } else {
-                activeObject.set({
-                    flipY: true
-                });
+            if (direction === 'left') {
+                activeObject.set({ flipY: !activeObject.flipY });
+            } else if (direction === 'right') {
+                activeObject.set({ flipY: !activeObject.flipY });
             }
             this.canvas.requestRenderAll();
+        }
+        this.updateButtonStatus();
+    }
+
+    async updateButtonStatus() {
+        if (this.addImplantObject()) {
+            document.getElementById('flip-implant-left').disabled = true;
+            document.getElementById('flip-implant-right').disabled = false;
+        } else {
+            document.getElementById('flip-implant-left').disabled = false;
+            document.getElementById('flip-implant-right').disabled = true;
         }
     }
 
