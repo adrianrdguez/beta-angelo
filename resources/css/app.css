@@ -18,7 +18,11 @@ https://play.tailwindcss.com/8xLdxyjOC5
     font-family: sans-serif;
 }
 
-input:checked ~ .dot {
+input:checked~.dot {
     transform: translateX(100%);
     background-color: #182c9c;
+}
+
+.max-w-7xl {
+    max-width: 100rem;
 }
