@@ -129,7 +129,7 @@ class Simulator {
         img.model = element.dataset.model;
         img.allowRotation = parseInt(element.dataset.allow_rotation);
         this.canvas.add(img);
-        img.scale(((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm) / img.width);
+        img.scale(((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm) / (img.width >= img.height ? img.width : img.height));
         img.set(this.getCenterOfView());
         img.on("selected", () => this.offcanvasToggler('offcanvas-implants-settings', true));
         img.on("deselected", () => this.offcanvasToggler('offcanvas-implants-settings', false));
@@ -236,7 +236,7 @@ class Simulator {
                             <div class="py-3 px-6 border-b border-gray-300">
                                 <h5 style="color: black;">${implant.name}</h5>
                             </div>
-                            <div class="p-6">
+                            <div class="p-6 h-40">
                                 <img
                                     data-measure="${implant.measureWidth}"
                                     data-selected="${implant?.aboveViewUrl}"
@@ -245,7 +245,7 @@ class Simulator {
                                     data-allow_rotation="${implant?.allowRotation}"
                                     data-model="${implant?.model}"
                                     src="${implant?.aboveViewUrl ?? implant?.lateralViewUrl}"
-                                    class="w-full"
+                                    class="w-full h-full object-contain"
                                 >
                             </div>
                             <div class="py-3 px-6 border-t border-gray-300 text-gray-600">
@@ -272,7 +272,7 @@ class Simulator {
             .catch(error => console.log('error', error));
     }
 
-    updateSubTypeSelect(selectInput, implant_type_id, implant_sub_type_id = null) {
+    updateSubTypeSelect(selectInput, implant_type_id) {
         fetch(`/api/implantSubTypes?implant_type_id=${implant_type_id}`)
             .then(response => response.json())
             .then(result => {
