@@ -25,8 +25,8 @@ class ImplantController extends Controller
         $implants = Implant::when($request->search, function ($query, $search) {
                 return $query->where('name', 'like', '%' . $search . '%');
             })
-            ->paginate()
             ->orderBy('model')
+            ->paginate()
             ->withQueryString();
         return view('settings.implant.index', ['implants' => $implants, 'search' => $request->search]);
     }

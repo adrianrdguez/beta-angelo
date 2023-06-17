@@ -20,6 +20,11 @@
             </div>
 
             <div class="mt-4">
+                <x-jet-label for="clinicHospital" value="{{ __('Hospital clinico') }}" />
+                <x-jet-input id="clinicHospital" class="block mt-1 w-full" type="text" name="clinicHospital" :value="old('clinicHospital')" required autocomplete="clinicHospital" />
+            </div>
+
+            <div class="mt-4">
                 <x-jet-label for="email" value="{{ __('Email') }}" />
                 <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
             </div>

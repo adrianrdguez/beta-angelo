@@ -18,6 +18,8 @@ class UserController extends Controller
     {
         $users = User::when($request->search, function ($query, $search) {
             $query->where('name', 'like', '%' . $search . '%');
+            $query->orWhere('surname', 'like', '%' . $search . '%');
+            $query->orWhere('clinicHospital', 'like', '%' . $search . '%');
             $query->orWhere('email', 'like', '%' . $search . '%');
             return $query;
         })

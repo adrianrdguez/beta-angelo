@@ -59,6 +59,18 @@
             <x-jet-input-error for="name" class="mt-2" />
         </div>
 
+        <div class="col-span-6 sm:col-span-4">
+            <x-jet-label for="surname" value="{{ __('Surname') }}" />
+            <x-jet-input id="surname" type="text" class="mt-1 block w-full" wire:model.defer="state.surname" autocomplete="surname" />
+            <x-jet-input-error for="surname" class="mt-2" />
+        </div>
+
+        <div class="col-span-6 sm:col-span-4">
+            <x-jet-label for="clinicHospital" value="{{ __('Hospital clinico') }}" />
+            <x-jet-input id="clinicHospital" type="text" class="mt-1 block w-full" wire:model.defer="state.clinicHospital" autocomplete="clinicHospital" />
+            <x-jet-input-error for="clinicHospital" class="mt-2" />
+        </div>
+
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
             <x-jet-label for="email" value="{{ __('Email') }}" />
