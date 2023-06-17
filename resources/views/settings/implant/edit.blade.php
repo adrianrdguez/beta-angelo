@@ -48,16 +48,6 @@
                         <x-jet-input-error for="implant_sub_type_id" class="mt-2" />
                     </div>
                     <div class="col-span-6 sm:col-span-4 mt-4">
-                        <x-jet-label for="lateralViewImg" value="{{ __('Imagen desde lateral') }}" />
-                        <x-jet-input id="lateralViewImg" type="file" class="mt-1 block w-full" autocomplete="lateralViewImg" name="lateralViewImg" />
-                        <x-jet-input-error for="lateralViewImg" class="mt-2" />
-                    </div>
-                    <div class="col-span-6 sm:col-span-4 mt-4">
-                        <x-jet-label for="aboveViewImg" value="{{ __('Imagen desde arriba') }}" />
-                        <x-jet-input id="aboveViewImg" type="file" class="mt-1 block w-full" autocomplete="aboveViewImg" name="aboveViewImg" />
-                        <x-jet-input-error for="aboveViewImg" class="mt-2" />
-                    </div>
-                    <div class="col-span-6 sm:col-span-4 mt-4">
                         <label for="allowRotation" class="flex items-center cursor-pointer">
                             <div class="relative">
                                 <input id="allowRotation" name="allowRotation" type="checkbox" class="sr-only"  value="1" {{ $implant->allowRotation ? 'checked' : '' }}/>
@@ -79,6 +69,40 @@
                         </label>
                         <x-jet-input-error for="allowDisplay" class="mt-2" />
                     </div>
+                    <div class="col-span-6 sm:col-span-4 mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-center justify-center w-full mb-4">
+                            <div>
+                                <div class="text-center mb-2 text-gray-700 font-medium">{{ __('Imagen desde lateral') }}</div>
+                                <label
+                                    class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative">
+                                    <div
+                                        class="absolute flex flex-col w-full h-full items-center justify-center">
+                                        <img id="lateralViewImgPreview" class="absolute inset-0 w-full h-full invisible object-contain">
+                                        <i id="lateralViewImgIcon" class="fa-solid fa-image text-6xl"></i>
+                                    </div>
+                                    <input type="file" class="absolute opacity-0" accept="image/*"
+                                        name="lateralViewImg" onchange="showPreview(event, 'lateralViewImg')">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center w-full mb-4">
+                            <div>
+                                <div class="text-center mb-2 text-gray-700 font-medium">{{ __('Imagen desde arriba') }}</div>
+                                <label
+                                    class="flex flex-col w-96 h-96 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 relative">
+                                    <div
+                                        class="absolute flex flex-col w-full h-full items-center justify-center">
+                                        <img id="aboveViewImgPreview" class="absolute inset-0 w-full h-full invisible object-contain">
+                                        <i id="aboveViewImgIcon" class="fa-solid fa-image text-6xl"></i>
+                                    </div>
+                                    <input type="file" class="absolute opacity-0" accept="image/*"
+                                        name="aboveViewImg" onchange="showPreview(event, 'aboveViewImg')">
+                                </label>
+                            </div>
+                        </div>
+                        <x-jet-input-error for="lateralViewImg" class="text-center" />
+                        <x-jet-input-error for="aboveViewImg" class="text-center" />
+                    </div>
                     <div
                         class="flex flex-shrink-0 items-center justify-end px-4 pt-4 rounded-b-md">
                         <x-jet-button>
@@ -90,6 +114,18 @@
         </div>
     </div>
     <script>
+        function showPreview(event, id) {
+            if (event.target.files.length > 0) {
+                let src = URL.createObjectURL(event.target.files[0]);
+                let preview = document.getElementById(id + 'Preview');
+                preview.classList.remove('invisible');
+                preview.classList.remove('absolute');
+                preview.src = src;
+                preview.style.display = "block";
+                rotation = 0;
+                document.getElementById(id + 'Icon').classList.add('hidden');
+            }
+        }
         let implant_type_id = {{ $implant->implant_type_id }};
         let implant_sub_type_id = {{ $implant->implant_sub_type_id }};
         function listImplantSubTypes(selectInput, implant_type_id, implant_sub_type_id = null) {
