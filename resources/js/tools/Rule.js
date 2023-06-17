@@ -55,7 +55,8 @@ export class Rule extends Tool {
             p1 = (angle > 90) ? coords.p1 : coords.p0;
             p3 = (angle > 90) ? coords.p3 : coords.p2;
         }
-        let text = (angle >= 89.95 || angle >= 90.05 ? '90' : (angle).toFixed(2)) + 'º';
+        let roundedAngle = Math.round(angle);
+        let text = (roundedAngle % 1 === 0.5 ? roundedAngle + 0.1 : roundedAngle) + 'º';
         if (!this.simulator.lineAngles[keyAngle]) {
             this.simulator.lineAngles[keyAngle] = {};
             this.simulator.lineAngles[keyAngle].triangle = this.createTriangle(coords.pc.x, coords.pc.y, p1.x, p1.y, p3.x, p3.y);
