@@ -26,6 +26,7 @@ class ImplantController extends Controller
                 return $query->where('name', 'like', '%' . $search . '%');
             })
             ->paginate()
+            ->orderBy('model')
             ->withQueryString();
         return view('settings.implant.index', ['implants' => $implants, 'search' => $request->search]);
     }
@@ -46,6 +47,7 @@ class ImplantController extends Controller
             $allowDisplay[] = 0;
         }
         $implants->whereIn('allowDisplay', $allowDisplay);
+        $implants->orderBy('model');
         return ImplantResource::collection($implants->get());
     }
 
