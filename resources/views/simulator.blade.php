@@ -222,7 +222,7 @@
         <div class="offcanvas-header flex items-center justify-between p-4">
             <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-implants-settingsLabel">
                 OPCIONES DEL
-                IMPLANTE</h5>
+                IMPLANTE  - <span id="titleModel"></span></h5>
         </div>
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto small">
             <div class="w-full mb-4">

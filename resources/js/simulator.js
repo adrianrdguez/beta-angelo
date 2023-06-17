@@ -126,6 +126,7 @@ class Simulator {
 
     async addImplantObject(element) {
         let img = await this.loadImageFromUrl(element.src);
+        img.model = element.dataset.model;
         img.allowRotation = parseInt(element.dataset.allow_rotation);
         this.canvas.add(img);
         img.scale(((element.dataset.measure * this.firstLineMeasurePx) / this.firstLineMeasureMm) / img.width);
@@ -133,6 +134,7 @@ class Simulator {
         img.on("selected", () => this.offcanvasToggler('offcanvas-implants-settings', true));
         img.on("deselected", () => this.offcanvasToggler('offcanvas-implants-settings', false));
         img.on('selected', () => {
+            document.getElementById('titleModel').innerHTML = img.model;
             document.getElementById('opacity').value = img.opacity;
             if (img.allowRotation) {
                 document.getElementById('rotate-implant').classList.remove('invisible');
@@ -241,6 +243,7 @@ class Simulator {
                                     data-above="${implant?.aboveViewUrl}"
                                     data-lateral="${implant?.lateralViewUrl}"
                                     data-allow_rotation="${implant?.allowRotation}"
+                                    data-model="${implant?.model}"
                                     src="${implant?.aboveViewUrl ?? implant?.lateralViewUrl}"
                                     class="w-full"
                                 >
