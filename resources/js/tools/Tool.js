@@ -89,6 +89,7 @@ export class Tool {
             cursorStyle: 'pointer',
             mouseDownHandler: (eventData, transform) => {
                 let target = transform.target;
+                let targetId = target?.id;
                 if (target?.element) {
                     for (const [key, value] of Object.entries(target.element)) {
                         if (value instanceof fabric.Object) {
@@ -99,7 +100,14 @@ export class Tool {
                                     this.canvas.remove(subValue);
                                 }
                             }
-                            delete this.simulator.lineAngles[key];
+                        }
+                    }
+                }
+                if (targetId) {
+                    for (const keyAngle in this.simulator.lineAngles) {
+                        let lines = this.canvas.getObjects().filter((line) => line?.id === (keyAngle - targetId));
+                        if (lines.length > 0) {
+                            lines[0].tool.removeAngle(lines[0].id + targetId);
                         }
                     }
                 }

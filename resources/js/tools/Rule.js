@@ -20,6 +20,7 @@ export class Rule extends Tool {
         }]);
         this.canvas.add(line);
         line.id = Date.now();
+        line.tool = this;
         return line;
     }
 
