@@ -19,6 +19,7 @@ class Simulator {
     firstLineMeasureMm;
     lineAngles = {};
     usedImplants = [];
+    hideText = false;
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }
@@ -105,6 +106,7 @@ class Simulator {
                 this.setCurrentTool(new Rule(this.canvas));
             }
         });
+        document.getElementById('measure-input-button')
         this.setCircleCutOptions('angle-input')
         this.setCircleCutOptions('radius-input')
     }
@@ -474,7 +476,9 @@ let interval = setInterval(() => {
                 .catch(error => console.log('error', error));
             window.location.href = `/project/${projectId}`;
         }
-        document.getElementById('delete-text').onclick = async function () {
+
+        document.getElementById('delete-text').onclick = async function deleteText() {
+            simulator.hideText = true;
             var objects = simulator.canvas.getObjects();
             for (var i = 1; i < objects.length; i++) {
                 if (objects[i].text && objects[i].opacity !== 0) {
@@ -484,21 +488,18 @@ let interval = setInterval(() => {
             simulator.canvas.requestRenderAll();
         };
 
-        document.getElementById('add-text').onclick = async function () {
+        document.getElementById('add-text').onclick = async function addText() {
+            simulator.hideText = false;
             var objects = simulator.canvas.getObjects();
             for (var i = 1; i < objects.length; i++) {
                 if (objects[i].text) {
                     if (objects[i].opacity === 0) {
                         objects[i].opacity = 1; // Set opacity to 1 (fully visible)
-                    } else {
-                        objects[i].opacity = 0; // Set opacity to 0 (completely invisible)
                     }
                 }
             }
             simulator.canvas.requestRenderAll();
         };
-
-
 
 
         function getZoomLevel(element) {
