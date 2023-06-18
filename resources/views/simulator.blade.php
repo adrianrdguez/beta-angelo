@@ -163,7 +163,7 @@
                     filtros</button>
             </div>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-4" style="padding: 0 15px;">
             <div class="w-full">
                 <button id="add-text"
                     class="w-full select-none cursor-pointer rounded-lg border-2 border-yellow-500 py-2 px-4 font-bold bg-yellow-500 text-black">Añadir
@@ -222,7 +222,7 @@
         <div class="offcanvas-header flex items-center justify-between p-4">
             <h5 class="offcanvas-title mb-0 leading-normal font-semibold" id="offcanvas-implants-settingsLabel">
                 OPCIONES DEL
-                IMPLANTE  - <span id="titleModel"></span></h5>
+                IMPLANTE - <span id="titleModel"></span></h5>
         </div>
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto small">
             <div class="w-full mb-4">
