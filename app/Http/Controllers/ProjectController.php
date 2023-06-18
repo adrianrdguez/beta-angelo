@@ -8,6 +8,7 @@ use App\Http\Requests\ShareProjectRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectImageRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Implant;
 use App\Models\ImplantType;
 use App\Models\Project;
 use App\Models\User;
@@ -149,7 +150,7 @@ class ProjectController extends Controller
     {
         if ($request->hasFile('radiographyImg') && $request->file('radiographyImg')->isValid()) {
             $images = $project->getMedia('radiographies')->where('name', $request->name);
-            $project->addMedia($this->getRotatedImg($request->radiographyImg, $request->rotation))
+            $project->addMedia($this->addUsedImplantsToImg($request->radiographyImg, $request->implants))
                 ->usingName($request->name . ' - V' . $images->count() + 1)
                 ->withCustomProperties([
                     'rotation' => $request->rotation,
@@ -197,6 +198,40 @@ class ProjectController extends Controller
             'image/png' => imagepng($img, $file->getPathname()),
             default => $file,
         };
+        return $file;
+    }
+
+    private function addUsedImplantsToImg(UploadedFile $file, ?array $implants): UploadedFile
+    {
+        if (empty($implants)) {
+            return $file;
+        }
+        $implants = collect($implants)->map(function ($implantId) {
+            return ['id' => $implantId];
+        });
+        $image = match ($file->getMimeType()) {
+            'image/jpg', 'image/jpeg' => imagecreatefromjpeg($file->getPathname()),
+            'image/png' => imagecreatefrompng($file->getPathname()),
+            default => $file,
+        };
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $newImage = imagecreatetruecolor($width, $height + (40 * $implants->unique()->count()));
+        $white = imagecolorallocate($newImage, 255, 255, 255);
+        imagefill($newImage, 0, 0, $white);
+        imagecopy($newImage, $image, 0, 0, 0, 0, $width, $height);
+        $black = imagecolorallocate($newImage, 0, 0, 0);
+        $font = storage_path('fonts/Nunito.ttf');
+        $fontSize = 20;
+        foreach ($implants->unique() as $implantData) {
+            $implant = Implant::find($implantData['id']);
+            $text = $implants->where('id', $implantData['id'])->count() . 'x | ' . $implant->name . ' - ' . $implant->model;
+            imagettftext($newImage, $fontSize, 0, 10, $height + 30, $black, $font, $text);
+            $height += 40;
+        }
+        imagejpeg($newImage, $file->getPathname());
+        imagedestroy($image);
+        imagedestroy($newImage);
         return $file;
     }
 }

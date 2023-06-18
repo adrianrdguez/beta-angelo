@@ -111,6 +111,12 @@ export class Tool {
                         }
                     }
                 }
+                if (target?.iid) {
+                    let index = this.simulator.usedImplants.indexOf(target.iid)
+                    if (index > -1) {
+                        this.simulator.usedImplants.splice(index, 1);
+                    }
+                }
                 this.canvas.remove(target);
                 this.canvas.requestRenderAll();
             },

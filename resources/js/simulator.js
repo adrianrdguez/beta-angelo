@@ -18,6 +18,7 @@ class Simulator {
     firstLineMeasurePx;
     firstLineMeasureMm;
     lineAngles = {};
+    usedImplants = [];
     constructor(radiographyUrl) {
         this.initConstructor(radiographyUrl);
     }
@@ -125,7 +126,9 @@ class Simulator {
     }
 
     async addImplantObject(element) {
+        this.usedImplants.push(element.dataset.iid);
         let img = await this.loadImageFromUrl(element.src);
+        img.iid = element.dataset.iid;
         img.model = element.dataset.model;
         img.allowRotation = parseInt(element.dataset.allow_rotation);
         this.canvas.add(img);
@@ -244,6 +247,7 @@ class Simulator {
                                     data-lateral="${implant?.lateralViewUrl}"
                                     data-allow_rotation="${implant?.allowRotation}"
                                     data-model="${implant?.model}"
+                                    data-iid="${implant?.id}"
                                     src="${implant?.aboveViewUrl ?? implant?.lateralViewUrl}"
                                     class="w-full h-full object-contain"
                                 >
@@ -459,7 +463,9 @@ let interval = setInterval(() => {
             formData.append("name", canvas.dataset.name);
             formData.append("rotation", 0);
             formData.append("zoom", zoom); // Append the zoom level to the form data
-
+            for (const key in simulator.usedImplants) {
+                formData.append("implants[]", simulator.usedImplants[key]);
+            }
             let requestOptions = {
                 method: 'POST',
                 body: formData,
