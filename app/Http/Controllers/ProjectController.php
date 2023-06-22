@@ -26,20 +26,30 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $projects = Auth::user()
-            ->projects()
-            ->when($request->search, function ($query, $search) {
-                return $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%')
-                        ->orWhere('race', 'like', '%' . $search . '%')
-                        ->orWhere('created_at', 'like', '%' . $search . '%')
-                        ->orWhere('description', 'like', '%' . $search . '%');
-                });
-            })
+        $projectId = $request->input('project_id');
+        $search = $request->input('search');
+
+        $query = Auth::user()->projects();
+
+        if ($projectId) {
+            $project = $query->find($projectId);
+            return view('project.show', ['project' => $project]);
+        }
+
+        $projects = $query->when($search, function ($query, $search) {
+            return $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('race', 'like', '%' . $search . '%')
+                    ->orWhere('created_at', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        })
             ->paginate()
             ->withQueryString();
-        return view('project.index', ['projects' => $projects, 'search' => $request->search]);
+
+        return view('project.index', ['projects' => $projects, 'search' => $search]);
     }
+
 
     /**
      * Show the form for creating a new resource.

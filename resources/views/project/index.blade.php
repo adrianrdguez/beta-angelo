@@ -129,6 +129,9 @@
                         </div>
                     @endforeach
                 </div>
+                <div class="mt-4">
+                    {{ $projects->links('pagination::tailwind') }}
+                </div>
             @endif
         </div>
     </div>
@@ -155,12 +158,15 @@
                             </div>
                             @if (Auth::user()->hasRole('admin'))
                                 <div>
-                                    <x-jet-label for="userEmail" value="{{ __('Escribe el email del usuario al que quieres compartir el proyecto.') }}" />
-                                    <x-jet-input id="userEmail" class="block mt-1 w-full" type="email" name="userEmail" :value="old('userEmail')" required autocomplete="userEmail" />
+                                    <x-jet-label for="userEmail"
+                                        value="{{ __('Escribe el email del usuario al que quieres compartir el proyecto.') }}" />
+                                    <x-jet-input id="userEmail" class="block mt-1 w-full" type="email" name="userEmail"
+                                        :value="old('userEmail')" required autocomplete="userEmail" />
                                 </div>
                             @else
                                 {{ __('Se va a compartir el proyecto con los administradores') }}
-                                <x-jet-input id="userEmail" type="hidden" name="userEmail" value="admin@admin.com" required />
+                                <x-jet-input id="userEmail" type="hidden" name="userEmail" value="admin@admin.com"
+                                    required />
                             @endif
                         </div>
                         <div
