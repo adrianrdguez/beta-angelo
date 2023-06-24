@@ -61,13 +61,13 @@ export class TriangleCut extends RuleTriangle {
     callbackOnFinishedCut(imgCut) {
         let brPoints = imgCut.aCoords.br;
         let tlPoints = imgCut.aCoords.tl;
-        let trianglePoint = this.getPointCoord(this.element.triangle, 2);
+        let rotatingPoint = this.getPointCoord(this.element.triangle, 2);
 
         let xFirstDiff = brPoints.x - tlPoints.x;
         let yFirstDiff = brPoints.y - tlPoints.y;
 
-        let xSecondDiff = trianglePoint.x - tlPoints.x;
-        let ySecondDiff = trianglePoint.y - tlPoints.y;
+        let xSecondDiff = rotatingPoint.x - tlPoints.x;
+        let ySecondDiff = rotatingPoint.y - tlPoints.y;
 
         let newOriginX = xSecondDiff / xFirstDiff;
         let newOriginY = ySecondDiff / yFirstDiff;
@@ -77,11 +77,20 @@ export class TriangleCut extends RuleTriangle {
             centeredRotation: true,
             originY: newOriginY,
             originX: newOriginX,
-            left: trianglePoint.x,
-            top: trianglePoint.y,
+            left: rotatingPoint.x,
+            top: rotatingPoint.y,
             angle: this.element.angle2.rawAngle
-        })
-
+        });
+        let sizeToRotatePoint = this.getPointCoord(this.element.triangle, 0);
+        let startCutPoint = this.getPointCoord(this.element.triangle, 1);
+        if (
+            startCutPoint.x > sizeToRotatePoint.x && startCutPoint.y < rotatingPoint.y ||
+            startCutPoint.x < sizeToRotatePoint.x && startCutPoint.y > rotatingPoint.y
+        ) {
+            imgCut.set({
+                angle: imgCut.angle * -1
+            });
+        }
         this.canvas.setActiveObject(imgCut);
     }
 }
