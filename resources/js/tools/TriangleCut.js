@@ -59,9 +59,9 @@ export class TriangleCut extends RuleTriangle {
     }
 
     callbackOnFinishedCut(imgCut) {
-        let brPoints = imgCut.oCoords.br;
-        let tlPoints = imgCut.oCoords.tl;
-        let trianglePoint = this.element.triangle.oCoords.p2;
+        let brPoints = imgCut.aCoords.br;
+        let tlPoints = imgCut.aCoords.tl;
+        let trianglePoint = this.getPointCoord(this.element.triangle, 2);
 
         let xFirstDiff = brPoints.x - tlPoints.x;
         let yFirstDiff = brPoints.y - tlPoints.y;
