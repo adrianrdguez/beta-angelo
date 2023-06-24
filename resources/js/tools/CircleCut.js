@@ -94,13 +94,13 @@ export class CircleCut extends RuleCircle {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
         this.simulator.setBackgroundOptions(this.element.circle);
-        let semicirclePrueba = fabric.util.object.clone(this.element.semicircle);
-        semicirclePrueba.set({
+        let pathToAddToCut = fabric.util.object.clone(this.element.semicircle);
+        pathToAddToCut.set({
             stroke: 'transparent',
         })
-        semicirclePrueba.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
-        semicirclePrueba.startAngle = -(parseInt(this.element.semicircle.input) + 1) / 2;
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, semicirclePrueba);
+        pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
+        pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input) + 1) / 2;
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, pathToAddToCut);
         this.canvas.remove(this.element.text);
 
         this.element.miniPointer = new fabric.Circle({
