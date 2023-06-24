@@ -142,7 +142,7 @@ export class CircleCut extends RuleCircle {
         const endX = centerX + (lineLength * Math.cos(angleInRadians));
         const endY = centerY + (lineLength * Math.sin(angleInRadians));
 
-        this.element.miniPointer = new fabric.Circle({
+        /* this.element.miniPointer = new fabric.Circle({
             radius: this.canvas.freeDrawingBrush.width,
             fill: this.canvas.freeDrawingBrush.color,
             originX: 'center',
@@ -156,7 +156,7 @@ export class CircleCut extends RuleCircle {
         this.element.miniPointer.set({
             left: endX,
             top: endY,
-        });
+        }); */
 
         let newLine = new fabric.Line([centerX, centerY, endX, endY], {
             stroke: 'blue',
@@ -187,14 +187,14 @@ export class CircleCut extends RuleCircle {
 
         if (this.element.semicircle.input <= 180) {
             this.freeCutTool.element.pointer.set({
-                left: startPoint.x,
+                left: startPoint.x + 1.5,
                 top: startPoint.y,
             });
             this.freeCutTool.element.miniPointer.set({
-                left: startPoint.x,
+                left: startPoint.x + 1.5,
                 top: startPoint.y,
             });
-            this.freeCutTool.startCut(endPoint.x, endPoint.y);
+            this.freeCutTool.startCut(endPoint.x + 2, endPoint.y);
         } else {
             this.freeCutTool.element.pointer.set({
                 left: startPoint2.x,
