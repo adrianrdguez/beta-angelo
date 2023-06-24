@@ -215,6 +215,39 @@ export class CircleCut extends RuleCircle {
 
     callbackOnFinishedCut(imgCut) {
         this.simulator.setBackgroundOptions(this.element.circle);
+
+        const circleCenter = this.element.circle.getCenterPoint();
+        const imgCutCenter = imgCut.getCenterPoint();
+
+        this.element.miniPointer2 = new fabric.Circle({
+            radius: this.canvas.freeDrawingBrush.width,
+            fill: this.canvas.freeDrawingBrush.color,
+            originX: 'center',
+            originY: 'center',
+            hasBorders: false,
+            hasControls: false,
+            selectable: false,
+            left: circleCenter.x,
+            top: circleCenter.y,
+        })
+        this.canvas.add(this.element.miniPointer2);
+
+        this.element.miniPointer = new fabric.Circle({
+            radius: this.canvas.freeDrawingBrush.width,
+            fill: this.canvas.freeDrawingBrush.color,
+            originX: 'center',
+            originY: 'center',
+            hasBorders: false,
+            hasControls: false,
+            selectable: false,
+            left: imgCutCenter.x,
+            top: imgCutCenter.y,
+        });
+
+        this.canvas.add(this.element.miniPointer);
+
+        console.log(circleCenter)
+        console.log(imgCutCenter)
         imgCut.set({
             lockMovementX: true,
             lockMovementY: true,
@@ -276,6 +309,7 @@ export class CircleCut extends RuleCircle {
             this.canvas.bringToFront(this.element.circle);
             this.canvas.bringToFront(this.element.semicircle);
         });
+
         imgCut.on('selected', (event) => {
             setTimeout(() => {
                 this.canvas.bringToFront(this.element.circle);
