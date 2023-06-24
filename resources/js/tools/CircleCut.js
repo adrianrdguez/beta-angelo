@@ -93,7 +93,7 @@ export class CircleCut extends RuleCircle {
     startCut() {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
-        this.simulator.setBackgroundOptions(this.element.circle);
+        //this.simulator.setBackgroundOptions(this.element.circle);
         let pathToAddToCut = fabric.util.object.clone(this.element.semicircle);
         pathToAddToCut.stroke = 'transparent';
         pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
@@ -209,10 +209,11 @@ export class CircleCut extends RuleCircle {
     }
 
     callbackOnFinishedCut(imgCut) {
+        this.canvas.add(this.element.circle);
         //this.simulator.setBackgroundOptions(this.element.circle);
 
         this.element.circle.set({
-            fill: "blue"
+            fill: "rgba(1,0,0,0.01)",
         });
 
         const circleCenter = this.element.circle.getCenterPoint();
@@ -298,6 +299,11 @@ export class CircleCut extends RuleCircle {
         this.canvas.bringToFront(this.element.circle);
 
         this.element.circle.on('rotating', (event) => {
+            imgCut.set({
+                angle: this.element.circle.angle,
+            });
+        });
+        imgCut.on('rotating', (event) => {
             this.element.semicircle.set({
                 flipX: (imgCut.angle + 90) < 270,
                 angle: imgCut.angle + 90,
