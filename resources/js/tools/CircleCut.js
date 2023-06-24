@@ -192,14 +192,14 @@ export class CircleCut extends RuleCircle {
             this.freeCutTool.startCut(endPoint.x + 2, endPoint.y);
         } else {
             this.freeCutTool.element.pointer.set({
-                left: startPoint2.x,
+                left: startPoint2.x + 2,
                 top: startPoint2.y,
             });
             this.freeCutTool.element.miniPointer.set({
-                left: startPoint2.x,
+                left: startPoint2.x + 2,
                 top: startPoint2.y,
             });
-            this.freeCutTool.startCut(endPoint2.x, endPoint2.y);
+            this.freeCutTool.startCut(endPoint2.x + 2, endPoint2.y);
         }
 
         this.canvas.remove(this.element.line);
