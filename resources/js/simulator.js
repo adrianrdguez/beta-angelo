@@ -91,7 +91,6 @@ class Simulator {
         document.getElementById('rotate-implant-right').addEventListener('click', () => {
             this.rotateAndFlipImplant('right');
         });
-
         document.getElementById('rotate-implant-left').addEventListener('click', () => {
             this.rotateAndFlipImplant('left');
         });

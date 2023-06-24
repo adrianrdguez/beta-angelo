@@ -93,7 +93,7 @@ export class CircleCut extends RuleCircle {
     startCut() {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
-        this.simulator.setBackgroundOptions(this.element.circle);
+        //this.simulator.setBackgroundOptions(this.element.circle);
         let semicirclePrueba = fabric.util.object.clone(this.element.semicircle);
         semicirclePrueba.set({
             stroke: 'transparent',
@@ -214,7 +214,11 @@ export class CircleCut extends RuleCircle {
     }
 
     callbackOnFinishedCut(imgCut) {
-        this.simulator.setBackgroundOptions(this.element.circle);
+        //this.simulator.setBackgroundOptions(this.element.circle);
+
+        this.element.circle.set({
+            fill: "blue"
+        });
 
         const circleCenter = this.element.circle.getCenterPoint();
         const imgCutCenter = imgCut.getCenterPoint();
@@ -232,28 +236,36 @@ export class CircleCut extends RuleCircle {
         })
         this.canvas.add(this.element.miniPointer2);
 
-        this.element.miniPointer = new fabric.Circle({
-            radius: this.canvas.freeDrawingBrush.width,
-            fill: this.canvas.freeDrawingBrush.color,
-            originX: 'center',
-            originY: 'center',
-            hasBorders: false,
-            hasControls: false,
-            selectable: false,
-            left: imgCutCenter.x,
-            top: imgCutCenter.y,
-        });
-
-        this.canvas.add(this.element.miniPointer);
-
         console.log(circleCenter)
         console.log(imgCutCenter)
+
+        let brPoints = imgCut.aCoords.br;
+        let tlPoints = imgCut.aCoords.tl;
+        let circlePoint = new fabric.Point(
+            this.element.circle.left,
+            this.element.circle.top,
+        );
+
+        let xFirstDiff = brPoints.x - tlPoints.x;
+        let yFirstDiff = brPoints.y - tlPoints.y;
+
+        let xSecondDiff = circlePoint.x - tlPoints.x;
+        let ySecondDiff = circlePoint.y - tlPoints.y;
+
+        let newOriginX = xSecondDiff / xFirstDiff;
+        let newOriginY = ySecondDiff / yFirstDiff;
+
         imgCut.set({
             lockMovementX: true,
             lockMovementY: true,
             lockUniScaling: true,
-        });
-        this.setDefaultObjectOptions(imgCut);
+            originY: newOriginY,
+            originX: newOriginX,
+            left: circlePoint.x,
+            top: circlePoint.y,
+        })
+
+        this.simulator.setBackgroundOptions(imgCut);
         this.element.semicircle.set({
             fill: this.canvas.freeDrawingBrush.color + '40',
             strokeWidth: 0,
@@ -290,7 +302,7 @@ export class CircleCut extends RuleCircle {
         this.canvas.add(this.element.angleText);
         this.canvas.bringToFront(this.element.circle);
 
-        imgCut.on('rotating', (event) => {
+        this.element.circle.on('rotating', (event) => {
             this.element.semicircle.set({
                 flipX: (imgCut.angle + 90) < 270,
                 angle: imgCut.angle + 90,
