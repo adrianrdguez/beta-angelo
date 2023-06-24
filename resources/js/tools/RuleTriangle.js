@@ -108,7 +108,7 @@ export class RuleTriangle extends Tool {
                 this.element['angle' + point] = new fabric.Text(text, {
                     fontSize: 12,
                     stroke: 'black',
-                    strokeWidth: 0.1,
+                    strokeWidth: 0.10,
                     fill: this.canvas.freeDrawingBrush.color,
                     fontFamily: 'Nunito'
                 });
@@ -165,7 +165,7 @@ export class RuleTriangle extends Tool {
                 this.element['text' + point] = new fabric.Text(text, {
                     fontSize: 12,
                     stroke: 'black',
-                    strokeWidth: 0.05,
+                    strokeWidth: 0.10,
                     fill: this.canvas.freeDrawingBrush.color,
                     fontFamily: 'Nunito'
                 });

@@ -93,16 +93,17 @@ export class CircleCut extends RuleCircle {
     startCut() {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
-        //this.simulator.setBackgroundOptions(this.element.circle);
-        let semicirclePrueba = fabric.util.object.clone(this.element.semicircle);
-        semicirclePrueba.set({
-            stroke: 'transparent',
-        })
-        semicirclePrueba.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
-        semicirclePrueba.startAngle = -(parseInt(this.element.semicircle.input) + 1) / 2;
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, semicirclePrueba);
+        this.simulator.setBackgroundOptions(this.element.circle);
+        let pathToAddToCut = fabric.util.object.clone(this.element.semicircle);
+        pathToAddToCut.stroke = 'transparent';
+        pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
+        pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input) + 1) / 2;
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, pathToAddToCut);
         this.canvas.remove(this.element.text);
-
+        this.element.circle.set({
+            originX: 'center',
+            originY: 'center',
+        })
         this.element.miniPointer = new fabric.Circle({
             radius: this.canvas.freeDrawingBrush.width,
             fill: this.canvas.freeDrawingBrush.color,
@@ -111,16 +112,10 @@ export class CircleCut extends RuleCircle {
             hasBorders: false,
             hasControls: false,
             selectable: false,
+            left: this.element.circle.left,
+            top: this.element.circle.top
         });
         this.canvas.add(this.element.miniPointer);
-        this.element.circle.set({
-            originX: 'center',
-            originY: 'center',
-        })
-        this.element.miniPointer.set({
-            left: this.element.circle.left,
-            top: this.element.circle.top,
-        });
 
         // NEED A REFACTOR
 
