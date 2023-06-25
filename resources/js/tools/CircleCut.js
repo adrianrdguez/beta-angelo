@@ -93,7 +93,6 @@ export class CircleCut extends RuleCircle {
     startCut() {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
-        //this.simulator.setBackgroundOptions(this.element.circle);
         let pathToAddToCut = fabric.util.object.clone(this.element.semicircle);
         pathToAddToCut.stroke = 'transparent';
         pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
@@ -210,12 +209,7 @@ export class CircleCut extends RuleCircle {
 
     callbackOnFinishedCut(imgCut) {
         this.canvas.add(this.element.circle);
-        //this.simulator.setBackgroundOptions(this.element.circle);
-
-        this.element.circle.set({
-            fill: "rgba(1,0,0,0.01)",
-        });
-
+        this.element.circle.fill = "rgba(1, 0, 0, 0.01)";
         const circleCenter = this.element.circle.getCenterPoint();
         const imgCutCenter = imgCut.getCenterPoint();
 
@@ -231,10 +225,6 @@ export class CircleCut extends RuleCircle {
             top: circleCenter.y,
         })
         this.canvas.add(this.element.miniPointer2);
-
-        console.log(circleCenter)
-        console.log(imgCutCenter)
-
         let brPoints = imgCut.aCoords.br;
         let tlPoints = imgCut.aCoords.tl;
         let circlePoint = new fabric.Point(
