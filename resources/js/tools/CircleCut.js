@@ -96,8 +96,8 @@ export class CircleCut extends RuleCircle {
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
         let pathToAddToCut = fabric.util.object.clone(this.element.semicircle);
         pathToAddToCut.stroke = 'transparent';
-        pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
-        pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input) + 1) / 2;
+        pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 3) / 2);
+        pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input) + 3) / 2;
         this.canvas.remove(this.element.text);
         this.element.circle.set({
             originX: 'center',
@@ -115,77 +115,41 @@ export class CircleCut extends RuleCircle {
             top: this.element.circle.top
         });
         this.canvas.add(this.element.circlePointer);
-
-        // NEED A REFACTOR
-
         let newAngle = 0;
-        let newAngle2 = 0;
         if (this.element.semicircle.input) {
             newAngle = ((180 - this.element.semicircle.input)) / 2;
-            newAngle2 = ((180 - this.element.semicircle.input) - 45) / 2;
         }
         let angleInRadians = this.degreesToRadians(newAngle);
-        const lineLength = (this.element.circle.radius) * 2;
-        const halfLength = (lineLength / 2);
-        const startX = this.element.circlePointer.left - (halfLength * Math.cos(angleInRadians));
-        const startY = this.element.circlePointer.top - (halfLength * Math.sin(angleInRadians));
-        const endX = (startX + (lineLength * Math.cos(angleInRadians)));
-        const endY = (startY + (lineLength * Math.sin(angleInRadians)));
-
-        //NUEVO
-        // Calculate new starting point
-        const newStartX = endX - halfLength * Math.cos(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
-        const newStartY = endY - halfLength * Math.sin(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
-
-        // Calculate new ending point
-        const newEndX = startX + halfLength * Math.cos(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
-        const newEndY = startY + halfLength * Math.sin(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
-
-        //NUEVO
-        // ---------- Borrar todo esto de abajo
-
-        let newLine = new fabric.Line([newStartX, newStartY, newEndX, newEndY], {
-            stroke: 'blue',
-            strokeWidth: 0.5,
-            strokeLineCap: 'round',
-            originX: 'center',
-            originY: 'center',
-        });
-        let mirroredLine = new fabric.Line([startX, endY, endX, startY], {
-            stroke: 'red',
-            strokeWidth: 0.5,
-            strokeLineCap: 'round',
-            originX: 'center',
-            originY: 'center',
-        });
-
-        this.canvas.add(newLine);
-        this.canvas.add(mirroredLine);
-
-        // ---------- Borrar todo esto de arriba
-
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, pathToAddToCut, endX, endY);
-        this.freeCutTool.startCut(startX, endY);
+        let lineLength = (this.element.circle.radius) * 2;
+        let halfLength = (lineLength / 2);
+        let startX = this.element.circlePointer.left - (halfLength * Math.cos(angleInRadians));
+        let startY = this.element.circlePointer.top - (halfLength * Math.sin(angleInRadians));
+        let endX = (startX + (lineLength * Math.cos(angleInRadians)));
+        let endY = (startY + (lineLength * Math.sin(angleInRadians)));
+        let newPoints1 = this.calculateNewCoords(startX, startY, endX, endY, this.element.semicircle.angle - 90);
+        let newPoints2 = this.calculateNewCoords(newPoints1.x1, newPoints1.y1, newPoints1.x2, newPoints1.y2, this.element.semicircle.endAngle * 2);
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, pathToAddToCut, newPoints2.x2, newPoints2.y2);
+        this.freeCutTool.startCut(newPoints1.x2, newPoints1.y2);
         this.canvas.remove(this.element.line);
         delete this.element.line;
         Object.assign(this.freeCutTool.element, this.element);
         this.canvas.requestRenderAll();
     }
 
-    calculateNewCoords(x1, y1, x2, y2, rotationInDegrees) {
-        let rotateX = x1 + ((x2 - x1) / 2);
-        let rotateY = y1 + ((y2 - y1) / 2);
-        rotationInDegrees = rotationInDegrees * Math.PI / 180;
-        let x1New = (x1 - rotateX) * Math.cos(rotationInDegrees) - (y1 - rotateY) * Math.sin(rotationInDegrees) + rotateX;
-        let y1New = (x1 - rotateX) * Math.sin(rotationInDegrees) + (y1 - rotateY) * Math.cos(rotationInDegrees) + rotateY;
-        let x2New = (x2 - rotateX) * Math.cos(rotationInDegrees) - (y2 - rotateY) * Math.sin(rotationInDegrees) + rotateX;
-        let y2New = (x2 - rotateX) * Math.sin(rotationInDegrees) + (y2 - rotateY) * Math.cos(rotationInDegrees) + rotateY;
+    calculateNewCoords(x1, y1, x2, y2, angleInDegrees) {
+        let angleInRadians = angleInDegrees * Math.PI / 180;
+        let centerX = (x1 + x2) / 2;
+        let centerY = (y1 + y2) / 2;
+        let rotatedX1 = Math.cos(angleInRadians) * (x1 - centerX) - Math.sin(angleInRadians) * (y1 - centerY) + centerX;
+        let rotatedY1 = Math.sin(angleInRadians) * (x1 - centerX) + Math.cos(angleInRadians) * (y1 - centerY) + centerY;
+        let rotatedX2 = Math.cos(angleInRadians) * (x2 - centerX) - Math.sin(angleInRadians) * (y2 - centerY) + centerX;
+        let rotatedY2 = Math.sin(angleInRadians) * (x2 - centerX) + Math.cos(angleInRadians) * (y2 - centerY) + centerY;
         return {
-            x1: x1New,
-            y1: y1New,
-            x2: x2New,
-            y2: y2New
-        }
+            x1: rotatedX1,
+            y1: rotatedY1,
+            x2: rotatedX2,
+            y2: rotatedY2
+        };
     }
 
     callbackOnFinishedCut(imgCut) {
