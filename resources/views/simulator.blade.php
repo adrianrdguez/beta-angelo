@@ -121,7 +121,7 @@
         <div class="offcanvas-body flex-grow p-4 overflow-y-auto">
             <div class="w-full mb-4">
                 <label for="pincelsize">Tamaño del pincel</label>
-                <input type="range" id="pincelsize" value="1" min="0" max="10" step="0.1"
+                <input type="range" id="pincelsize" value="1" min="0.2" max="10" step="0.1"
                     class="form-range appearance-none w-full h-6 p-0 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none">
             </div>
             <div class="w-full mb-4">

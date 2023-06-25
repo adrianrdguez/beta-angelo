@@ -48,11 +48,11 @@ export class Tool {
             lockSkewingX: true,
             lockSkewingY: true,
             selectable: true,
-            borderColor: 'red',
+            borderColor: this.canvas.freeDrawingBrush.color,
             cornerSize: 20,
             padding: 10,
             cornerStyle: 'circle',
-            cornerColor: '#f08080',
+            cornerColor: this.canvas.freeDrawingBrush.color + '80',
             transparentCorners: false,
             hasBorders: true,
         });
@@ -281,7 +281,7 @@ export class Tool {
             hasBorders: false,
             cornerSize: 50,
             cornerStyle: 'circle',
-            cornerColor: 'rgba(255, 0, 0, 0.2)',
+            cornerColor: this.canvas.freeDrawingBrush.color + '50',
         });
         polygon.controls = polygon.points.reduce((acc, point, index) => {
             acc['p' + index] = new fabric.Control({
