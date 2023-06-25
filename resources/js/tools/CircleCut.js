@@ -119,8 +119,10 @@ export class CircleCut extends RuleCircle {
         // NEED A REFACTOR
 
         let newAngle = 0;
+        let newAngle2 = 0;
         if (this.element.semicircle.input) {
-            newAngle = (180 - this.element.semicircle.input) / 2;
+            newAngle = ((180 - this.element.semicircle.input)) / 2;
+            newAngle2 = ((180 - this.element.semicircle.input) - 45) / 2;
         }
         let angleInRadians = this.degreesToRadians(newAngle);
         const lineLength = (this.element.circle.radius) * 2;
@@ -130,9 +132,19 @@ export class CircleCut extends RuleCircle {
         const endX = (startX + (lineLength * Math.cos(angleInRadians)));
         const endY = (startY + (lineLength * Math.sin(angleInRadians)));
 
+        //NUEVO
+        // Calculate new starting point
+        const newStartX = endX - halfLength * Math.cos(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
+        const newStartY = endY - halfLength * Math.sin(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
+
+        // Calculate new ending point
+        const newEndX = startX + halfLength * Math.cos(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
+        const newEndY = startY + halfLength * Math.sin(this.element.semicircle.angle + (90 - this.element.semicircle.angle));
+
+        //NUEVO
         // ---------- Borrar todo esto de abajo
 
-        let newLine = new fabric.Line([startX, startY, endX, endY], {
+        let newLine = new fabric.Line([newStartX, newStartY, newEndX, newEndY], {
             stroke: 'blue',
             strokeWidth: 0.5,
             strokeLineCap: 'round',
