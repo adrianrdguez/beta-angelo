@@ -220,16 +220,18 @@ export class CircleCut extends RuleCircle {
         })
         this.simulator.setBackgroundOptions(imgCut);
         this.element.semicircle.set({
-            //fill: this.canvas.freeDrawingBrush.color + '40',
-            fill: 'blue',
+            fill: this.canvas.freeDrawingBrush.color + '40',
             strokeWidth: 0,
             startAngle: 270,
             endAngle: 90,
             angle: 90,
         });
-        this.element.semicircle2 = fabric.util.object.clone(this.element.semicircle);
-        this.canvas.add(this.element.semicircle2);
-        this.element.semicircle2.set({
+        this.element.angleCircle = fabric.util.object.clone(this.element.semicircle);
+        this.element.clipPath = fabric.util.object.clone(this.element.semicircle);
+        this.canvas.remove(this.element.semicircle);
+        this.canvas.add(this.element.angleCircle);
+        this.canvas.add(this.element.clipPath);
+        this.element.clipPath.set({
             fill: 'transparent',
             stroke: 'transparent',
             strokeWidth: 0,
@@ -238,13 +240,12 @@ export class CircleCut extends RuleCircle {
             angle: 270,
             absolutePositioned: true
         });
-        this.element.semicircle.set({
+        this.element.angleCircle.set({
             angle: imgCut.angle + 90,
-            clipPath: this.element.semicircle2,
+            clipPath: this.element.clipPath,
         });
-
         this.element.angleText = new fabric.Text("0", {
-            left: this.element.circle.left + (this.element.circle.width / 2) + 10,
+            left: this.element.circle.left + (this.element.circle.width / 2) + 20,
             top: this.element.circle.top,
             originX: 'center',
             originY: 'center',
@@ -260,12 +261,12 @@ export class CircleCut extends RuleCircle {
             imgCut.set({
                 angle: this.element.circle.angle,
             });
-            this.element.semicircle.set({
-                flipX: (this.element.circle + 90) < 270,
-                angle: this.element.circle + 90,
+            this.element.angleCircle.set({
+                flipX: (this.element.circle.angle + 90) < 270,
+                angle: this.element.circle.angle + 90,
             });
-            this.element.semicircle2.set({
-                angle: (this.element.circle + 90) < 270 ? 90 : 270,
+            this.element.clipPath.set({
+                angle: this.element.angleCircle.angle < 270 ? 90 : 270,
             });
             angleText = Math.abs(Math.round(this.element.circle.angle) > 180 ? Math.round(this.element.circle.angle) - 360 : Math.round(this.element.circle.angle));
             this.element.angleText.text = angleText + 'º';
