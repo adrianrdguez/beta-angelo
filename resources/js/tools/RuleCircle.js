@@ -17,9 +17,9 @@ export class RuleCircle extends Rule {
             stroke: this.canvas.freeDrawingBrush.color,
             originX: 'center',
             originY: 'center',
-            hasBorders: true,
-            hasControls: true,
-            selectable: true
+            hasBorders: false,
+            hasControls: false,
+            selectable: false
         });
         this.canvas.add(circle);
         this.element.circle = circle;
