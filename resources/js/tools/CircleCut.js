@@ -46,6 +46,7 @@ export class CircleCut extends RuleCircle {
         let semicircle = new fabric.Circle({
             fill: 'transparent',
             strokeWidth: this.canvas.freeDrawingBrush.width + 1,
+            strokeLineCap: 'round',
             stroke: 'blue',
             originX: 'center',
             originY: 'center',
@@ -97,13 +98,12 @@ export class CircleCut extends RuleCircle {
         pathToAddToCut.stroke = 'transparent';
         pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 1) / 2);
         pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input) + 1) / 2;
-        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, pathToAddToCut);
         this.canvas.remove(this.element.text);
         this.element.circle.set({
             originX: 'center',
             originY: 'center',
         })
-        this.element.miniPointer = new fabric.Circle({
+        this.element.circlePointer = new fabric.Circle({
             radius: this.canvas.freeDrawingBrush.width,
             fill: this.canvas.freeDrawingBrush.color,
             originX: 'center',
@@ -114,133 +114,89 @@ export class CircleCut extends RuleCircle {
             left: this.element.circle.left,
             top: this.element.circle.top
         });
-        this.canvas.add(this.element.miniPointer);
+        this.canvas.add(this.element.circlePointer);
 
         // NEED A REFACTOR
 
-        let p4 = this.getPointCoord(this.element.line, 0);
-        let newAngle;
-        if (this.element.semicircle.input === undefined) {
-            newAngle = 0;
-        } else {
+        let newAngle = 0;
+        if (this.element.semicircle.input) {
             newAngle = (180 - this.element.semicircle.input) / 2;
         }
         let angleInRadians = this.degreesToRadians(newAngle);
-
         const lineLength = (this.element.circle.radius) * 2;
-        const halfLength = (lineLength / 2) + 2;
+        const halfLength = (lineLength / 2);
+        const startX = this.element.circlePointer.left - (halfLength * Math.cos(angleInRadians));
+        const startY = this.element.circlePointer.top - (halfLength * Math.sin(angleInRadians));
+        const endX = (startX + (lineLength * Math.cos(angleInRadians)));
+        const endY = (startY + (lineLength * Math.sin(angleInRadians)));
 
-        const centerX = p4.x - (halfLength * Math.cos(angleInRadians));
-        const centerY = p4.y - (halfLength * Math.sin(angleInRadians));
+        // ---------- Borrar todo esto de abajo
 
-        const endX = centerX + (lineLength * Math.cos(angleInRadians));
-        const endY = centerY + (lineLength * Math.sin(angleInRadians));
-
-        /* this.element.miniPointer = new fabric.Circle({
-            radius: this.canvas.freeDrawingBrush.width,
-            fill: this.canvas.freeDrawingBrush.color,
-            originX: 'center',
-            originY: 'center',
-            hasBorders: false,
-            hasControls: false,
-            selectable: false,
-        });
-        this.canvas.add(this.element.miniPointer);
-
-        this.element.miniPointer.set({
-            left: endX,
-            top: endY,
-        }); */
-
-        let newLine = new fabric.Line([centerX, centerY, endX, endY], {
+        let newLine = new fabric.Line([startX, startY, endX, endY], {
             stroke: 'blue',
             strokeWidth: 0.5,
             strokeLineCap: 'round',
             originX: 'center',
             originY: 'center',
-            angle: this.element.semicircle.angle - 90
         });
-
-        let mirroredLine = new fabric.Line([centerX, endY, endX, centerY], {
+        let mirroredLine = new fabric.Line([startX, endY, endX, startY], {
             stroke: 'red',
             strokeWidth: 0.5,
             strokeLineCap: 'round',
             originX: 'center',
             originY: 'center',
-            angle: this.element.semicircle.angle - 90
         });
 
-        /* this.canvas.add(newLine)
-        this.canvas.add(mirroredLine) */
+        this.canvas.add(newLine);
+        this.canvas.add(mirroredLine);
 
-        const endPoint = newLine.getPointByOrigin('left', 'bottom');
-        const startPoint = newLine.getPointByOrigin('right', 'bottom');
+        // ---------- Borrar todo esto de arriba
 
-        const endPoint2 = newLine.getPointByOrigin('left', 'top');
-        const startPoint2 = newLine.getPointByOrigin('right', 'top');
-
-        if (this.element.semicircle.input <= 180) {
-            this.freeCutTool.element.pointer.set({
-                left: startPoint.x + 1.5,
-                top: startPoint.y,
-            });
-            this.freeCutTool.element.miniPointer.set({
-                left: startPoint.x + 1.5,
-                top: startPoint.y,
-            });
-            this.freeCutTool.startCut(endPoint.x + 2, endPoint.y);
-        } else {
-            this.freeCutTool.element.pointer.set({
-                left: startPoint2.x + 2,
-                top: startPoint2.y,
-            });
-            this.freeCutTool.element.miniPointer.set({
-                left: startPoint2.x + 2,
-                top: startPoint2.y,
-            });
-            this.freeCutTool.startCut(endPoint2.x + 2, endPoint2.y);
-        }
-
+        this.freeCutTool = new FreeCut(this.canvas, this.callbackOnFinishedCut, pathToAddToCut, endX, endY);
+        this.freeCutTool.startCut(startX, endY);
         this.canvas.remove(this.element.line);
         delete this.element.line;
         Object.assign(this.freeCutTool.element, this.element);
         this.canvas.requestRenderAll();
     }
 
+    calculateNewCoords(x1, y1, x2, y2, rotationInDegrees) {
+        let rotateX = x1 + ((x2 - x1) / 2);
+        let rotateY = y1 + ((y2 - y1) / 2);
+        rotationInDegrees = rotationInDegrees * Math.PI / 180;
+        let x1New = (x1 - rotateX) * Math.cos(rotationInDegrees) - (y1 - rotateY) * Math.sin(rotationInDegrees) + rotateX;
+        let y1New = (x1 - rotateX) * Math.sin(rotationInDegrees) + (y1 - rotateY) * Math.cos(rotationInDegrees) + rotateY;
+        let x2New = (x2 - rotateX) * Math.cos(rotationInDegrees) - (y2 - rotateY) * Math.sin(rotationInDegrees) + rotateX;
+        let y2New = (x2 - rotateX) * Math.sin(rotationInDegrees) + (y2 - rotateY) * Math.cos(rotationInDegrees) + rotateY;
+        return {
+            x1: x1New,
+            y1: y1New,
+            x2: x2New,
+            y2: y2New
+        }
+    }
+
     callbackOnFinishedCut(imgCut) {
         this.canvas.add(this.element.circle);
         this.element.circle.fill = "rgba(1, 0, 0, 0.01)";
-        const circleCenter = this.element.circle.getCenterPoint();
-        const imgCutCenter = imgCut.getCenterPoint();
-
-        this.element.miniPointer2 = new fabric.Circle({
-            radius: this.canvas.freeDrawingBrush.width,
-            fill: this.canvas.freeDrawingBrush.color,
-            originX: 'center',
-            originY: 'center',
-            hasBorders: false,
-            hasControls: false,
-            selectable: false,
-            left: circleCenter.x,
-            top: circleCenter.y,
-        })
-        this.canvas.add(this.element.miniPointer2);
+        this.setDefaultObjectOptions(this.element.circle);
+        this.element.circle.hasBorders = true;
+        this.element.circle.hasControls = true;
+        this.element.circle.selectable = true;
+        this.element.circle.lockMovementX = true;
+        this.element.circle.lockMovementY = true;
         let brPoints = imgCut.aCoords.br;
         let tlPoints = imgCut.aCoords.tl;
         let circlePoint = new fabric.Point(
             this.element.circle.left,
             this.element.circle.top,
         );
-
         let xFirstDiff = brPoints.x - tlPoints.x;
         let yFirstDiff = brPoints.y - tlPoints.y;
-
         let xSecondDiff = circlePoint.x - tlPoints.x;
         let ySecondDiff = circlePoint.y - tlPoints.y;
-
         let newOriginX = xSecondDiff / xFirstDiff;
         let newOriginY = ySecondDiff / yFirstDiff;
-
         imgCut.set({
             lockMovementX: true,
             lockMovementY: true,
@@ -250,10 +206,10 @@ export class CircleCut extends RuleCircle {
             left: circlePoint.x,
             top: circlePoint.y,
         })
-
         this.simulator.setBackgroundOptions(imgCut);
         this.element.semicircle.set({
-            fill: this.canvas.freeDrawingBrush.color + '40',
+            //fill: this.canvas.freeDrawingBrush.color + '40',
+            fill: 'blue',
             strokeWidth: 0,
             startAngle: 270,
             endAngle: 90,
@@ -276,48 +232,32 @@ export class CircleCut extends RuleCircle {
         });
 
         this.element.angleText = new fabric.Text("0", {
-            left: this.element.semicircle.left + 870,
-            top: this.element.semicircle.top + 650,
+            left: this.element.circle.left + (this.element.circle.width / 2) + 10,
+            top: this.element.circle.top,
             originX: 'center',
             originY: 'center',
-            stroke: 'red',
             fontSize: 12,
-            angle: imgCut.angle,
+            stroke: 'black',
+            strokeWidth: 0.10,
+            fill: this.canvas.freeDrawingBrush.color,
             fontFamily: 'Nunito'
         });
         this.canvas.add(this.element.angleText);
-        this.canvas.bringToFront(this.element.circle);
-
+        let angleText = this.element.angleText;
         this.element.circle.on('rotating', (event) => {
             imgCut.set({
                 angle: this.element.circle.angle,
             });
-        });
-        imgCut.on('rotating', (event) => {
             this.element.semicircle.set({
-                flipX: (imgCut.angle + 90) < 270,
-                angle: imgCut.angle + 90,
+                flipX: (this.element.circle + 90) < 270,
+                angle: this.element.circle + 90,
             });
             this.element.semicircle2.set({
-                angle: (imgCut.angle + 90) < 270 ? 90 : 270,
+                angle: (this.element.circle + 90) < 270 ? 90 : 270,
             });
-            let newAngle = 0;
-            if (this.element.semicircle.angle > 270) {
-                newAngle = Math.round(450 - this.element.semicircle.angle);
-            } else {
-                newAngle = -Math.round(this.element.semicircle.angle - 90);
-            }
-            this.element.angleText.set('text', newAngle + 'º');
+            angleText = Math.abs(Math.round(this.element.circle.angle) > 180 ? Math.round(this.element.circle.angle) - 360 : Math.round(this.element.circle.angle));
+            this.element.angleText.text = angleText + 'º';
             this.canvas.renderAll();
-            this.canvas.bringToFront(this.element.circle);
-            this.canvas.bringToFront(this.element.semicircle);
-        });
-
-        imgCut.on('selected', (event) => {
-            setTimeout(() => {
-                this.canvas.bringToFront(this.element.circle);
-                this.canvas.bringToFront(this.element.semicircle);
-            }, 10);
         });
     }
 }

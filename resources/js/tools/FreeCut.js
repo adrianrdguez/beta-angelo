@@ -6,16 +6,16 @@ export class FreeCut extends Tool {
     cutLinePaths = [];
     callbackOnFinishedCut = null;
     pathToAddToCut = null;
-    constructor(canvas, callbackOnFinishedCut = null, pathToAddToCut = null) {
+    constructor(canvas, callbackOnFinishedCut = null, pathToAddToCut = null, x2 = null, y2 = null) {
         super(canvas, 'free-cut');
         this.callbackOnFinishedCut = callbackOnFinishedCut;
         this.pathToAddToCut = pathToAddToCut;
         this.resetEvents();
-        this.createPointer();
+        this.createPointer(x2, y2);
         this.simulator.setCurrentTool(new Drag(this.canvas));
     }
 
-    createPointer() {
+    createPointer(x2 = null, y2 = null) {
         this.element.pointer = new fabric.Circle();
         this.setDefaultObjectOptions(this.element.pointer);
         this.element.pointer.set({
@@ -44,7 +44,14 @@ export class FreeCut extends Tool {
         this.setStartControl(this.element.pointer, () => this.startCut());
         this.canvas.add(this.element.pointer);
         this.canvas.add(this.element.miniPointer);
-        this.element.pointer.set(this.simulator.getCenterOfView(this.element.pointer));
+        let pointerPosition = this.simulator.getCenterOfView(this.element.pointer);
+        if (x2 && y2) {
+            pointerPosition = {
+                left: x2,
+                top: y2,
+            };
+        }
+        this.element.pointer.set(pointerPosition);
         this.miniPointerFollowPointer();
         this.canvas.bringForward(this.element.pointer);
     }
@@ -59,11 +66,13 @@ export class FreeCut extends Tool {
         }
     }
 
-    createLine(x2 = null, y2 = null) {
-        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, x2 ?? this.element.pointer.left, y2 ?? this.element.pointer.top], {
+    createLine(x1 = null, y1 = null) {
+        this.element.line = new fabric.Line([this.element.pointer.left, this.element.pointer.top, x1 ?? this.element.pointer.left, y1 ?? this.element.pointer.top], {
             stroke: this.canvas.freeDrawingBrush.color,
             strokeWidth: this.canvas.freeDrawingBrush.width,
             strokeLineCap: 'round',
+            originX: 'center',
+            originY: 'center',
         });
         this.canvas.add(this.element.line);
         this.simulator.setBackgroundOptions(this.element.line);
@@ -76,15 +85,15 @@ export class FreeCut extends Tool {
         });
     }
 
-    startCut(x2 = null, y2 = null) {
+    startCut(x1 = null, y1 = null) {
         this.setBrushOptions(0.3);
-        this.createLine(x2, y2);
+        this.createLine(x1, y1);
         this.element.pointer.set({
             radius: this.element.pointer.radius + 20,
             stroke: 'lightblue',
             fill: 'lightblue',
         });
-        this.setStartControl(this.element.pointer, () => this.finishCutPath(x2, y2));
+        this.setStartControl(this.element.pointer, () => this.finishCutPath(x1, y1));
         this.canvas.requestRenderAll();
     }
 
@@ -163,11 +172,11 @@ export class FreeCut extends Tool {
         }
     }
 
-    finishCutPath(x2 = null, y2 = null) {
-        if (x2 && y2) {
+    finishCutPath(x1 = null, y1 = null) {
+        if (x1 && y1) {
             this.cutPath.push({
-                x: x2,
-                y: y2,
+                x: x1,
+                y: y1,
             });
         }
         this.cutPath.push({
