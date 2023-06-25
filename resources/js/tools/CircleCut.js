@@ -102,7 +102,7 @@ export class CircleCut extends RuleCircle {
         this.element.circle.set({
             originX: 'center',
             originY: 'center',
-        })
+        });
         this.element.circlePointer = new fabric.Circle({
             radius: this.canvas.freeDrawingBrush.width,
             fill: this.canvas.freeDrawingBrush.color,
