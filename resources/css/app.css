@@ -26,3 +26,8 @@ input:checked~.dot {
 .max-w-7xl {
     max-width: 100rem;
 }
+
+button[disabled] {
+    background-color: grey;
+    color: white;
+}

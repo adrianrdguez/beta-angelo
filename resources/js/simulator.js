@@ -94,7 +94,6 @@ class Simulator {
         document.getElementById('rotate-implant-left').addEventListener('click', () => {
             this.rotateAndFlipImplant('left');
         });
-
         document.getElementById('opacity').addEventListener('input', (e) => this.applyFiltersToImplant());
         document.getElementById('angle-input').addEventListener('input', () => this.setCircleCutOptions('angle-input'));
         document.getElementById('radius-input').addEventListener('input', () => this.setCircleCutOptions('radius-input'));
@@ -141,9 +140,11 @@ class Simulator {
             document.getElementById('titleModel').innerHTML = img.model;
             document.getElementById('opacity').value = img.opacity;
             if (img.allowRotation) {
-                document.getElementById('rotate-implant').classList.remove('invisible');
+                document.getElementById('rotate-implant-left').classList.remove('invisible');
+                document.getElementById('rotate-implant-right').classList.remove('invisible');
             } else {
-                document.getElementById('rotate-implant').classList.add('invisible');
+                document.getElementById('rotate-implant-left').classList.add('invisible');
+                document.getElementById('rotate-implant-right').classList.add('invisible');
             }
         });
         this.canvas.currentTool.setDefaultObjectOptions(img);
@@ -166,23 +167,17 @@ class Simulator {
         if (activeObject) {
             if (direction === 'left') {
                 activeObject.set({ flipY: !activeObject.flipY });
+                document.getElementById('rotate-implant-right').disabled = false;
+                document.getElementById('rotate-implant-left').disabled = true;
             } else if (direction === 'right') {
                 activeObject.set({ flipY: !activeObject.flipY });
+                document.getElementById('rotate-implant-left').disabled = false;
+                document.getElementById('rotate-implant-right').disabled = true;
             }
             this.canvas.requestRenderAll();
         }
-        this.updateButtonStatus();
     }
-
-    async updateButtonStatus() {
-        if (this.addImplantObject()) {
-            document.getElementById('flip-implant-left').disabled = true;
-            document.getElementById('flip-implant-right').disabled = false;
-        } else {
-            document.getElementById('flip-implant-left').disabled = false;
-            document.getElementById('flip-implant-right').disabled = true;
-        }
-    }
+  
 
     async applyFiltersToImplant() {
         let activeObject = this.canvas.getActiveObject();
