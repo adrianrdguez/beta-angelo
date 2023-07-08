@@ -99,8 +99,8 @@ export class CircleCut extends RuleCircle {
             pathToAddToCut = clone;
         });
         pathToAddToCut.stroke = 'transparent';
-        pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 3) / 2);
-        pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input) + 3) / 2;
+        pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input ?? 180) + 3) / 2);
+        pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input ?? 180) + 3) / 2;
         this.canvas.remove(this.element.text);
         this.element.circle.set({
             originX: 'center',
