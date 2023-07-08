@@ -471,8 +471,7 @@ let interval = setInterval(() => {
                 method: 'POST',
                 body: formData,
             };
-            fetch(`/api/project/${projectId}/image`, requestOptions)
-                .catch(error => console.log('error', error));
+            await fetch(`/api/project/${projectId}/image`, requestOptions);
             window.location.href = `/project/${projectId}`;
         }
 
