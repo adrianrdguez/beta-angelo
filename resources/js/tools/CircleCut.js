@@ -33,7 +33,7 @@ export class CircleCut extends RuleCircle {
         let dx = coords.p1.x - coords.p0.x;
         let dy = coords.p1.y - coords.p0.y;
         let angleRadians = Math.atan2(dy, dx);
-        let angle = angleRadians * (180 / Math.PI)
+        let angle = angleRadians * (180 / Math.PI);
         this.updateSemiCircleAngles(angle);
         if (calculateRadius) {
             this.element.semicircle?.set({
@@ -94,7 +94,10 @@ export class CircleCut extends RuleCircle {
     startCut() {
         this.canvas.remove(this.element.circle);
         this.element.semicircle.strokeWidth = this.element.circle.strokeWidth;
-        let pathToAddToCut = fabric.util.object.clone(this.element.semicircle);
+        let pathToAddToCut = null;
+        this.element.semicircle.clone(function(clone) {
+            pathToAddToCut = clone;
+        });
         pathToAddToCut.stroke = 'transparent';
         pathToAddToCut.endAngle = ((parseInt(this.element.semicircle.input) + 3) / 2);
         pathToAddToCut.startAngle = -(parseInt(this.element.semicircle.input) + 3) / 2;
@@ -190,8 +193,16 @@ export class CircleCut extends RuleCircle {
             endAngle: 90,
             angle: 90,
         });
-        this.element.angleCircle = fabric.util.object.clone(this.element.semicircle);
-        this.element.clipPath = fabric.util.object.clone(this.element.semicircle);
+        let angleCircle = null;
+        let clipPath = null;
+        this.element.semicircle.clone(function(clone) {
+            angleCircle = clone;
+        });
+        this.element.semicircle.clone(function(clone) {
+            clipPath = clone;
+        });
+        this.element.angleCircle = angleCircle;
+        this.element.clipPath = clipPath;
         this.canvas.remove(this.element.semicircle);
         this.canvas.add(this.element.angleCircle);
         this.canvas.add(this.element.clipPath);
